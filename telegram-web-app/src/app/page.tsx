@@ -1,85 +1,168 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Trophy, Home, Lock } from "lucide-react";
 
-interface User {
+interface Game {
   id: number;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  language_code?: string;
+  name: string;
+  image: string;
+  description: string;
 }
 
-export default function Home() {
-  const [tgWebApp, setTgWebApp] = useState<TelegramWebApp | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const games: Game[] = [
+  {
+    id: 1,
+    name: "COIN DASH!",
+    image: "https://placehold.co/512x512",
+    description:
+      "COIN DASH is a side-scrolling action game. Try to win more coins by dodging obstacles flowing from the right.",
+  },
+  {
+    id: 2,
+    name: "Crashed",
+    image: "https://placehold.co/512x512",
+    description:
+      "A fast-paced puzzle game where you clear blocks before they reach the top.",
+  },
+];
 
-  useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      const tgWebApp = window.Telegram.WebApp;
-      setTgWebApp(tgWebApp);
-      tgWebApp.ready();
+interface GameCardProps {
+  game: Game;
+  onClick: (game: Game) => void;
+}
 
-      fetch("/api/validate-telegram-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ initData: tgWebApp.initData }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.valid) {
-            setUser(data.user);
-          } else {
-            setError("Invalid Telegram WebApp data");
-          }
-        })
-        .catch((error) => {
-          console.error("Error validating Telegram WebApp data:", error);
-          setError("Error validating Telegram WebApp data");
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-      setError("Telegram WebApp is not available");
-    }
-  }, []);
+const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => (
+  <div
+    className="relative rounded-2xl overflow-hidden cursor-pointer"
+    onClick={() => onClick(game)}
+  >
+    <img src={game.image} alt={game.name} className="w-full h-auto" />
+    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-center">
+      {game.name}
+    </div>
+  </div>
+);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+interface GameModalProps {
+  game: Game;
+  onClose: () => void;
+  onStart: () => void;
+}
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+const GameModal: React.FC<GameModalProps> = ({ game, onClose, onStart }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+      <img
+        src={game.image}
+        alt={game.name}
+        className="w-24 h-24 mx-auto mb-4 rounded-2xl"
+      />
+      <h2 className="text-xl font-bold text-center mb-4">{game.name}</h2>
+      <p className="text-center mb-6">{game.description}</p>
+      <div className="flex justify-center space-x-4">
+        <button
+          onClick={onStart}
+          className="bg-yellow-400 text-black font-bold py-2 px-6 rounded-full"
+        >
+          Start
+        </button>
+        <button
+          onClick={onClose}
+          className="bg-gray-200 text-black font-bold py-2 px-6 rounded-full"
+        >
+          Back
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
-  if (!tgWebApp) {
-    return <div>Telegram WebApp is not available</div>;
-  }
+const WindfallGameUI: React.FC = () => {
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const handleGameClick = (game: Game) => {
+    setSelectedGame(game);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedGame(null);
+  };
+
+  const handleStartGame = () => {
+    setIsPlaying(true);
+  };
+
+  const handleQuitGame = () => {
+    setIsPlaying(false);
+    setSelectedGame(null);
+  };
 
   return (
-    <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Telegram WebApp Home</h1>
-      {user ? (
-        <div>
-          <p>Welcome, {user.first_name}!</p>
-          <p>Your Telegram ID: {user.id}</p>
-          {user.username && <p>Username: @{user.username}</p>}
-        </div>
-      ) : (
-        <p>User data not available</p>
+    <div className="flex flex-col min-h-screen bg-yellow-400">
+      <header className="bg-yellow-400 p-4">
+        <p className="text-lg font-bold">WindFall</p>
+      </header>
+
+      <main className="flex-grow bg-white">
+        {isPlaying ? (
+          <div className="relative w-screen h-[calc(100vh-4rem)]">
+            <iframe
+              src="https://lootadventure-stage.vercel.app/game/prod/index.html"
+              className="w-full h-full"
+            />
+            <button
+              onClick={handleQuitGame}
+              className="absolute top-4 right-4 bg-yellow-400 text-black font-bold py-2 px-4 rounded-full"
+            >
+              QUIT
+            </button>
+          </div>
+        ) : (
+          <div className="p-4">
+            <h2 className="text-2xl font-bold mb-4">Season1 Picked Games</h2>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {games.map((game) => (
+                <GameCard key={game.id} game={game} onClick={handleGameClick} />
+              ))}
+            </div>
+            <h2 className="text-2xl font-bold mb-4">
+              Today's Picked Games Ranking
+            </h2>
+            {/* Add ranking table here */}
+          </div>
+        )}
+      </main>
+
+      {!isPlaying && (
+        <footer className="bg-yellow-400 p-4">
+          <div className="flex justify-around">
+            <button className="flex flex-col items-center">
+              <Trophy size={24} />
+              <span>LeaderBoard</span>
+            </button>
+            <button className="flex flex-col items-center">
+              <Home size={24} />
+              <span>Home</span>
+            </button>
+            <button className="flex flex-col items-center">
+              <Lock size={24} />
+              <span>Vaults</span>
+            </button>
+          </div>
+        </footer>
       )}
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={() => tgWebApp.showAlert("Hello from WebApp!")}
-      >
-        Show Alert
-      </button>
-    </main>
+
+      {selectedGame && !isPlaying && (
+        <GameModal
+          game={selectedGame}
+          onClose={handleCloseModal}
+          onStart={handleStartGame}
+        />
+      )}
+    </div>
   );
-}
+};
+
+export default WindfallGameUI;
