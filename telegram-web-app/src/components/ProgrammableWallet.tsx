@@ -4,16 +4,22 @@ import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
 export const ProgrammableWallet: React.FC = () => {
   const [sdk, setSdk] = useState<W3SSdk | null>(null);
-  const [appId, setAppId] = useState<string>("");
+  const [appId, setAppId] = useState<string>(
+    "4cbb4d87-4575-5ffb-930a-192ddf54676c"
+  );
   const [userToken, setUserToken] = useState<string>("");
   const [encryptionKey, setEncryptionKey] = useState<string>("");
   const [challengeId, setChallengeId] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     setSdk(new W3SSdk());
 
     // Set initial values from localStorage
-    setAppId(window.localStorage.getItem("appId") || "someAppId");
+    setAppId(
+      window.localStorage.getItem("appId") ||
+        "4cbb4d87-4575-5ffb-930a-192ddf54676c"
+    );
     setUserToken(window.localStorage.getItem("userToken") || "someUserToken");
     setEncryptionKey(
       window.localStorage.getItem("encryptionKey") || "someEncryptionKey"
@@ -21,6 +27,7 @@ export const ProgrammableWallet: React.FC = () => {
     setChallengeId(
       window.localStorage.getItem("challengeId") || "someChallengeId"
     );
+    setUserId(window.localStorage.getItem("userId") || "someUserId");
   }, []);
 
   const onChangeHandler = useCallback(
@@ -32,6 +39,20 @@ export const ProgrammableWallet: React.FC = () => {
       },
     []
   );
+
+  const fetchUserToken = async () => {
+    const response = await fetch("/api/circle/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    const data = await response.json();
+    setUserToken(data.token);
+    window.localStorage.setItem("userToken", data.token);
+  };
 
   const onSubmit = useCallback(() => {
     if (!sdk) return;
@@ -108,6 +129,27 @@ export const ProgrammableWallet: React.FC = () => {
           onChange={onChangeHandler(setChallengeId, "challengeId")}
         />
       </div>
+      <div>
+        <label
+          htmlFor="userId"
+          className="block text-sm font-medium text-gray-700"
+        >
+          User Id
+        </label>
+        <input
+          type="text"
+          id="userId"
+          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          value={userId}
+          onChange={onChangeHandler(setUserId, "userId")}
+        />
+      </div>
+      <button
+        onClick={fetchUserToken}
+        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Fetch User Token
+      </button>
       <button
         onClick={onSubmit}
         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   ConnectionProvider,
@@ -20,10 +20,14 @@ import { games } from "./data";
 import { Footer } from "@/components/Footer";
 import { ProgrammableWallet } from "@/components/ProgrammableWallet";
 import { ThirdPartyWallet } from "@/components/ThirdPartyWallet";
+import { signIn, useSession } from "next-auth/react";
+import { RankingTable } from "@/components/RankingTable";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 const WindfallGameUI: React.FC = () => {
+  const [tgWebApp, setTgWebApp] = useState<TelegramWebApp | null>(null);
+
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [showWallet, setShowWallet] = useState<boolean>(false);
@@ -47,6 +51,30 @@ const WindfallGameUI: React.FC = () => {
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = clusterApiUrl(network);
   const wallets = [new PhantomWalletAdapter()];
+
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      const tgWebApp = window.Telegram.WebApp;
+      setTgWebApp(tgWebApp);
+      tgWebApp.ready();
+      if (tgWebApp.initData) {
+        signIn("credentials", {
+          redirect: false,
+          initData: tgWebApp.initData,
+        }).then((result) => {
+          if (!result?.ok) {
+            toast.error("Failed to sign in");
+          } else {
+            toast.success("Signed in successfully");
+          }
+        });
+      } else {
+        toast.error("Telegram initData not found");
+      }
+    } else {
+      toast.error("Telegram WebApp not found");
+    }
+  }, []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
@@ -118,7 +146,7 @@ const WindfallGameUI: React.FC = () => {
                   <h2 className="text-2xl font-bold mb-4">
                     Today's Picked Games Ranking
                   </h2>
-                  {/* Add ranking table here */}
+                  <RankingTable />
                 </div>
               )}
             </main>
