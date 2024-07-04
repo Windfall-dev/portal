@@ -53,6 +53,18 @@ const WindfallGameUI: React.FC = () => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <div className="flex flex-col min-h-screen bg-yellow-400">
+            <header className="bg-yellow-400 p-4 flex justify-between items-center">
+              <p className="text-lg font-bold">WindFall</p>
+              {!showWallet && !isPlaying && (
+                <button
+                  onClick={() => setShowWallet(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Show Wallet
+                </button>
+              )}
+            </header>
+
             <main className="flex-grow bg-white relative">
               {isPlaying ? (
                 <div className="relative w-screen h-[calc(100vh-4rem)]">
