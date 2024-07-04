@@ -20,12 +20,12 @@ import { games } from "./data";
 import { Footer } from "@/components/Footer";
 import { ProgrammableWallet } from "@/components/ProgrammableWallet";
 import { ThirdPartyWallet } from "@/components/ThirdPartyWallet";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { RankingTable } from "@/components/RankingTable";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 
-const WindfallGameUI: React.FC = () => {
+export default function Page() {
   const [tgWebApp, setTgWebApp] = useState<TelegramWebApp | null>(null);
 
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
@@ -53,24 +53,27 @@ const WindfallGameUI: React.FC = () => {
   const wallets = [new PhantomWalletAdapter()];
 
   useEffect(() => {
+    // signOut();
+    // return;
     if (window.Telegram?.WebApp) {
       const tgWebApp = window.Telegram.WebApp;
       setTgWebApp(tgWebApp);
       tgWebApp.ready();
-      if (tgWebApp.initData) {
-        signIn("credentials", {
-          redirect: false,
-          initData: tgWebApp.initData,
-        }).then((result) => {
-          if (!result?.ok) {
-            toast.error("Failed to sign in");
-          } else {
-            toast.success("Signed in successfully");
-          }
-        });
-      } else {
-        toast.error("Telegram initData not found");
-      }
+
+      // if (tgWebApp.initData) {
+      signIn("credentials", {
+        redirect: false,
+        initData: tgWebApp.initData || process.env.NEXT_PUBLIC_DEBUG_INIT_DATA,
+      }).then((result) => {
+        if (!result?.ok) {
+          toast.error("Failed to sign in");
+        } else {
+          toast.success("Signed in successfully");
+        }
+      });
+      // } else {
+      //   toast.error("Telegram initData not found");
+      // }
     } else {
       toast.error("Telegram WebApp not found");
     }
@@ -80,6 +83,7 @@ const WindfallGameUI: React.FC = () => {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
+          <button onClick={() => signOut()}>SignOut</button>
           <div className="flex flex-col min-h-screen bg-yellow-400">
             <header className="bg-yellow-400 p-4 flex justify-between items-center">
               <p className="text-lg font-bold">WindFall</p>
@@ -165,6 +169,4 @@ const WindfallGameUI: React.FC = () => {
       </WalletProvider>
     </ConnectionProvider>
   );
-};
-
-export default WindfallGameUI;
+}
