@@ -58,21 +58,24 @@ export default function Page() {
       const tgWebApp = window.Telegram.WebApp;
       setTgWebApp(tgWebApp);
       tgWebApp.ready();
-      fetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          initData:
-            tgWebApp.initData || process.env.NEXT_PUBLIC_DEBUG_INIT_DATA,
-        }),
-      }).then(async (response) => {
-        const data = await response.json();
-        setAuth(data);
-      });
+      if (tgWebApp.initData) {
+        fetch("/api/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            initData: tgWebApp.initData,
+          }),
+        }).then(async (response) => {
+          const data = await response.json();
+          setAuth(data);
+        });
+      } else {
+        toast.error("Telegram webApp initData not found");
+      }
     } else {
-      toast.error("Telegram WebApp not found");
+      toast.error("Telegram webApp not found");
     }
   }, []);
 
