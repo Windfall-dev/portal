@@ -1,10 +1,24 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Trophy, Home, Lock } from "lucide-react";
+import { Trophy, Home, Lock, ChevronDown } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+import {
+  ConnectionProvider,
+  WalletProvider,
+  useWallet,
+} from "@solana/wallet-adapter-react";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import {
+  WalletModalProvider,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
+import { clusterApiUrl } from "@solana/web3.js";
+
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 interface Game {
   id: number;
@@ -81,10 +95,35 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onStart }) => (
   </div>
 );
 
+const BackButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute top-4 left-4 bg-gray-200 text-black font-bold py-2 px-6 rounded-full"
+  >
+    Back
+  </button>
+);
+
+const ConnectedWalletInfo: React.FC = () => {
+  const { publicKey } = useWallet();
+
+  if (!publicKey) return null;
+
+  return (
+    <div className="mt-4 p-4 bg-gray-100 rounded-md">
+      <h3 className="text-lg font-semibold mb-2">Connected Wallet</h3>
+      <p className="text-sm break-all">{publicKey.toString()}</p>
+    </div>
+  );
+};
+
 const WindfallGameUI: React.FC = () => {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [showSdkTest, setShowSdkTest] = useState<boolean>(false);
+  const [showWallet, setShowWallet] = useState<boolean>(false);
+  const [walletType, setWalletType] = useState<"programmable" | "phantom">(
+    "programmable"
+  );
 
   // SDK Test states
   const [sdk, setSdk] = useState<W3SSdk | null>(null);
@@ -147,146 +186,197 @@ const WindfallGameUI: React.FC = () => {
     });
   }, [sdk, appId, userToken, encryptionKey, challengeId]);
 
+  // Solana wallet setup
+  const network = WalletAdapterNetwork.Devnet;
+  const endpoint = clusterApiUrl(network);
+  const wallets = [new PhantomWalletAdapter()];
+
   return (
-    <div className="flex flex-col min-h-screen bg-yellow-400">
-      <header className="bg-yellow-400 p-4 flex justify-between items-center">
-        <p className="text-lg font-bold">WindFall</p>
-        <button
-          onClick={() => setShowSdkTest(!showSdkTest)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          {showSdkTest ? "Show Games" : "Show SDK Test"}
-        </button>
-      </header>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <div className="flex flex-col min-h-screen bg-yellow-400">
+            <header className="bg-yellow-400 p-4 flex justify-between items-center">
+              <p className="text-lg font-bold">WindFall</p>
+              {!showWallet && !isPlaying && (
+                <button
+                  onClick={() => setShowWallet(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Show Wallet
+                </button>
+              )}
+            </header>
 
-      <main className="flex-grow bg-white">
-        {isPlaying ? (
-          <div className="relative w-screen h-[calc(100vh-4rem)]">
-            <iframe
-              src="https://lootadventure-stage.vercel.app/game/prod/index.html"
-              className="w-full h-full"
-            />
-            <button
-              onClick={handleQuitGame}
-              className="absolute top-4 right-4 bg-yellow-400 text-black font-bold py-2 px-4 rounded-full"
-            >
-              QUIT
-            </button>
-          </div>
-        ) : showSdkTest ? (
-          <div className="p-4 space-y-4">
-            <div>
-              <label
-                htmlFor="appId"
-                className="block text-sm font-medium text-gray-700"
-              >
-                App Id
-              </label>
-              <input
-                type="text"
-                id="appId"
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={appId}
-                onChange={onChangeHandler(setAppId, "appId")}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="userToken"
-                className="block text-sm font-medium text-gray-700"
-              >
-                User Token
-              </label>
-              <input
-                type="text"
-                id="userToken"
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={userToken}
-                onChange={onChangeHandler(setUserToken, "userToken")}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="encryptionKey"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Encryption Key
-              </label>
-              <input
-                type="text"
-                id="encryptionKey"
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={encryptionKey}
-                onChange={onChangeHandler(setEncryptionKey, "encryptionKey")}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="challengeId"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Challenge Id
-              </label>
-              <input
-                type="text"
-                id="challengeId"
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={challengeId}
-                onChange={onChangeHandler(setChallengeId, "challengeId")}
-              />
-            </div>
-            <button
-              onClick={onSubmit}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Verify Challenge
-            </button>
-          </div>
-        ) : (
-          <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Season1 Picked Games</h2>
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {games.map((game) => (
-                <GameCard key={game.id} game={game} onClick={handleGameClick} />
-              ))}
-            </div>
-            <h2 className="text-2xl font-bold mb-4">
-              Today's Picked Games Ranking
-            </h2>
-            {/* Add ranking table here */}
-          </div>
-        )}
-      </main>
+            <main className="flex-grow bg-white relative">
+              {isPlaying ? (
+                <div className="relative w-screen h-[calc(100vh-4rem)]">
+                  <iframe
+                    src="https://lootadventure-stage.vercel.app/game/prod/index.html"
+                    className="w-full h-full"
+                  />
+                  <BackButton onClick={() => setIsPlaying(false)} />
+                </div>
+              ) : showWallet ? (
+                <div className="p-4">
+                  <BackButton onClick={() => setShowWallet(false)} />
+                  <div className="flex justify-center mb-4">
+                    <select
+                      value={walletType}
+                      onChange={(e) =>
+                        setWalletType(
+                          e.target.value as "programmable" | "phantom"
+                        )
+                      }
+                      className="appearance-none bg-white border border-gray-300 rounded-md py-2 pl-3 pr-10 text-sm leading-5 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out"
+                    >
+                      <option value="programmable">Programmable Wallet</option>
+                      <option value="phantom">Phantom Wallet</option>
+                    </select>
+                    <ChevronDown
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      size={16}
+                    />
+                  </div>
+                  {walletType === "programmable" ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="appId"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          App Id
+                        </label>
+                        <input
+                          type="text"
+                          id="appId"
+                          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          value={appId}
+                          onChange={onChangeHandler(setAppId, "appId")}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="userToken"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          User Token
+                        </label>
+                        <input
+                          type="text"
+                          id="userToken"
+                          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          value={userToken}
+                          onChange={onChangeHandler(setUserToken, "userToken")}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="encryptionKey"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Encryption Key
+                        </label>
+                        <input
+                          type="text"
+                          id="encryptionKey"
+                          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          value={encryptionKey}
+                          onChange={onChangeHandler(
+                            setEncryptionKey,
+                            "encryptionKey"
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="challengeId"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Challenge Id
+                        </label>
+                        <input
+                          type="text"
+                          id="challengeId"
+                          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          value={challengeId}
+                          onChange={onChangeHandler(
+                            setChallengeId,
+                            "challengeId"
+                          )}
+                        />
+                      </div>
+                      <button
+                        onClick={onSubmit}
+                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        Verify Challenge
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-2xl font-bold mb-4">
+                        Connect Your Phantom Wallet
+                      </h2>
+                      <WalletMultiButton />
+                      <ConnectedWalletInfo />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-4">
+                  <h2 className="text-2xl font-bold mb-4">
+                    Season1 Picked Games
+                  </h2>
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    {games.map((game) => (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                        onClick={handleGameClick}
+                      />
+                    ))}
+                  </div>
+                  <h2 className="text-2xl font-bold mb-4">
+                    Today's Picked Games Ranking
+                  </h2>
+                  {/* Add ranking table here */}
+                </div>
+              )}
+            </main>
 
-      {!isPlaying && (
-        <footer className="bg-yellow-400 p-4">
-          <div className="flex justify-around">
-            <button className="flex flex-col items-center">
-              <Trophy size={24} />
-              <span>LeaderBoard</span>
-            </button>
-            <button className="flex flex-col items-center">
-              <Home size={24} />
-              <span>Home</span>
-            </button>
-            <button className="flex flex-col items-center">
-              <Lock size={24} />
-              <span>Vaults</span>
-            </button>
+            {!isPlaying && !showWallet && (
+              <footer className="bg-yellow-400 p-4">
+                <div className="flex justify-around">
+                  <button className="flex flex-col items-center">
+                    <Trophy size={24} />
+                    <span>LeaderBoard</span>
+                  </button>
+                  <button className="flex flex-col items-center">
+                    <Home size={24} />
+                    <span>Home</span>
+                  </button>
+                  <button className="flex flex-col items-center">
+                    <Lock size={24} />
+                    <span>Vaults</span>
+                  </button>
+                </div>
+              </footer>
+            )}
+
+            {selectedGame && !isPlaying && !showWallet && (
+              <GameModal
+                game={selectedGame}
+                onClose={handleCloseModal}
+                onStart={handleStartGame}
+              />
+            )}
+
+            <ToastContainer />
           </div>
-        </footer>
-      )}
-
-      {selectedGame && !isPlaying && (
-        <GameModal
-          game={selectedGame}
-          onClose={handleCloseModal}
-          onStart={handleStartGame}
-        />
-      )}
-
-      <ToastContainer />
-    </div>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 };
 
