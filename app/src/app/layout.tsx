@@ -12,6 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <meta name="apple-mobile-web-app-capable" content="yes"></meta>
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
       </head>
       <body>
