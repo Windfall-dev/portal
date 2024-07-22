@@ -9,7 +9,10 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import {
+  PhantomWalletAdapter,
+  WalletConnectWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import { Game } from "@/types/game";
@@ -51,7 +54,16 @@ export default function Page() {
   // Solana wallet setup
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = clusterApiUrl(network);
-  const wallets = [new PhantomWalletAdapter()];
+  const wallets = [
+    new PhantomWalletAdapter(),
+    new WalletConnectWalletAdapter({
+      network: WalletAdapterNetwork.Devnet,
+      options: {
+        relayUrl: "wss://relay.walletconnect.com",
+        projectId: "e899c82be21d4acca2c8aec45e893598",
+      },
+    }),
+  ];
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
