@@ -1,0 +1,2 @@
+# https://github.com/lint-staged/lint-staged?tab=readme-ov-file#examples
+npx lint-staged
