@@ -8,10 +8,7 @@ import postgres from "postgres";
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-const isProduction = process.env.NODE_ENV === "production";
-const sslMode = isProduction ? "?sslmode=require" : "";
-
-const client = postgres(`${process.env.POSTGRES_URL!}${sslMode}`);
+const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
 export async function getUser(email: string) {
