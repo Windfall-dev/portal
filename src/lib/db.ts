@@ -1,27 +1,22 @@
-import { genSaltSync, hashSync } from "bcrypt-ts";
 import { eq } from "drizzle-orm";
 import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-// Optionally, if not using email/pass login, you can
-// use the Drizzle adapter for Auth.js / NextAuth
-// https://authjs.dev/reference/adapter/drizzle
-
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(email: string) {
+export async function getUser(telegram_id: string) {
   const users = await ensureTableExists();
-  return await db.select().from(users).where(eq(users.email, email));
+  return await db
+    .select()
+    .from(users)
+    .where(eq(users.telegram_id, telegram_id));
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(telegram_id: string) {
   const users = await ensureTableExists();
-  const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
-
-  return await db.insert(users).values({ email, password: hash });
+  return await db.insert(users).values({ telegram_id });
 }
 
 async function ensureTableExists() {
@@ -36,15 +31,13 @@ async function ensureTableExists() {
     await client`
       CREATE TABLE "User" (
         id SERIAL PRIMARY KEY,
-        email VARCHAR(64),
-        password VARCHAR(64)
+        telegram_id VARCHAR(64)
       );`;
   }
 
   const table = pgTable("User", {
     id: serial("id").primaryKey(),
-    email: varchar("email", { length: 64 }),
-    password: varchar("password", { length: 64 }),
+    telegram_id: varchar("telegram_id", { length: 64 }),
   });
 
   return table;

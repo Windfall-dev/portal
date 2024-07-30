@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
 interface TelegramContextProps {
+  isLoaded: boolean;
   tgWebApp: TelegramWebApp | null;
 }
 
