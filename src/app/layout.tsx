@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-col h-screen bg-gray-200">
+        <div className="flex flex-col h-screen bg-gray-200 max-w-md mx-auto">
           <ScrollArea className="h-full">
             <Header />
             {children}
