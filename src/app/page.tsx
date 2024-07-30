@@ -6,10 +6,6 @@ import { Button } from "@/components/ui/button";
 
 const HomePage: React.FC = () => (
   <main className="flex-grow overflow-y-auto">
-    <div className="bg-gray-200 p-4">
-      <h1 className="text-center text-lg">header</h1>
-    </div>
-
     <div className="p-4 bg-gray-300">
       <h2 className="text-xl font-bold text-center mb-2">サービス説明</h2>
       <p className="text-sm text-gray-600 text-center mb-4">KV、簡単説明</p>
@@ -48,10 +44,6 @@ const HomePage: React.FC = () => (
     <div className="p-4 bg-gray-300">
       <h2 className="text-lg font-semibold text-center mb-2">サービス説明2</h2>
       <p className="text-sm text-center">もっと説明</p>
-    </div>
-
-    <div className="bg-gray-200 p-4">
-      <h1 className="text-center text-lg">Footer</h1>
     </div>
   </main>
 );
