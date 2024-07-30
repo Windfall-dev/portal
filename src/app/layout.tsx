@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import "../styles/globals.css";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,21 +15,22 @@ export const metadata: Metadata = {
   description: "Windfall Portal",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+      </head>
       <body className={inter.className}>
-        <div className="flex flex-col h-screen bg-gray-200 max-w-md mx-auto">
-          <ScrollArea className="h-full">
-            <Header />
-            {children}
-          </ScrollArea>
-          <Footer />
-        </div>
+        <Providers>
+          <div className="flex flex-col h-screen bg-gray-200 max-w-md mx-auto">
+            <ScrollArea className="h-full">
+              <Header />
+              {children}
+            </ScrollArea>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

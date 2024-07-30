@@ -5,13 +5,23 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { LuGamepad2, LuHome, LuWallet } from "react-icons/lu";
 
-export const Footer: React.FC = () => {
+import { useTelegram } from "@/hooks/useTelegram";
+
+export function Footer() {
   const pathname = usePathname();
 
   const navItems = [
     { name: "Home", icon: LuHome, path: "/" },
-    { name: "Game", icon: LuGamepad2, path: "/game" },
-    { name: "Staking", icon: LuWallet, path: "/staking" },
+    {
+      name: "Game",
+      icon: LuGamepad2,
+      path: "/game",
+    },
+    {
+      name: "Staking",
+      icon: LuWallet,
+      path: "/staking",
+    },
   ];
 
   return (
@@ -37,4 +47,4 @@ export const Footer: React.FC = () => {
       </div>
     </footer>
   );
-};
+}
