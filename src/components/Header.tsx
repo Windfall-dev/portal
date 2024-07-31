@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallets } from "@/hooks/useProgrammableWallets";
@@ -15,32 +15,51 @@ export function Header() {
   const { isLoading, isSignedIn } = useTelegram();
   const { sdk, walletAddress, setWalletAddress } = useProgrammableWallets();
 
+  const [isCreating, setIsCreating] = useState(false);
+
   return (
     <div className="bg-gray-200 p-4 flex justify-between items-center">
       <h1 className="text-lg font-bold">Windfall</h1>
-      {isLoading && <Button variant="secondary">Loading...</Button>}
+      {isLoading && (
+        <Button variant="secondary" disabled>
+          Loading...
+        </Button>
+      )}
       {!isLoading && (
         <>
           {!isSignedIn && (
-            <Button variant="destructive">Telegram Not Detected</Button>
+            <Button variant="destructive" disabled>
+              Telegram Not Detected
+            </Button>
           )}
           {isSignedIn && (
             <>
               {!walletAddress && (
                 <Button
+                  variant={!isCreating ? "default" : "secondary"}
+                  disabled={isCreating}
                   onClick={async () => {
                     if (!sdk) {
                       throw new Error("SDK not initialized");
                     }
                     const challengeId = await getInitializeChallengeId();
                     sdk.execute(challengeId, async () => {
-                      const walletAddress =
-                        await setProgrammableWalletsWallet();
-                      setWalletAddress(walletAddress);
+                      setIsCreating(true);
+                      const intervalId = setInterval(async () => {
+                        try {
+                          const walletAddress =
+                            await setProgrammableWalletsWallet();
+                          clearInterval(intervalId);
+                          setIsCreating(false);
+                          setWalletAddress(walletAddress);
+                        } catch (error) {
+                          console.error("Error setting wallet address:", error);
+                        }
+                      }, 1000);
                     });
                   }}
                 >
-                  Create Wallet
+                  {!isCreating ? "Create Wallet" : "Creating..."}
                 </Button>
               )}
               {walletAddress && (
