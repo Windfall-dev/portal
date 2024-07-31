@@ -2,7 +2,15 @@ import crypto from "crypto";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import { createUser, getUser } from "@/lib/db";
+import {
+  createUserByTelegramId,
+  getUserByTelegramId,
+  setIsProgrammableWalletsCreated,
+} from "@/lib/db";
+import {
+  createUser,
+  getUserTokenAndEncryptionKey,
+} from "@/lib/programmable-wallets";
 import { TelegramUser } from "@/types/telegram-user";
 
 export const { handlers, auth } = NextAuth({
@@ -29,20 +37,42 @@ export const { handlers, auth } = NextAuth({
         if (calculatedHash !== hash) {
           return null;
         }
-        const { id: _id }: TelegramUser = JSON.parse(
+        const { id: _telegramId }: TelegramUser = JSON.parse(
           params.get("user") || "{}",
         );
-        if (!_id) {
+        if (!_telegramId) {
           return null;
         }
-        const id = _id.toString();
-        let [user] = await getUser(id);
+        const telegramId = _telegramId.toString();
+        let [user] = await getUserByTelegramId(telegramId);
         if (!user) {
-          await createUser(id);
-          [user] = await getUser(id);
+          [user] = await createUserByTelegramId(telegramId);
         }
-        return { ...user, id: user.id.toString() };
+        const userId = user.id.toString();
+        if (!user.isProgrammableWalletsCreated) {
+          await createUser(userId);
+          await setIsProgrammableWalletsCreated(userId);
+        }
+        const { userToken, encryptionKey } =
+          await getUserTokenAndEncryptionKey(userId);
+        return {
+          ...user,
+          id: userId,
+          programmableWallets: { userToken, encryptionKey },
+        };
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token = { ...token, user };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session = { ...session, ...token };
+      return session;
+    },
+  },
 });

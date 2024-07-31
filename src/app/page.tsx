@@ -3,8 +3,12 @@ import React from "react";
 import { LuPlay } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth();
+  console.log("session", session);
+
   return (
     <main className="flex-grow overflow-y-auto">
       <div className="p-4 bg-gray-300">

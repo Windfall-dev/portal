@@ -1,22 +1,27 @@
 import { eq } from "drizzle-orm";
-import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { boolean, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(telegram_id: string) {
+export async function getUserByTelegramId(telegramId: string) {
   const users = await ensureTableExists();
-  return await db
-    .select()
-    .from(users)
-    .where(eq(users.telegram_id, telegram_id));
+  return await db.select().from(users).where(eq(users.telegramId, telegramId));
 }
 
-export async function createUser(telegram_id: string) {
+export async function createUserByTelegramId(telegramId: string) {
   const users = await ensureTableExists();
-  return await db.insert(users).values({ telegram_id });
+  return await db.insert(users).values({ telegramId }).returning();
+}
+
+export async function setIsProgrammableWalletsCreated(userId: string) {
+  const users = await ensureTableExists();
+  return await db
+    .update(users)
+    .set({ id: userId, isProgrammableWalletsCreated: true })
+    .returning();
 }
 
 async function ensureTableExists() {
@@ -30,14 +35,18 @@ async function ensureTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "User" (
-        id SERIAL PRIMARY KEY,
-        telegram_id VARCHAR(64)
+        id uuid DEFAULT gen_random_uuid(),
+        telegram_id VARCHAR(64) NOT NULL,
+        is_programmable_wallets_created BOOLEAN DEFAULT FALSE
       );`;
   }
 
   const table = pgTable("User", {
-    id: serial("id").primaryKey(),
-    telegram_id: varchar("telegram_id", { length: 64 }).notNull(),
+    id: uuid("id").primaryKey().defaultRandom(),
+    telegramId: varchar("telegram_id", { length: 64 }).notNull(),
+    isProgrammableWalletsCreated: boolean(
+      "is_programmable_wallets_created",
+    ).default(false),
   });
 
   return table;
