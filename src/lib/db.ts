@@ -44,3 +44,45 @@ async function ensureUserTableExists() {
   });
   return table;
 }
+
+export async function getTelegram(telegramId: string) {
+  const telegrams = await ensureTelegramTableExists();
+  const [telegram] = await db
+    .select()
+    .from(telegrams)
+    .where(eq(telegrams.telegramId, telegramId));
+  if (telegram) {
+    return telegram;
+  }
+}
+
+export async function createTelegram(telegramId: string) {
+  const telegrams = await ensureTelegramTableExists();
+  const [telegram] = await db
+    .insert(telegrams)
+    .values({ telegramId })
+    .returning();
+  return telegram;
+}
+
+async function ensureTelegramTableExists() {
+  const result = await client`
+    SELECT EXISTS (
+      SELECT FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_name = 'Telegram'
+    );`;
+
+  if (!result[0].exists) {
+    await client`
+      CREATE TABLE "Telegram" (
+        id: uuid("id").primaryKey().defaultRandom(),
+        telegram_id VARCHAR(64) NOT NULL
+      );`;
+  }
+  const table = pgTable("Telegram", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    telegramId: varchar("telegram_id", { length: 64 }).notNull(),
+  });
+  return table;
+}

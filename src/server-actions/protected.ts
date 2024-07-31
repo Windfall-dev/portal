@@ -2,6 +2,7 @@
 
 import crypto from "crypto";
 
+import * as db from "@/lib/db";
 import * as programmableWallet from "@/lib/programmable-wallet";
 import { TelegramUser } from "@/types/telegram-user";
 
@@ -34,12 +35,19 @@ export async function getProgrammableWalletByTelegramInitData(
     throw new Error("Invalid user");
   }
   const telegramId = _telegramId.toString();
-  const isUserCreated = await programmableWallet.checkIsUserCreated(telegramId);
+
+  let telegram = await db.getTelegram(telegramId);
+  if (!telegram) {
+    telegram = await db.createTelegram(telegramId);
+  }
+
+  const id = telegram.id;
+  const isUserCreated = await programmableWallet.checkIsUserCreated(id);
   if (!isUserCreated) {
-    await programmableWallet.createUser(telegramId);
+    await programmableWallet.createUser(id);
   }
   const { userToken, encryptionKey } =
-    await programmableWallet.getUserTokenAndEncryptionKey(telegramId);
+    await programmableWallet.getUserTokenAndEncryptionKey(id);
 
   const wallet = await programmableWallet.getWallet(userToken);
   return {
