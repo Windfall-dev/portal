@@ -20,6 +20,10 @@ export function useSolanaWallet() {
     if (!signMessage) {
       throw new Error("signMessage is not defined");
     }
+    if (!publicKey) {
+      throw new Error("publicKey is not defined");
+    }
+
     const walletAddress = publicKey.toBase58();
     const encodedMessage = new TextEncoder().encode(auth.signInMessage);
     const signatureBuffer = await signMessage(encodedMessage);

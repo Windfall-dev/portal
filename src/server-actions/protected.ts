@@ -2,17 +2,8 @@
 
 import crypto from "crypto";
 
-import { auth } from "@/lib/auth";
 import * as programmableWallet from "@/lib/programmable-wallet";
 import { TelegramUser } from "@/types/telegram-user";
-
-export async function getSessionUser() {
-  const session = await auth();
-  if (!session) {
-    throw new Error("Failed to authenticate");
-  }
-  return session.user;
-}
 
 export async function getProgrammableWalletByTelegramInitData(
   initData: string,
