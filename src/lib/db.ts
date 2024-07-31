@@ -1,71 +1,50 @@
 import { eq } from "drizzle-orm";
-import { boolean, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUserByTelegramId(telegramId: string) {
-  const users = await ensureTableExists();
-  return await db.select().from(users).where(eq(users.telegramId, telegramId));
+export async function getTelegramUser(telegramId: string) {
+  const telegramUsers = await ensureTelegramUserTableExists();
+  const [telegramUser] = await db
+    .select()
+    .from(telegramUsers)
+    .where(eq(telegramUsers.telegramId, telegramId));
+  if (telegramUser) {
+    return telegramUser;
+  }
 }
 
-export async function createUserByTelegramId(telegramId: string) {
-  const users = await ensureTableExists();
-  return await db.insert(users).values({ telegramId }).returning();
-}
-
-export async function setProgrammableWalletsIsUserCreated(userId: string) {
-  const users = await ensureTableExists();
-  return await db
-    .update(users)
-    .set({ id: userId, programmableWalletsIsUserCreated: true })
+export async function createTelegramUser(telegramId: string) {
+  const telegramUsers = await ensureTelegramUserTableExists();
+  const [telegramUser] = await db
+    .insert(telegramUsers)
+    .values({ telegramId })
     .returning();
+  return telegramUser;
 }
 
-export async function setProgrammableWalletsWalletAddress(
-  userId: string,
-  walletAddress: string,
-) {
-  const users = await ensureTableExists();
-  return await db
-    .update(users)
-    .set({ id: userId, programmableWalletsWalletAddress: walletAddress })
-    .returning();
-}
-
-async function ensureTableExists() {
+async function ensureTelegramUserTableExists() {
   const result = await client`
     SELECT EXISTS (
       SELECT FROM information_schema.tables 
       WHERE table_schema = 'public' 
-      AND table_name = 'User'
+      AND table_name = 'TelegramUser'
     );`;
 
   if (!result[0].exists) {
     await client`
-      CREATE TABLE "User" (
+      CREATE TABLE "TelegramUser" (
         id uuid DEFAULT gen_random_uuid(),
-        telegram_id VARCHAR(64) NOT NULL,
-        programmable_wallets_is_user_created BOOLEAN DEFAULT FALSE,
-        programmable_wallets_wallet_address VARCHAR(64)
+        telegram_id VARCHAR(64) NOT NULL
       );`;
   }
 
-  const table = pgTable("User", {
+  const table = pgTable("TelegramUser", {
     id: uuid("id").primaryKey().defaultRandom(),
     telegramId: varchar("telegram_id", { length: 64 }).notNull(),
-    programmableWalletsIsUserCreated: boolean(
-      "programmable_wallets_is_user_created",
-    ).default(false),
-    programmableWalletsWalletAddress: varchar(
-      "programmable_wallets_wallet_address",
-      {
-        length: 64,
-      },
-    ),
   });
-
   return table;
 }

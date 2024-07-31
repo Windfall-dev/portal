@@ -1,16 +1,11 @@
 "use client";
 
-import { ProgrammableWalletsProvider } from "./ProgrammableWalletsProvider";
-import { TelegramProvider } from "./TelegramProvider";
+import { ProgrammableWalletsProvider } from "./ProgrammableWalletProvider";
 
 export function Providers({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <TelegramProvider>
-      <ProgrammableWalletsProvider>{children}</ProgrammableWalletsProvider>
-    </TelegramProvider>
-  );
+  return <ProgrammableWalletsProvider>{children}</ProgrammableWalletsProvider>;
 }

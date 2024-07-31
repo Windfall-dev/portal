@@ -31,27 +31,9 @@ export async function createUser(userId: string) {
   }
 }
 
-export async function checkIsWalletCreated(userToken: string) {
-  const userCheckResponse = await fetch(`${process.env.CIRCLE_API_URL}/user`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-      "X-User-Token": userToken,
-    },
-  });
-
-  if (!userCheckResponse.ok) {
-    throw new Error("Failed to fetch user");
-  }
-
-  const {
-    data: { pinStatus },
-  } = await userCheckResponse.json();
-  return pinStatus === "ENABLED";
-}
-
-export async function getInitializeChallengeId(userToken: string) {
+export async function getInitializeChallengeId(
+  userToken: string,
+): Promise<string> {
   const challengeResponse = await fetch(
     `${process.env.CIRCLE_API_URL}/user/initialize`,
     {
@@ -78,7 +60,10 @@ export async function getInitializeChallengeId(userToken: string) {
   return challengeId;
 }
 
-export async function getUserTokenAndEncryptionKey(userId: string) {
+export async function getUserTokenAndEncryptionKey(userId: string): Promise<{
+  userToken: string;
+  encryptionKey: string;
+}> {
   const tokenResponse = await fetch(
     `${process.env.CIRCLE_API_URL}/users/token`,
     {
@@ -109,15 +94,18 @@ export async function getWallet(userToken: string) {
     },
   });
 
-  const data = await res.json();
+  const {
+    data: { wallets },
+  } = await res.json();
 
-  if (data["code"]) {
-    throw new Error("Failed to fetch wallet");
+  if (wallets.length === 0) {
+    return;
   }
+  const [{ id, address }] = wallets;
 
   const result = {
-    id: data["data"]["wallets"][0].id,
-    address: data["data"]["wallets"][0].address,
+    id,
+    address,
   };
 
   return result;

@@ -1,8 +1,10 @@
 "use server";
 
+import crypto from "crypto";
+
 import { auth } from "@/lib/auth";
-import * as db from "@/lib/db";
-import * as programmableWallets from "@/lib/programmable-wallets";
+import * as programmableWallet from "@/lib/programmable-wallet";
+import { TelegramUser } from "@/types/telegram-user";
 
 export async function getSessionUser() {
   const session = await auth();
@@ -12,18 +14,55 @@ export async function getSessionUser() {
   return session.user;
 }
 
-export async function getInitializeChallengeId() {
-  const user = await getSessionUser();
-  return await programmableWallets.getInitializeChallengeId(
-    user.programmableWalletsUserToken,
-  );
+export async function getInitializeChallengeId(userToken: string) {
+  return await programmableWallet.getInitializeChallengeId(userToken);
 }
 
-export async function setProgrammableWalletsWallet() {
-  const user = await getSessionUser();
-  const { address } = await programmableWallets.getWallet(
-    user.programmableWalletsUserToken,
+export async function getWallet(userToken: string) {
+  return await programmableWallet.getWallet(userToken);
+}
+
+export async function getProgrammableWalletByTelegramInitData(
+  initData: string,
+) {
+  const decoded = decodeURIComponent(initData);
+  const params = new URLSearchParams(decoded);
+  const hash = params.get("hash");
+  params.delete("hash");
+  const dataCheckString = Array.from(params.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n");
+  const secretKey = crypto
+    .createHmac("sha256", "WebAppData")
+    .update(process.env.TELEGRAM_BOT_TOKEN || "")
+    .digest();
+  const calculatedHash = crypto
+    .createHmac("sha256", secretKey)
+    .update(dataCheckString)
+    .digest("hex");
+  if (calculatedHash !== hash) {
+    throw new Error("Invalid hash");
+  }
+  const { id: _telegramId }: TelegramUser = JSON.parse(
+    params.get("user") || "{}",
   );
-  await db.setProgrammableWalletsWalletAddress(user.id, address);
-  return address;
+  if (!_telegramId) {
+    throw new Error("Invalid user");
+  }
+  // const telegramId = _telegramId.toString();
+  const telegramId = "1000000000";
+  const isUserCreated = await programmableWallet.checkIsUserCreated(telegramId);
+  if (!isUserCreated) {
+    await programmableWallet.createUser(telegramId);
+  }
+  const { userToken, encryptionKey } =
+    await programmableWallet.getUserTokenAndEncryptionKey(telegramId);
+  const wallet = await programmableWallet.getWallet(userToken);
+  return {
+    userToken,
+    encryptionKey,
+    walletId: wallet ? wallet.id : "",
+    walletAddress: wallet ? wallet.address : "",
+  };
 }

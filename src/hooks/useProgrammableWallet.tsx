@@ -1,9 +1,9 @@
 import { useContext } from "react";
 
-import { ProgrammableWalletsContext } from "@/contexts/ProgrammableWalletsContext";
+import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext";
 
-export function useProgrammableWallets() {
-  const context = useContext(ProgrammableWalletsContext);
+export function useProgrammableWallet() {
+  const context = useContext(ProgrammableWalletContext);
   if (context === undefined) {
     throw new Error(
       "useProgrammableWallets must be used within a ProgrammableWalletsProvider",
