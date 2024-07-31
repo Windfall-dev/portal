@@ -10,7 +10,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(true);
-  const [tgWebApp, setTgWebApp] = useState<TelegramWebApp | null>(null);
+  const [tgWebApp, setTgWebApp] = useState<TelegramWebApp>();
 
   useEffect(() => {
     (async () => {

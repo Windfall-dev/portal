@@ -2,15 +2,8 @@ import crypto from "crypto";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import {
-  createUserByTelegramId,
-  getUserByTelegramId,
-  setIsProgrammableWalletsCreated,
-} from "@/lib/db";
-import {
-  createUser,
-  getUserTokenAndEncryptionKey,
-} from "@/lib/programmable-wallets";
+import * as db from "@/lib/db";
+import * as programmableWallets from "@/lib/programmable-wallets";
 import { TelegramUser } from "@/types/telegram-user";
 
 export const { handlers, auth } = NextAuth({
@@ -44,21 +37,37 @@ export const { handlers, auth } = NextAuth({
           return null;
         }
         const telegramId = _telegramId.toString();
-        let [user] = await getUserByTelegramId(telegramId);
+        let [user] = await db.getUserByTelegramId(telegramId);
         if (!user) {
-          [user] = await createUserByTelegramId(telegramId);
+          [user] = await db.createUserByTelegramId(telegramId);
         }
         const userId = user.id.toString();
-        if (!user.isProgrammableWalletsCreated) {
-          await createUser(userId);
-          await setIsProgrammableWalletsCreated(userId);
+        if (!user.isProgrammableWalletsUserCreated) {
+          const isUserCreated =
+            await programmableWallets.checkIsUserCreated(userId);
+          if (!isUserCreated) {
+            await programmableWallets.createUser(userId);
+          }
+          await db.setIsProgrammableWalletsUserCreated(userId);
+          user.isProgrammableWalletsUserCreated = true;
         }
         const { userToken, encryptionKey } =
-          await getUserTokenAndEncryptionKey(userId);
+          await programmableWallets.getUserTokenAndEncryptionKey(userId);
+
+        if (!user.isProgrammableWalletsWalletCreated) {
+          const isWalletCreated =
+            await programmableWallets.checkIsWalletCreated(userToken);
+          if (isWalletCreated) {
+            await db.setIsProgrammableWalletsWalletCreated(userId);
+            user.isProgrammableWalletsWalletCreated = true;
+          }
+        }
+
         return {
           ...user,
           id: userId,
-          programmableWallets: { userToken, encryptionKey },
+          programmableWalletsUserToken: userToken,
+          programmableWalletsEncryptionKey: encryptionKey,
         };
       },
     }),
