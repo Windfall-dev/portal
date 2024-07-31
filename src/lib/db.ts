@@ -37,7 +37,7 @@ async function ensureTableExists() {
 
   const table = pgTable("User", {
     id: serial("id").primaryKey(),
-    telegram_id: varchar("telegram_id", { length: 64 }),
+    telegram_id: varchar("telegram_id", { length: 64 }).notNull(),
   });
 
   return table;
