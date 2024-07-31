@@ -1,3 +1,4 @@
+import { skipCSRFCheck } from "@auth/core";
 import bs58 from "bs58";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -49,4 +50,5 @@ export const {
       return session;
     },
   },
+  skipCSRFCheck,
 });
