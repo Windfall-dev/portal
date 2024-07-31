@@ -34,7 +34,7 @@ async function ensureUserTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "User" (
-        id uuid DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         wallet_address VARCHAR(64) NOT NULL
       );`;
   }
@@ -76,7 +76,7 @@ async function ensureTelegramTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "Telegram" (
-        id uuid DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         telegram_id VARCHAR(64) NOT NULL
       );`;
   }
