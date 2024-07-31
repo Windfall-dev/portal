@@ -99,6 +99,7 @@ export function ProgrammableWalletsProvider({
       const result = _result as any;
       const signature = result.data.signature;
       await auth.signIn(walletAddress, signature);
+      window.location.reload();
     });
   }
 

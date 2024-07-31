@@ -36,12 +36,14 @@ export const {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log("jwt");
       if (user) {
         token = { ...token, user };
       }
       return token;
     },
     async session({ session, token }) {
+      console.log("session");
       session = { ...session, ...token };
       return session;
     },

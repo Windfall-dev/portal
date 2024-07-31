@@ -1,101 +1,89 @@
 "use client";
 
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import bs58 from "bs58";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import nacl from "tweetnacl";
 
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
-import * as auth from "@/lib/auth";
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { truncate } from "@/lib/utils";
 
 nacl.sign.detached.verify;
 export function Header() {
-  const {
-    isLoading,
-    isEnabled,
-    isCreating,
-    walletAddress,
-    create,
-    signIn: signInWithProgrammableWallet,
-  } = useProgrammableWallet();
+  const programmableWallet = useProgrammableWallet();
+  const solanaWallet = useSolanaWallet();
 
-  const { setVisible } = useWalletModal();
-  const { connected, publicKey, signMessage } = useWallet();
-  const { data: session } = useSession();
-
-  const signInWithSolanaWallet = async () => {
-    if (!signMessage) {
-      throw new Error("signMessage is not defined");
-    }
-    const walletAddress = publicKey.toBase58();
-    const encodedMessage = new TextEncoder().encode(auth.signInMessage);
-    const signatureBuffer = await signMessage(encodedMessage);
-    const signature = bs58.encode(signatureBuffer);
-    await auth.signIn(walletAddress, signature);
-  };
+  const { status } = useSession();
+  console.log("status", status);
 
   return (
     <div className="bg-gray-200 p-4 flex justify-between items-center">
       <h1 className="text-lg font-bold">Windfall</h1>
       <div>
-        {isLoading && (
+        {programmableWallet.isLoading && (
           <Button variant="secondary" disabled>
             Loading...
           </Button>
         )}
-        {!isLoading && (
+        {!programmableWallet.isLoading && (
           <>
-            {!isEnabled && (
+            {!programmableWallet.isEnabled && (
               <>
-                {!connected && (
-                  <Button
-                    onClick={() => {
-                      setVisible(true);
-                    }}
-                  >
-                    {!isCreating ? "Connect Wallet" : "Creating..."}
+                {!solanaWallet.walletAddress && (
+                  <Button onClick={solanaWallet.openConnectModal}>
+                    Connect Wallet
                   </Button>
                 )}
-                {connected && (
+                {solanaWallet.walletAddress && (
                   <>
-                    {!session?.user.walletAddress && (
-                      <Button onClick={signInWithSolanaWallet}>Sign In</Button>
-                    )}
-                    {session?.user.walletAddress && (
+                    {status === "unauthenticated" && (
                       <Button
+                        onClick={solanaWallet.signIn}
+                      >{`Sign In with ${truncate(solanaWallet.walletAddress, 6)}`}</Button>
+                    )}
+                    {status === "authenticated" && (
+                      <Button
+                        variant="secondary"
                         onClick={() => {
+                          solanaWallet.disconnect();
                           signOut();
                         }}
                       >
-                        Sign out
+                        {`${truncate(solanaWallet.walletAddress, 12)}`}
                       </Button>
                     )}
                   </>
                 )}
               </>
             )}
-            {isEnabled && (
+            {programmableWallet.isEnabled && (
               <>
-                {!walletAddress && (
+                {!programmableWallet.walletAddress && (
                   <Button
-                    variant={!isCreating ? "default" : "secondary"}
-                    disabled={isCreating}
-                    onClick={create}
+                    variant={
+                      !programmableWallet.isCreating ? "default" : "secondary"
+                    }
+                    disabled={programmableWallet.isCreating}
+                    onClick={programmableWallet.create}
                   >
-                    {!isCreating ? "Create Wallet" : "Creating..."}
+                    {!programmableWallet.isCreating
+                      ? "Create Wallet"
+                      : "Creating..."}
                   </Button>
                 )}
-                {walletAddress && (
+                {programmableWallet.walletAddress && (
                   <>
-                    {!session?.user.walletAddress && (
-                      <Button onClick={signInWithProgrammableWallet}>
+                    {status === "unauthenticated" && (
+                      <Button onClick={programmableWallet.signIn}>
                         Sign In
                       </Button>
                     )}
-                    {session?.user.walletAddress && <Button>Sign out</Button>}
+                    {status === "authenticated" && (
+                      <Button variant="secondary">
+                        {truncate(solanaWallet.walletAddress, 12)}
+                      </Button>
+                    )}
                   </>
                 )}
               </>

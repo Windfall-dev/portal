@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
@@ -11,7 +11,7 @@ export async function getUser(walletAddress: string) {
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.walletAddress, walletAddress));
+    .where(eq(users.id, walletAddress));
   if (user) {
     return user;
   }
@@ -19,7 +19,10 @@ export async function getUser(walletAddress: string) {
 
 export async function createUser(walletAddress: string) {
   const users = await ensureUserTableExists();
-  const [user] = await db.insert(users).values({ walletAddress }).returning();
+  const [user] = await db
+    .insert(users)
+    .values({ id: walletAddress })
+    .returning();
   return user;
 }
 
@@ -34,13 +37,11 @@ async function ensureUserTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "User" (
-        id uuid DEFAULT gen_random_uuid(),
-        wallet_address VARCHAR(64) NOT NULL
+        id VARCHAR(64) PRIMARY KEY
       );`;
   }
   const table = pgTable("User", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    walletAddress: varchar("wallet_address", { length: 64 }).notNull(),
+    id: varchar("id", { length: 64 }).primaryKey(),
   });
   return table;
 }
