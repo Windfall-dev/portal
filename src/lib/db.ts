@@ -34,7 +34,7 @@ async function ensureUserTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "User" (
-        id: uuid("id").primaryKey().defaultRandom(),
+        id uuid DEFAULT gen_random_uuid(),
         wallet_address VARCHAR(64) NOT NULL
       );`;
   }
@@ -76,8 +76,8 @@ async function ensureTelegramTableExists() {
   if (!result[0].exists) {
     await client`
       CREATE TABLE "Telegram" (
-        id: uuid("id").primaryKey().defaultRandom(),
-        telegram_id: VARCHAR(64) NOT NULL
+        id uuid DEFAULT gen_random_uuid(),
+        telegram_id VARCHAR(64) NOT NULL
       );`;
   }
   const table = pgTable("Telegram", {
