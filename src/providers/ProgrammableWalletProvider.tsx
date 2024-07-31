@@ -1,6 +1,7 @@
 "use client";
 
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+import bs58 from "bs58";
 import { useEffect, useRef, useState } from "react";
 
 import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext";
@@ -97,10 +98,13 @@ export function ProgrammableWalletsProvider({
     sdk.execute(challengeId, async (_, _result) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = _result as any;
-      const signature = result.data.signature;
-      console.log("walletAddress", walletAddress);
-      console.log("signature", signature);
-
+      const signatureHex = result.data.signature;
+      Buffer.from(walletAddress.slice(2), "hex");
+      const signatureBuffer = Buffer.from(
+        signatureHex.replace("0x", ""),
+        "hex",
+      );
+      const signature = bs58.encode(signatureBuffer);
       await auth.signIn(walletAddress, signature);
       window.location.reload();
     });
