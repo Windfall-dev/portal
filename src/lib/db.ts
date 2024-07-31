@@ -77,7 +77,7 @@ async function ensureTelegramTableExists() {
     await client`
       CREATE TABLE "Telegram" (
         id: uuid("id").primaryKey().defaultRandom(),
-        telegram_id VARCHAR(64) NOT NULL
+        telegram_id: VARCHAR(64) NOT NULL
       );`;
   }
   const table = pgTable("Telegram", {
