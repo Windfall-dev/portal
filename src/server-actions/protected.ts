@@ -19,12 +19,11 @@ export async function getInitializeChallengeId() {
   );
 }
 
-export async function setIsProgrammableWalletsWalletCreated() {
+export async function setProgrammableWalletsWallet() {
   const user = await getSessionUser();
-  const isWalletCreated = await programmableWallets.checkIsWalletCreated(
+  const { address } = await programmableWallets.getWallet(
     user.programmableWalletsUserToken,
   );
-  if (isWalletCreated) {
-    await db.setIsProgrammableWalletsWalletCreated(user.id);
-  }
+  await db.setProgrammableWalletsWalletAddress(user.id, address);
+  return address;
 }

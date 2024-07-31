@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  isProgrammableWalletsWalletCreated: boolean;
+  programmableWalletsWalletAddress: string;
   programmableWalletsUserToken: string;
   programmableWalletsEncryptionKey: string;
 }

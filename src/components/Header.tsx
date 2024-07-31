@@ -5,14 +5,15 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallets } from "@/hooks/useProgrammableWallets";
 import { useTelegram } from "@/hooks/useTelegram";
+import { truncate } from "@/lib/utils";
 import {
   getInitializeChallengeId,
-  setIsProgrammableWalletsWalletCreated,
+  setProgrammableWalletsWallet,
 } from "@/server-actions/protected";
 
 export function Header() {
   const { isLoading, isSignedIn } = useTelegram();
-  const { sdk, isWalletCreated, setIsWalletCreated } = useProgrammableWallets();
+  const { sdk, walletAddress, setWalletAddress } = useProgrammableWallets();
 
   return (
     <div className="bg-gray-200 p-4 flex justify-between items-center">
@@ -25,7 +26,7 @@ export function Header() {
           )}
           {isSignedIn && (
             <>
-              {!isWalletCreated && (
+              {!walletAddress && (
                 <Button
                   onClick={async () => {
                     if (!sdk) {
@@ -33,16 +34,19 @@ export function Header() {
                     }
                     const challengeId = await getInitializeChallengeId();
                     sdk.execute(challengeId, async () => {
-                      setIsWalletCreated(true);
-                      await setIsProgrammableWalletsWalletCreated();
+                      const walletAddress =
+                        await setProgrammableWalletsWallet();
+                      setWalletAddress(walletAddress);
                     });
                   }}
                 >
                   Create Wallet
                 </Button>
               )}
-              {isWalletCreated && (
-                <Button variant="secondary">Wallet Info</Button>
+              {walletAddress && (
+                <Button variant="secondary">
+                  {truncate(walletAddress, 12)}
+                </Button>
               )}
             </>
           )}

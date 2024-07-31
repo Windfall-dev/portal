@@ -16,7 +16,7 @@ export function ProgrammableWalletsProvider({
 
   const initialized = useRef(false);
   const [sdk, setSdk] = useState<W3SSdk>();
-  const [isWalletCreated, setIsWalletCreated] = useState(false);
+  const [walletAddress, setWalletAddress] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -31,7 +31,7 @@ export function ProgrammableWalletsProvider({
           },
         });
         const {
-          isProgrammableWalletsWalletCreated,
+          programmableWalletsWalletAddress,
           programmableWalletsUserToken,
           programmableWalletsEncryptionKey,
         } = await getSessionUser();
@@ -40,14 +40,14 @@ export function ProgrammableWalletsProvider({
           encryptionKey: programmableWalletsEncryptionKey,
         });
         setSdk(sdk);
-        setIsWalletCreated(isProgrammableWalletsWalletCreated);
+        setWalletAddress(programmableWalletsWalletAddress);
       }
     })();
   }, [isSignedIn]);
 
   return (
     <ProgrammableWalletsContext.Provider
-      value={{ sdk, isWalletCreated, setIsWalletCreated }}
+      value={{ sdk, walletAddress, setWalletAddress }}
     >
       {children}
     </ProgrammableWalletsContext.Provider>

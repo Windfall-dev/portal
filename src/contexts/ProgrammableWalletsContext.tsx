@@ -3,8 +3,8 @@ import { createContext } from "react";
 
 interface ProgrammableWalletsContextProps {
   sdk?: W3SSdk;
-  isWalletCreated: boolean;
-  setIsWalletCreated: (isWalletCreated: boolean) => void;
+  walletAddress: string;
+  setWalletAddress: (address: string) => void;
 }
 
 export const ProgrammableWalletsContext = createContext<

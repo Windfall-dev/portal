@@ -16,19 +16,22 @@ export async function createUserByTelegramId(telegramId: string) {
   return await db.insert(users).values({ telegramId }).returning();
 }
 
-export async function setIsProgrammableWalletsUserCreated(userId: string) {
+export async function setProgrammableWalletsIsUserCreated(userId: string) {
   const users = await ensureTableExists();
   return await db
     .update(users)
-    .set({ id: userId, isProgrammableWalletsUserCreated: true })
+    .set({ id: userId, programmableWalletsIsUserCreated: true })
     .returning();
 }
 
-export async function setIsProgrammableWalletsWalletCreated(userId: string) {
+export async function setProgrammableWalletsWalletAddress(
+  userId: string,
+  walletAddress: string,
+) {
   const users = await ensureTableExists();
   return await db
     .update(users)
-    .set({ id: userId, isProgrammableWalletsWalletCreated: true })
+    .set({ id: userId, programmableWalletsWalletAddress: walletAddress })
     .returning();
 }
 
@@ -45,20 +48,23 @@ async function ensureTableExists() {
       CREATE TABLE "User" (
         id uuid DEFAULT gen_random_uuid(),
         telegram_id VARCHAR(64) NOT NULL,
-        is_programmable_wallets_user_created BOOLEAN DEFAULT FALSE,
-        is_programmable_wallets_wallet_created BOOLEAN DEFAULT FALSE
+        programmable_wallets_is_user_created BOOLEAN DEFAULT FALSE,
+        programmable_wallets_wallet_address VARCHAR(64)
       );`;
   }
 
   const table = pgTable("User", {
     id: uuid("id").primaryKey().defaultRandom(),
     telegramId: varchar("telegram_id", { length: 64 }).notNull(),
-    isProgrammableWalletsUserCreated: boolean(
-      "is_programmable_wallets_user_created",
+    programmableWalletsIsUserCreated: boolean(
+      "programmable_wallets_is_user_created",
     ).default(false),
-    isProgrammableWalletsWalletCreated: boolean(
-      "is_programmable_wallets_wallet_created",
-    ).default(false),
+    programmableWalletsWalletAddress: varchar(
+      "programmable_wallets_wallet_address",
+      {
+        length: 64,
+      },
+    ),
   });
 
   return table;

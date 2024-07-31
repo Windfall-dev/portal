@@ -42,24 +42,27 @@ export const { handlers, auth } = NextAuth({
           [user] = await db.createUserByTelegramId(telegramId);
         }
         const userId = user.id.toString();
-        if (!user.isProgrammableWalletsUserCreated) {
+        if (!user.programmableWalletsIsUserCreated) {
           const isUserCreated =
             await programmableWallets.checkIsUserCreated(userId);
           if (!isUserCreated) {
             await programmableWallets.createUser(userId);
           }
-          await db.setIsProgrammableWalletsUserCreated(userId);
-          user.isProgrammableWalletsUserCreated = true;
+          await db.setProgrammableWalletsIsUserCreated(userId);
+          user.programmableWalletsIsUserCreated = true;
         }
         const { userToken, encryptionKey } =
           await programmableWallets.getUserTokenAndEncryptionKey(userId);
 
-        if (!user.isProgrammableWalletsWalletCreated) {
+        console.log("user", user);
+
+        if (!user.programmableWalletsWalletAddress) {
           const isWalletCreated =
             await programmableWallets.checkIsWalletCreated(userToken);
           if (isWalletCreated) {
-            await db.setIsProgrammableWalletsWalletCreated(userId);
-            user.isProgrammableWalletsWalletCreated = true;
+            const { address } = await programmableWallets.getWallet(userToken);
+            await db.setProgrammableWalletsWalletAddress(userId, address);
+            user.programmableWalletsWalletAddress = address;
           }
         }
 

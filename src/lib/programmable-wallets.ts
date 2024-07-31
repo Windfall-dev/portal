@@ -98,3 +98,27 @@ export async function getUserTokenAndEncryptionKey(userId: string) {
   const { data } = await tokenResponse.json();
   return data;
 }
+
+export async function getWallet(userToken: string) {
+  const res = await fetch(`${process.env.CIRCLE_API_URL}/wallets`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.CIRCLE_API_KEY || ""}`,
+      "Content-Type": "application/json",
+      "X-User-Token": userToken,
+    },
+  });
+
+  const data = await res.json();
+
+  if (data["code"]) {
+    throw new Error("Failed to fetch wallet");
+  }
+
+  const result = {
+    id: data["data"]["wallets"][0].id,
+    address: data["data"]["wallets"][0].address,
+  };
+
+  return result;
+}
