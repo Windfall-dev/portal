@@ -31,35 +31,6 @@ export async function createUser(userId: string) {
   }
 }
 
-export async function getInitializeChallengeId(
-  userToken: string,
-): Promise<string> {
-  const challengeResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/user/initialize`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-        "X-User-Token": userToken,
-      },
-      body: JSON.stringify({
-        idempotencyKey: uuidv4(),
-        blockchains: ["SOL-DEVNET"],
-      }),
-    },
-  );
-
-  if (!challengeResponse.ok) {
-    throw new Error("Failed to fetch challenge");
-  }
-
-  const {
-    data: { challengeId },
-  } = await challengeResponse.json();
-  return challengeId;
-}
-
 export async function getUserTokenAndEncryptionKey(userId: string): Promise<{
   userToken: string;
   encryptionKey: string;
@@ -109,4 +80,64 @@ export async function getWallet(userToken: string) {
   };
 
   return result;
+}
+
+export async function getInitializeChallengeId(
+  userToken: string,
+): Promise<string> {
+  const challengeResponse = await fetch(
+    `${process.env.CIRCLE_API_URL}/user/initialize`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+        "X-User-Token": userToken,
+      },
+      body: JSON.stringify({
+        idempotencyKey: uuidv4(),
+        blockchains: ["SOL-DEVNET"],
+      }),
+    },
+  );
+
+  if (!challengeResponse.ok) {
+    throw new Error("Failed to fetch challenge");
+  }
+
+  const {
+    data: { challengeId },
+  } = await challengeResponse.json();
+  return challengeId;
+}
+
+export async function getSignMessageChallengeId(
+  userToken: string,
+  walletId: string,
+  message: string,
+): Promise<string> {
+  const challengeResponse = await fetch(
+    `${process.env.CIRCLE_API_URL}/user/sign/message`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-Token": userToken,
+        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        walletId,
+        message,
+      }),
+    },
+  );
+
+  if (!challengeResponse.ok) {
+    throw new Error("Failed to fetch challenge");
+  }
+
+  const {
+    data: { challengeId },
+  } = await challengeResponse.json();
+  return challengeId;
 }

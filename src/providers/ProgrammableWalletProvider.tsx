@@ -4,6 +4,7 @@ import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 import { useEffect, useRef, useState } from "react";
 
 import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext";
+import * as auth from "@/lib/auth";
 import * as protectedServerActions from "@/server-actions/protected";
 
 export function ProgrammableWalletsProvider({
@@ -14,6 +15,7 @@ export function ProgrammableWalletsProvider({
   const [isLoading, setIsLoading] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+
   const initialized = useRef(false);
   const [sdk, setSdk] = useState<W3SSdk>();
   const [userToken, setUserToken] = useState("");
@@ -71,7 +73,8 @@ export function ProgrammableWalletsProvider({
       await protectedServerActions.getInitializeChallengeId(userToken);
     sdk.execute(challengeId, async () => {
       const intervalId = setInterval(async () => {
-        const wallet = await protectedServerActions.getWallet(userToken);
+        const wallet =
+          await protectedServerActions.getWalletByUserToken(userToken);
         if (wallet) {
           clearInterval(intervalId);
           setWalletId(wallet.id);
@@ -79,6 +82,23 @@ export function ProgrammableWalletsProvider({
           setIsCreating(false);
         }
       }, 1000);
+    });
+  }
+
+  async function signIn() {
+    if (!sdk) {
+      throw new Error("SDK is not defined");
+    }
+    const challengeId = await protectedServerActions.getSignMessageChallengeId(
+      userToken,
+      walletId,
+      auth.signInMessage,
+    );
+    sdk.execute(challengeId, async (_, _result) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = _result as any;
+      const signature = result.data.signature;
+      await auth.signIn(signature);
     });
   }
 
@@ -91,6 +111,7 @@ export function ProgrammableWalletsProvider({
         sdk,
         walletAddress,
         create,
+        signIn,
       }}
     >
       {children}

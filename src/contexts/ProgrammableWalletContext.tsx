@@ -8,6 +8,7 @@ interface ProgrammableWalletContextProps {
   sdk?: W3SSdk;
   walletAddress: string;
   create: () => void;
+  signIn: () => void;
 }
 
 export const ProgrammableWalletContext = createContext<

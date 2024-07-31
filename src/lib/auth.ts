@@ -1,12 +1,18 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { stringify } from "querystring";
+
+// import { stringify } from "querystring";
+
+export const signInMessage = "Sign in to Windfall";
 
 export const { handlers, auth } = NextAuth({
   providers: [
     Credentials({
-      async authorize() {
+      async authorize({ signature }) {
+        console.log("signature", signature);
         return {
-          id: "",
+          id: "1",
         };
       },
     }),
@@ -24,3 +30,18 @@ export const { handlers, auth } = NextAuth({
     },
   },
 });
+
+export async function signIn(signature: string) {
+  const csrfApiResponse = await fetch("api/auth/csrf");
+  const { csrfToken } = await csrfApiResponse.json();
+  await fetch(`api/auth/callback/credentials?`, {
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+    },
+    body: stringify({
+      initData: signature,
+      csrfToken,
+    }),
+    method: "POST",
+  });
+}

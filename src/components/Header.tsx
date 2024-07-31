@@ -4,10 +4,11 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
-import { truncate } from "@/lib/utils";
+
+// import { truncate } from "@/lib/utils";
 
 export function Header() {
-  const { isLoading, isEnabled, isCreating, walletAddress, create } =
+  const { isLoading, isEnabled, isCreating, walletAddress, create, signIn } =
     useProgrammableWallet();
 
   return (
@@ -37,11 +38,7 @@ export function Header() {
                     {!isCreating ? "Create Wallet" : "Creating..."}
                   </Button>
                 )}
-                {walletAddress && (
-                  <Button variant="secondary">
-                    {truncate(walletAddress, 12)}
-                  </Button>
-                )}
+                {walletAddress && <Button onClick={signIn}>Sign In</Button>}
               </>
             )}
           </>

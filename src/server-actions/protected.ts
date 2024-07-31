@@ -14,14 +14,6 @@ export async function getSessionUser() {
   return session.user;
 }
 
-export async function getInitializeChallengeId(userToken: string) {
-  return await programmableWallet.getInitializeChallengeId(userToken);
-}
-
-export async function getWallet(userToken: string) {
-  return await programmableWallet.getWallet(userToken);
-}
-
 export async function getProgrammableWalletByTelegramInitData(
   initData: string,
 ) {
@@ -58,6 +50,7 @@ export async function getProgrammableWalletByTelegramInitData(
   }
   const { userToken, encryptionKey } =
     await programmableWallet.getUserTokenAndEncryptionKey(telegramId);
+
   const wallet = await programmableWallet.getWallet(userToken);
   return {
     userToken,
@@ -65,4 +58,24 @@ export async function getProgrammableWalletByTelegramInitData(
     walletId: wallet ? wallet.id : "",
     walletAddress: wallet ? wallet.address : "",
   };
+}
+
+export async function getWalletByUserToken(userToken: string) {
+  return await programmableWallet.getWallet(userToken);
+}
+
+export async function getInitializeChallengeId(userToken: string) {
+  return await programmableWallet.getInitializeChallengeId(userToken);
+}
+
+export async function getSignMessageChallengeId(
+  userToken: string,
+  userId: string,
+  message: string,
+) {
+  return await programmableWallet.getSignMessageChallengeId(
+    userToken,
+    userId,
+    message,
+  );
 }
