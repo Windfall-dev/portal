@@ -1,3 +1,5 @@
+"use client";
+
 import { stringify } from "querystring";
 import { useEffect, useRef, useState } from "react";
 

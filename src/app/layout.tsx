@@ -4,9 +4,9 @@ import { Inter } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Providers } from "@/providers";
 
 import "../styles/globals.css";
-import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
