@@ -6,45 +6,41 @@ import postgres from "postgres";
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getTelegramUser(telegramId: string) {
-  const telegramUsers = await ensureTelegramUserTableExists();
-  const [telegramUser] = await db
+export async function getUser(walletAddress: string) {
+  const users = await ensureUserTableExists();
+  const [user] = await db
     .select()
-    .from(telegramUsers)
-    .where(eq(telegramUsers.telegramId, telegramId));
-  if (telegramUser) {
-    return telegramUser;
+    .from(users)
+    .where(eq(users.walletAddress, walletAddress));
+  if (user) {
+    return user;
   }
 }
 
-export async function createTelegramUser(telegramId: string) {
-  const telegramUsers = await ensureTelegramUserTableExists();
-  const [telegramUser] = await db
-    .insert(telegramUsers)
-    .values({ telegramId })
-    .returning();
-  return telegramUser;
+export async function createUser(walletAddress: string) {
+  const users = await ensureUserTableExists();
+  const [user] = await db.insert(users).values({ walletAddress }).returning();
+  return user;
 }
 
-async function ensureTelegramUserTableExists() {
+async function ensureUserTableExists() {
   const result = await client`
     SELECT EXISTS (
       SELECT FROM information_schema.tables 
       WHERE table_schema = 'public' 
-      AND table_name = 'TelegramUser'
+      AND table_name = 'User'
     );`;
 
   if (!result[0].exists) {
     await client`
-      CREATE TABLE "TelegramUser" (
+      CREATE TABLE "User" (
         id uuid DEFAULT gen_random_uuid(),
-        telegram_id VARCHAR(64) NOT NULL
+        wallet_address VARCHAR(64) NOT NULL
       );`;
   }
-
-  const table = pgTable("TelegramUser", {
+  const table = pgTable("User", {
     id: uuid("id").primaryKey().defaultRandom(),
-    telegramId: varchar("telegram_id", { length: 64 }).notNull(),
+    walletAddress: varchar("wallet_address", { length: 64 }).notNull(),
   });
   return table;
 }
