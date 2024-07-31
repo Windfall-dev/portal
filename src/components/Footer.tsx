@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { LuGamepad2, LuHome, LuWallet } from "react-icons/lu";
 
-import { useTelegram } from "@/hooks/useTelegram";
-
 export function Footer() {
   const pathname = usePathname();
 

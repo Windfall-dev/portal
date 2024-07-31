@@ -17,9 +17,12 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <script
+          src="https://telegram.org/js/telegram-web-app.js"
+          async
+        ></script>
       </head>
       <body className={inter.className}>
         <Providers>
