@@ -14,6 +14,9 @@ export const {
     Credentials({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async authorize({ walletAddress, signature }: any) {
+        console.log("walletAddress", walletAddress);
+        console.log("signature", signature);
+
         const messageBytes = decodeUTF8(signInMessage);
         const walletAddressBuffer = bs58.decode(walletAddress);
         const signatureBuffer = bs58.decode(signature);
@@ -36,14 +39,12 @@ export const {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      console.log("jwt");
       if (user) {
         token = { ...token, user };
       }
       return token;
     },
     async session({ session, token }) {
-      console.log("session");
       session = { ...session, ...token };
       return session;
     },
