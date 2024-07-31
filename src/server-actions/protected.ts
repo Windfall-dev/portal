@@ -33,8 +33,7 @@ export async function getProgrammableWalletByTelegramInitData(
   if (!_telegramId) {
     throw new Error("Invalid user");
   }
-  // const telegramId = _telegramId.toString();
-  const telegramId = "1000000000";
+  const telegramId = _telegramId.toString();
   const isUserCreated = await programmableWallet.checkIsUserCreated(telegramId);
   if (!isUserCreated) {
     await programmableWallet.createUser(telegramId);
