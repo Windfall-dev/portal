@@ -98,6 +98,9 @@ export function ProgrammableWalletsProvider({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = _result as any;
       const signature = result.data.signature;
+      console.log("walletAddress", walletAddress);
+      console.log("signature", signature);
+
       await auth.signIn(walletAddress, signature);
       window.location.reload();
     });
