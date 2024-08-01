@@ -20,6 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <script
           src="https://telegram.org/js/telegram-web-app.js"
           async
