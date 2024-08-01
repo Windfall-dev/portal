@@ -23,26 +23,30 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-800 text-white p-2">
-      <div className="flex justify-around items-center">
-        {navItems.map((item) => {
-          const isActive = pathname === item.path;
-          return (
-            <Link
-              key={item.name}
-              href={item.path}
-              className={`flex flex-col items-center ${
-                isActive ? "text-yellow-400" : "text-white"
-              }`}
-            >
-              <div className="mb-1">
-                <item.icon size={24} />
-              </div>
-              <span className="text-xs">{item.name}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </footer>
+    <>
+      {pathname !== "/game/play" && (
+        <footer className="bg-gray-800 text-white p-2">
+          <div className="flex justify-around items-center">
+            {navItems.map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.path}
+                  className={`flex flex-col items-center ${
+                    isActive ? "text-yellow-400" : "text-white"
+                  }`}
+                >
+                  <div className="mb-1">
+                    <item.icon size={24} />
+                  </div>
+                  <span className="text-xs">{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </footer>
+      )}
+    </>
   );
 }

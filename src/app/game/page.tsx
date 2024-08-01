@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { LuInfo, LuTrophy } from "react-icons/lu";
 
@@ -56,7 +57,9 @@ const GamePage: React.FC = () => (
 
         <Separator />
 
-        <Button className="w-full">Play</Button>
+        <Link href="game/play" className="w-full">
+          <Button className="w-full">Play</Button>
+        </Link>
       </CardContent>
     </Card>
   </main>

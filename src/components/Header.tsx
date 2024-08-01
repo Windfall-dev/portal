@@ -1,6 +1,8 @@
 "use client";
 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import nacl from "tweetnacl";
 
@@ -14,9 +16,15 @@ export function Header() {
   const telegram = useTelegram();
   const programmableWallet = useProgrammableWallet();
 
+  const pathname = usePathname();
+
   return (
-    <div className="bg-gray-200 p-4 flex justify-between items-center">
-      <h1 className="text-lg font-bold">Windfall</h1>
+    <div
+      className={`p-4 flex justify-between items-center ${pathname !== "/game/play" ? "bg-gray-200" : "absolute top-0 left-0 w-full z-10"}`}
+    >
+      <Link href="/">
+        <h1 className="text-lg font-bold">Windfall</h1>
+      </Link>
       <div>
         {telegram.isLoading && !telegram.isEnabled && (
           <Button variant="secondary" disabled>

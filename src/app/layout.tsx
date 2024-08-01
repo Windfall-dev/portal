@@ -27,11 +27,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="flex flex-col h-screen bg-gray-200 max-w-md mx-auto">
-            <ScrollArea className="h-full">
-              <Header />
-              {children}
-            </ScrollArea>
+          <div className="flex flex-col h-screen mx-auto">
+            <Header />
+            <ScrollArea className="h-full">{children}</ScrollArea>
             <Footer />
           </div>
         </Providers>

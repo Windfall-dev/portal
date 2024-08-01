@@ -32,9 +32,11 @@ export default async function Page() {
                   href="/game"
                   className="bg-gray-100 aspect-square w-full mb-2"
                 />
-                <Button size="sm" className="w-full">
-                  <LuPlay className="mr-2 h-4 w-4" /> Play
-                </Button>
+                <Link href="/game/play" className="w-full">
+                  <Button size="sm" className="w-full">
+                    <LuPlay className="mr-2 h-4 w-4" /> Play
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}
