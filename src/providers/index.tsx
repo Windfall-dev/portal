@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { SessionProvider } from "next-auth/react";
-
-import { endpoint, wallets } from "@/lib/solana-wallet";
-
+import { AuthProvider } from "./AuthProvider";
 import { ProgrammableWalletsProvider } from "./ProgrammableWalletProvider";
+import { SolanaWalletProvider } from "./SolanaWalletProvider";
 import { TelegramProvider } from "./TelegramProvider";
 
 export function Providers({
@@ -18,16 +11,12 @@ export function Providers({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProvider>
+    <AuthProvider>
       <TelegramProvider>
         <ProgrammableWalletsProvider>
-          <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-              <WalletModalProvider>{children}</WalletModalProvider>
-            </WalletProvider>
-          </ConnectionProvider>
+          <SolanaWalletProvider>{children}</SolanaWalletProvider>
         </ProgrammableWalletsProvider>
       </TelegramProvider>
-    </SessionProvider>
+    </AuthProvider>
   );
 }

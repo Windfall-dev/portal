@@ -1,7 +1,6 @@
 "use client";
 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useSession } from "next-auth/react";
 import React from "react";
 import nacl from "tweetnacl";
 
@@ -15,19 +14,16 @@ export function Header() {
   const telegram = useTelegram();
   const programmableWallet = useProgrammableWallet();
 
-  const { status } = useSession();
-  console.log("status", status);
-
   return (
     <div className="bg-gray-200 p-4 flex justify-between items-center">
       <h1 className="text-lg font-bold">Windfall</h1>
       <div>
-        {telegram.isLoading && !telegram.initData && (
+        {telegram.isLoading && !telegram.isEnabled && (
           <Button variant="secondary" disabled>
             Detecting Platform......
           </Button>
         )}
-        {!telegram.isLoading && telegram.initData && (
+        {!telegram.isLoading && telegram.isEnabled && (
           <>
             {programmableWallet.isLoading && (
               <Button variant="secondary" disabled>
@@ -58,7 +54,7 @@ export function Header() {
             )}
           </>
         )}
-        {!telegram.isLoading && !telegram.initData && <WalletMultiButton />}
+        {!telegram.isLoading && !telegram.isEnabled && <WalletMultiButton />}
       </div>
     </div>
   );

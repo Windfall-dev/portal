@@ -1,19 +1,14 @@
-import { stringify } from "querystring";
+import jwt from "jsonwebtoken";
 
-export const signInMessage = "Sign in to Windfall";
+import { AuthTokenPayload } from "@/types/auth-token-payload";
 
-export async function signIn(walletAddress: string, signature: string) {
-  // const csrfApiResponse = await fetch("api/auth/csrf");
-  // const { csrfToken } = await csrfApiResponse.json();
-  await fetch(`api/auth/callback/credentials?`, {
-    headers: {
-      "content-type": "application/x-www-form-urlencoded",
-    },
-    body: stringify({
-      walletAddress,
-      signature,
-      // csrfToken,
-    }),
-    method: "POST",
-  });
+const secret = process.env.AUTH_SECRET || "";
+
+export function createAccessToken(payload: AuthTokenPayload): string {
+  return jwt.sign(payload, secret);
+}
+
+export function verifyAccessToken(token: string): AuthTokenPayload {
+  const decoded = jwt.verify(token, secret) as AuthTokenPayload;
+  return decoded;
 }
