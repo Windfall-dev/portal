@@ -1,20 +1,20 @@
 "use client";
 
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
-import bs58 from "bs58";
 import { useEffect, useRef, useState } from "react";
 
+import * as actions from "@/app/actions";
 import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext";
-import * as auth from "@/lib/auth";
-import * as protectedServerActions from "@/server-actions/protected";
+import { useTelegram } from "@/hooks/useTelegram";
 
 export function ProgrammableWalletsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const telegram = useTelegram();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
   const initialized = useRef(false);
@@ -26,40 +26,36 @@ export function ProgrammableWalletsProvider({
 
   useEffect(() => {
     (async () => {
+      if (!telegram.initData) {
+        return;
+      }
       if (!initialized.current) {
         initialized.current = true;
-        if (window.Telegram?.WebApp) {
-          const tgWebApp = window.Telegram.WebApp;
-          tgWebApp.ready();
-          const initData = tgWebApp.initData;
-          if (initData) {
-            setIsEnabled(true);
-            const { userToken, encryptionKey, walletId, walletAddress } =
-              await protectedServerActions.getProgrammableWalletByTelegramInitData(
-                initData,
-              );
-            const sdk = new W3SSdk({
-              appSettings: {
-                appId: process.env.NEXT_PUBLIC_CIRCLE_APP_ID || "",
-              },
-            });
-            sdk.setAuthentication({
-              userToken,
-              encryptionKey,
-            });
-            setUserToken(userToken);
-            setEncryptionKey(encryptionKey);
-            setSdk(sdk);
-            setWalletId(walletId);
-            setWalletAddress(walletAddress);
-          }
-        }
+        setIsLoading(true);
+        const { userToken, encryptionKey, walletId, walletAddress } =
+          await actions.getProgrammableWalletByTelegramInitData(
+            telegram.initData,
+          );
+        const sdk = new W3SSdk({
+          appSettings: {
+            appId: process.env.NEXT_PUBLIC_CIRCLE_APP_ID || "",
+          },
+        });
+        sdk.setAuthentication({
+          userToken,
+          encryptionKey,
+        });
+        setUserToken(userToken);
+        setEncryptionKey(encryptionKey);
+        setWalletId(walletId);
+        setWalletAddress(walletAddress);
+        setSdk(sdk);
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [telegram.initData]);
 
-  async function create() {
+  async function createWallet() {
     if (!sdk) {
       throw new Error("SDK is not defined");
     }
@@ -70,12 +66,10 @@ export function ProgrammableWalletsProvider({
       throw new Error("Wallet is already defined");
     }
     setIsCreating(true);
-    const challengeId =
-      await protectedServerActions.getInitializeChallengeId(userToken);
+    const challengeId = await actions.getInitializeChallengeId(userToken);
     sdk.execute(challengeId, async () => {
       const intervalId = setInterval(async () => {
-        const wallet =
-          await protectedServerActions.getWalletByUserToken(userToken);
+        const wallet = await actions.getWalletByUserToken(userToken);
         if (wallet) {
           clearInterval(intervalId);
           setWalletId(wallet.id);
@@ -86,40 +80,25 @@ export function ProgrammableWalletsProvider({
     });
   }
 
-  async function signIn() {
-    if (!sdk) {
-      throw new Error("SDK is not defined");
-    }
-    const challengeId = await protectedServerActions.getSignMessageChallengeId(
-      userToken,
-      walletId,
-      auth.signInMessage,
-    );
-    sdk.execute(challengeId, async (_, _result) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = _result as any;
-      const signatureHex = result.data.signature;
-      Buffer.from(walletAddress.slice(2), "hex");
-      const signatureBuffer = Buffer.from(
-        signatureHex.replace("0x", ""),
-        "hex",
-      );
-      const signature = bs58.encode(signatureBuffer);
-      await auth.signIn(walletAddress, signature);
-      window.location.reload();
-    });
+  function signMessage(message: string) {
+    console.log("signMessage: ", message);
+    throw new Error("Not implemented");
+  }
+
+  function sendTransaction(to: string, value: string, args: []) {
+    console.log("sendTransaction: ", to, value, args);
+    throw new Error("Not implemented");
   }
 
   return (
     <ProgrammableWalletContext.Provider
       value={{
-        isEnabled,
         isLoading,
         isCreating,
-        sdk,
+        createWallet,
         walletAddress,
-        create,
-        signIn,
+        signMessage,
+        sendTransaction,
       }}
     >
       {children}

@@ -1,25 +1,46 @@
-import { eq } from "drizzle-orm";
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { and, eq } from "drizzle-orm";
+import { pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+
+type Provider = "wallet" | "telegram";
 
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(walletAddress: string) {
+export async function getUser(provider: Provider, identifier: string) {
   const users = await ensureUserTableExists();
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.walletAddress, walletAddress));
-  if (user) {
-    return user;
-  }
+  const query =
+    provider === "wallet"
+      ? db
+          .select()
+          .from(users)
+          .where(
+            and(
+              eq(users.provider, provider),
+              eq(users.walletAddress, identifier),
+            ),
+          )
+      : db
+          .select()
+          .from(users)
+          .where(
+            and(eq(users.provider, provider), eq(users.telegramId, identifier)),
+          );
+
+  const [user] = await query;
+  return user;
 }
 
-export async function createUser(walletAddress: string) {
+export async function createUser(provider: Provider, identifier: string) {
   const users = await ensureUserTableExists();
-  const [user] = await db.insert(users).values({ walletAddress }).returning();
+
+  const values =
+    provider === "wallet"
+      ? { provider, walletAddress: identifier }
+      : { provider, telegramId: identifier };
+
+  const [user] = await db.insert(users).values(values).returning();
   return user;
 }
 
@@ -35,54 +56,22 @@ async function ensureUserTableExists() {
     await client`
       CREATE TABLE "User" (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        wallet_address VARCHAR(64) NOT NULL
+        provider TEXT NOT NULL,
+        wallet_address VARCHAR(64),
+        telegram_id VARCHAR(64),
+        CHECK (
+          (provider = 'wallet' AND wallet_address IS NOT NULL) OR
+          (provider = 'telegram' AND telegram_id IS NOT NULL)
+        )
       );`;
   }
+
   const table = pgTable("User", {
     id: uuid("id").primaryKey().defaultRandom(),
-    walletAddress: varchar("wallet_address", { length: 64 }).notNull(),
+    provider: text("provider").notNull(),
+    walletAddress: varchar("wallet_address", { length: 64 }),
+    telegramId: varchar("telegram_id", { length: 64 }),
   });
-  return table;
-}
 
-export async function getTelegram(telegramId: string) {
-  const telegrams = await ensureTelegramTableExists();
-  const [telegram] = await db
-    .select()
-    .from(telegrams)
-    .where(eq(telegrams.telegramId, telegramId));
-  if (telegram) {
-    return telegram;
-  }
-}
-
-export async function createTelegram(telegramId: string) {
-  const telegrams = await ensureTelegramTableExists();
-  const [telegram] = await db
-    .insert(telegrams)
-    .values({ telegramId })
-    .returning();
-  return telegram;
-}
-
-async function ensureTelegramTableExists() {
-  const result = await client`
-    SELECT EXISTS (
-      SELECT FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name = 'Telegram'
-    );`;
-
-  if (!result[0].exists) {
-    await client`
-      CREATE TABLE "Telegram" (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        telegram_id VARCHAR(64) NOT NULL
-      );`;
-  }
-  const table = pgTable("Telegram", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    telegramId: varchar("telegram_id", { length: 64 }).notNull(),
-  });
   return table;
 }

@@ -10,6 +10,7 @@ import { SessionProvider } from "next-auth/react";
 import { endpoint, wallets } from "@/lib/solana-wallet";
 
 import { ProgrammableWalletsProvider } from "./ProgrammableWalletProvider";
+import { TelegramProvider } from "./TelegramProvider";
 
 export function Providers({
   children,
@@ -18,13 +19,15 @@ export function Providers({
 }>) {
   return (
     <SessionProvider>
-      <ProgrammableWalletsProvider>
-        <ConnectionProvider endpoint={endpoint}>
-          <WalletProvider wallets={wallets} autoConnect>
-            <WalletModalProvider>{children}</WalletModalProvider>
-          </WalletProvider>
-        </ConnectionProvider>
-      </ProgrammableWalletsProvider>
+      <TelegramProvider>
+        <ProgrammableWalletsProvider>
+          <ConnectionProvider endpoint={endpoint}>
+            <WalletProvider wallets={wallets} autoConnect>
+              <WalletModalProvider>{children}</WalletModalProvider>
+            </WalletProvider>
+          </ConnectionProvider>
+        </ProgrammableWalletsProvider>
+      </TelegramProvider>
     </SessionProvider>
   );
 }

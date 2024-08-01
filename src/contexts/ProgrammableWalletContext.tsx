@@ -1,14 +1,12 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 import { createContext } from "react";
 
 interface ProgrammableWalletContextProps {
-  isEnabled: boolean;
   isLoading: boolean;
   isCreating: boolean;
-  sdk?: W3SSdk;
   walletAddress: string;
-  create: () => void;
-  signIn: () => void;
+  createWallet: () => void;
+  signMessage: (message: string) => void;
+  sendTransaction: (to: string, value: string, args: []) => void;
 }
 
 export const ProgrammableWalletContext = createContext<
