@@ -27,7 +27,8 @@ export function SolanaWalletProvider({
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
       if (!("signIn" in adapter)) {
-        throw new Error("Adapter does not support sign in");
+        alert("This wallet does not support sign in");
+        return true;
       }
       const input = await createSignInData();
       const output = await adapter.signIn(input);
