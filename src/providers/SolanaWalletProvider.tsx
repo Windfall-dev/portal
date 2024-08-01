@@ -22,13 +22,10 @@ export function SolanaWalletProvider({
   children: React.ReactNode;
 }) {
   const { setAccessToken } = useAuth();
-  const { isEnabled } = useTelegram();
+  const { isEnabled: telegramEnabled } = useTelegram();
 
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
-      if (!isEnabled) {
-        return false;
-      }
       if (!("signIn" in adapter)) {
         throw new Error("Adapter does not support sign in");
       }
@@ -41,12 +38,15 @@ export function SolanaWalletProvider({
       setAccessToken(accessToken);
       return false;
     },
-    [setAccessToken, isEnabled],
+    [setAccessToken],
   );
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect={autoSignIn}>
+      <WalletProvider
+        wallets={wallets}
+        autoConnect={!telegramEnabled && autoSignIn}
+      >
         <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

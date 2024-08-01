@@ -13,8 +13,8 @@ export function ProgrammableWalletsProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const telegram = useTelegram();
-  const auth = useAuth();
+  const { isEnabled: telegramEnabled } = useTelegram();
+  const { accessToken } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -28,14 +28,14 @@ export function ProgrammableWalletsProvider({
 
   useEffect(() => {
     (async () => {
-      if (!auth.accessToken || !telegram.isEnabled) {
+      if (!accessToken || !telegramEnabled) {
         return;
       }
       if (!initialized.current) {
         initialized.current = true;
         setIsLoading(true);
         const { userToken, encryptionKey, walletId, walletAddress } =
-          await actions.getProgrammableWallet(auth.accessToken);
+          await actions.getProgrammableWallet(accessToken);
         const sdk = new W3SSdk({
           appSettings: {
             appId: process.env.NEXT_PUBLIC_CIRCLE_APP_ID || "",
@@ -53,7 +53,7 @@ export function ProgrammableWalletsProvider({
         setIsLoading(false);
       }
     })();
-  }, [auth.accessToken, telegram.isEnabled]);
+  }, [accessToken, telegramEnabled]);
 
   async function createWallet() {
     if (!sdk) {
