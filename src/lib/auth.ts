@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 import { AuthTokenPayload } from "@/types/auth-token-payload";
 
-const secret = process.env.AUTH_SECRET || "";
+const secret = process.env.AUTH_SECRET!;
 
 export function createAccessToken(payload: AuthTokenPayload): string {
   return jwt.sign(payload, secret);

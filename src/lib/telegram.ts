@@ -2,6 +2,8 @@ import crypto from "crypto";
 
 import { TelegramUser } from "@/types/telegram-user";
 
+const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN!;
+
 export function getTelegramIdFromInitData(initData: string) {
   const decoded = decodeURIComponent(initData);
   const params = new URLSearchParams(decoded);
@@ -13,7 +15,7 @@ export function getTelegramIdFromInitData(initData: string) {
     .join("\n");
   const secretKey = crypto
     .createHmac("sha256", "WebAppData")
-    .update(process.env.TELEGRAM_BOT_TOKEN || "")
+    .update(telegramBotToken)
     .digest();
   const calculatedHash = crypto
     .createHmac("sha256", secretKey)

@@ -31,7 +31,6 @@ export function SolanaWalletProvider({
       }
       const input = await createSignInData();
       const output = await adapter.signIn(input);
-
       const accessToken = await actions.getAccessTokenBySIWSData(
         serialiseSIWEData(input, output),
       );

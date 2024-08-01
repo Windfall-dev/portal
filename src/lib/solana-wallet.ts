@@ -13,35 +13,18 @@ const network = WalletAdapterNetwork.Devnet;
 export const endpoint = clusterApiUrl(network);
 export const wallets = [new PhantomWalletAdapter()];
 
-export const createSignInData = async (): Promise<SolanaSignInInput> => {
-  const now: Date = new Date();
+export const createSignInData = async () => {
   const uri = window.location.href;
   const currentUrl = new URL(uri);
   const domain = currentUrl.host;
-  const currentDateTime = now.toISOString();
   const signInData: SolanaSignInInput = {
     domain,
-    statement:
-      "Clicking Sign or Approve only means you have proved this wallet is owned by you. This request will not trigger any blockchain transaction or cost any gas fee.",
+    statement: `Clicking Sign or Approve only means you have proved this wallet is owned by you. This request will not trigger any blockchain transaction or cost any gas fee.`,
     version: "1",
-    nonce: "oBbLoEldZs",
-    chainId: "mainnet",
-    issuedAt: currentDateTime,
-    resources: ["https://example.com", "https://phantom.app/"],
+    chainId: "devnet",
   };
   return signInData;
 };
-
-export function getWalletAddressFromSIWSData(
-  input: SolanaSignInInput,
-  output: SolanaSignInOutput,
-): string {
-  const result = verifySignIn(input, output);
-  if (!result) {
-    throw new Error("SIWS verification failed");
-  }
-  return output.account.address;
-}
 
 export function serialiseSIWEData(
   input: SolanaSignInInput,
@@ -74,4 +57,15 @@ export function deserialiseSIWEData(siweData: string) {
       signedMessage: base64ToUint8Array(output.signedMessage),
     },
   };
+}
+
+export function getWalletAddressFromSIWSData(
+  input: SolanaSignInInput,
+  output: SolanaSignInOutput,
+): string {
+  const result = verifySignIn(input, output);
+  if (!result) {
+    throw new Error("SIWS verification failed");
+  }
+  return output.account.address;
 }

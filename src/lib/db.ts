@@ -5,7 +5,9 @@ import postgres from "postgres";
 
 import { AuthProvider } from "@/types/auth-provider";
 
-const client = postgres(process.env.POSTGRES_URL!);
+const postgresURL = process.env.POSTGRES_URL!;
+
+const client = postgres(postgresURL);
 const db = drizzle(client);
 
 export async function getOrCreateUser(

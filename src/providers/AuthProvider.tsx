@@ -6,7 +6,6 @@ import { AuthContext } from "@/contexts/AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [accessToken, setAccessToken] = useState("");
-
   console.log("accessToken", accessToken);
 
   return (

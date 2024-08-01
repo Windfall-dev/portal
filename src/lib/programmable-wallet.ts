@@ -1,31 +1,28 @@
 import { v4 as uuidv4 } from "uuid";
 
+const circleApiUrl = process.env.CIRCLE_API_URL;
+const circleApiKey = process.env.CIRCLE_API_KEY;
+
 export async function checkIsUserCreated(userId: string) {
-  const userCheckResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/users/${userId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-      },
+  const userCheckResponse = await fetch(`${circleApiUrl}/users/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${circleApiKey}`,
     },
-  );
+  });
   return userCheckResponse.ok;
 }
 
 export async function createUser(userId: string) {
-  const userCreateResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/users`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-      },
-      body: JSON.stringify({ userId }),
+  const userCreateResponse = await fetch(`${circleApiUrl}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${circleApiKey}`,
     },
-  );
+    body: JSON.stringify({ userId }),
+  });
   if (!userCreateResponse.ok) {
     throw new Error("Failed to create user");
   }
@@ -35,17 +32,14 @@ export async function getUserTokenAndEncryptionKey(userId: string): Promise<{
   userToken: string;
   encryptionKey: string;
 }> {
-  const tokenResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/users/token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-      },
-      body: JSON.stringify({ userId }),
+  const tokenResponse = await fetch(`${circleApiUrl}/users/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${circleApiKey}`,
     },
-  );
+    body: JSON.stringify({ userId }),
+  });
 
   if (!tokenResponse.ok) {
     throw new Error("Failed to fetch user token");
@@ -56,10 +50,10 @@ export async function getUserTokenAndEncryptionKey(userId: string): Promise<{
 }
 
 export async function getWallet(userToken: string) {
-  const res = await fetch(`${process.env.CIRCLE_API_URL}/wallets`, {
+  const res = await fetch(`${circleApiUrl}/wallets`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${process.env.CIRCLE_API_KEY || ""}`,
+      Authorization: `Bearer ${circleApiKey}`,
       "Content-Type": "application/json",
       "X-User-Token": userToken,
     },
@@ -85,21 +79,18 @@ export async function getWallet(userToken: string) {
 export async function getInitializeChallengeId(
   userToken: string,
 ): Promise<string> {
-  const challengeResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/user/initialize`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-        "X-User-Token": userToken,
-      },
-      body: JSON.stringify({
-        idempotencyKey: uuidv4(),
-        blockchains: ["SOL-DEVNET"],
-      }),
+  const challengeResponse = await fetch(`${circleApiUrl}/user/initialize`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${circleApiKey}`,
+      "X-User-Token": userToken,
     },
-  );
+    body: JSON.stringify({
+      idempotencyKey: uuidv4(),
+      blockchains: ["SOL-DEVNET"],
+    }),
+  });
 
   if (!challengeResponse.ok) {
     throw new Error("Failed to fetch challenge");
@@ -116,21 +107,18 @@ export async function getSignMessageChallengeId(
   walletId: string,
   message: string,
 ): Promise<string> {
-  const challengeResponse = await fetch(
-    `${process.env.CIRCLE_API_URL}/user/sign/message`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-User-Token": userToken,
-        Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        walletId,
-        message,
-      }),
+  const challengeResponse = await fetch(`${circleApiUrl}/user/sign/message`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Token": userToken,
+      Authorization: `Bearer ${circleApiKey}`,
     },
-  );
+    body: JSON.stringify({
+      walletId,
+      message,
+    }),
+  });
 
   if (!challengeResponse.ok) {
     throw new Error("Failed to fetch challenge");
