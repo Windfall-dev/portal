@@ -8,6 +8,7 @@ import { useCallback } from "react";
 
 import * as actions from "@/app/actions";
 import { useAuth } from "@/hooks/useAuth";
+import { useTelegram } from "@/hooks/useTelegram";
 import {
   createSignInData,
   endpoint,
@@ -21,22 +22,26 @@ export function SolanaWalletProvider({
   children: React.ReactNode;
 }) {
   const { setAccessToken } = useAuth();
+  const { isEnabled } = useTelegram();
+
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
+      if (!isEnabled) {
+        return false;
+      }
       if (!("signIn" in adapter)) {
         throw new Error("Adapter does not support sign in");
       }
       const input = await createSignInData();
       const output = await adapter.signIn(input);
 
-      console.log("output", output);
       const accessToken = await actions.getAccessTokenBySIWSData(
         serialiseSIWEData(input, output),
       );
       setAccessToken(accessToken);
       return false;
     },
-    [setAccessToken],
+    [setAccessToken, isEnabled],
   );
 
   return (
