@@ -20,16 +20,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta
           name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+          content="width=device-width,initial-scale=1,shrink-to-fit=no"
         />
-        <script
-          src="https://telegram.org/js/telegram-web-app.js"
-          async
-        ></script>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <script src="https://telegram.org/js/telegram-web-app.js" async />
       </head>
       <body className={inter.className}>
         <Providers>
