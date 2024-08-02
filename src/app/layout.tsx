@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="flex flex-col h-screen mx-auto">
+          <div className="flex flex-col h-dvh mx-auto">
             <Header />
             <ScrollArea className="h-full">{children}</ScrollArea>
             <Footer />
