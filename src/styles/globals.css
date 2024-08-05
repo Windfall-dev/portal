@@ -29,6 +29,16 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --wf-yellow: #ffe000;
+    --wf-orange: #ff9100;
+    --wf-red: #ef1600;
+    --white: #ffffff;
+    --gray: #cccccc;
+    --black: #000000;
+    --foreground: #2b221d;
+    --muted-foreground: #7a6a61;
+    --border: #e6e6e6;
+    --orange-hover: #ffc14a;
   }
 
   .dark {
@@ -63,7 +73,22 @@
   * {
     @apply border-border;
   }
+  h1 {
+    @apply text-3xl font-extrabold leading-10;
+  }
+  h2 {
+    @apply text-2xl font-extrabold leading-8;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .body2-bold {
+    @apply text-xs font-bold leading-4;
+  }
+  .caption {
+    @apply text-[10px] text-muted-foreground font-medium leading-[14px] text-center;
   }
 }

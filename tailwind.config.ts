@@ -19,11 +19,9 @@ const config = {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -52,11 +50,16 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        "wf-yellow": "#ffe000",
+        "wf-orange": "#ff9100",
+        "wf-red": "#ef1600",
+        white: "#ffffff",
+        gray: "#cccccc",
+        black: "#000000",
+        foreground: "#2b221d",
+        "muted-foreground": "#7a6a61",
+        border: "#e6e6e6",
+        "orange-hover": "#ffc14a",
       },
       keyframes: {
         "accordion-down": {
@@ -71,6 +74,15 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      fontFamily: {
+        sans: ["var(--font-m-plus-rounded-1c)"],
+      },
+      fontSize: {
+        "11": "11px",
+      },
+      lineHeight: {
+        "16": "16px",
       },
     },
   },
