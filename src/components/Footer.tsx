@@ -1,52 +1,20 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-import { LuGamepad2, LuHome, LuWallet } from "react-icons/lu";
+import Image from "next/image";
 
 export function Footer() {
-  const pathname = usePathname();
-
-  const navItems = [
-    { name: "Home", icon: LuHome, path: "/" },
-    {
-      name: "Game",
-      icon: LuGamepad2,
-      path: "/game",
-    },
-    {
-      name: "Staking",
-      icon: LuWallet,
-      path: "/staking",
-    },
-  ];
-
   return (
-    <>
-      {pathname !== "/game/play" && (
-        <footer className="bg-gray-800 text-white p-2">
-          <div className="flex justify-around items-center">
-            {navItems.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.path}
-                  className={`flex flex-col items-center ${
-                    isActive ? "text-yellow-400" : "text-white"
-                  }`}
-                >
-                  <div className="mb-1">
-                    <item.icon size={24} />
-                  </div>
-                  <span className="text-xs">{item.name}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </footer>
-      )}
-    </>
+    <footer className="h-[166px] bg-foreground px-5 py-10">
+      <div className="flex flex-col items-center justify-around m-3 h-full">
+        <Image
+          src="/windfall_logo_v_mono.png"
+          width={60}
+          height={60}
+          alt="Logo Mono"
+          className="opacity-60"
+        />
+        <div className="caption">
+          © 2024 Solana Foundation. All rights reserved.
+        </div>
+      </div>
+    </footer>
   );
 }
