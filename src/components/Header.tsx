@@ -36,26 +36,17 @@ export function Header() {
         </Link>
         <div>
           {telegram.isLoading && !telegram.isEnabled && (
-            <Button variant="secondary" disabled>
-              Detecting Platform......
-            </Button>
+            <Button disabled>Detecting Platform......</Button>
           )}
           {!telegram.isLoading && telegram.isEnabled && (
             <>
               {programmableWallet.isLoading && (
-                <Button variant="secondary" disabled>
-                  Loading Wallet...
-                </Button>
+                <Button disabled>Loading Wallet...</Button>
               )}
               {!programmableWallet.isLoading && (
                 <>
                   {!programmableWallet.walletAddress && (
                     <Button
-                      variant={
-                        !programmableWallet.isCreating
-                          ? "standard"
-                          : "secondary"
-                      }
                       disabled={programmableWallet.isCreating}
                       onClick={programmableWallet.createWallet}
                     >
@@ -65,7 +56,7 @@ export function Header() {
                     </Button>
                   )}
                   {programmableWallet.walletAddress && (
-                    <Button variant="secondary">
+                    <Button variant="standard" className="bg-wf-orange">
                       {`${truncate(programmableWallet.walletAddress, 12)}`}
                     </Button>
                   )}
