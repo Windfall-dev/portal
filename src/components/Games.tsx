@@ -10,7 +10,7 @@ import SectionTitle from "./SectionTitle";
 
 function Games() {
   return (
-    <div className="w-screen py-5">
+    <div className="py-5">
       <SectionTitle title="GAMES" />
       <div className="flex px-5 space-x-2 overflow-x-auto hidden-scrollbar">
         {games.map((game, index) => (
