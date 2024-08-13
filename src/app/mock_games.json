@@ -1,0 +1,20 @@
+[
+  {
+    "imagePath": "/game_thumb_sample1.png",
+    "gameTitle": "Game Title",
+    "caption": "Game genre",
+    "gameUrl": "game/play"
+  },
+  {
+    "imagePath": "/game_thumb_sample2.png",
+    "gameTitle": "Sample Game abce...",
+    "caption": "Puzzle",
+    "gameUrl": "game/play"
+  },
+  {
+    "imagePath": "/game_thumb_sample3.png",
+    "gameTitle": "Game Title 123",
+    "caption": "Action",
+    "gameUrl": "game/play"
+  }
+]

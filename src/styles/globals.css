@@ -29,6 +29,16 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --wf-yellow: #ffe000;
+    --wf-orange: #ff9100;
+    --wf-red: #ef1600;
+    --white: #ffffff;
+    --gray: #cccccc;
+    --black: #000000;
+    --foreground: #2b221d;
+    --muted-foreground: #7a6a61;
+    --border: #e6e6e6;
+    --orange-hover: #ffc14a;
   }
 
   .dark {
@@ -63,7 +73,48 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+  h1 {
+    @apply text-3xl/10 font-extrabold;
+  }
+  h2 {
+    @apply text-2xl font-extrabold;
+  }
+  h3 {
+    @apply text-xl font-extrabold;
+  }
+  h4 {
+    @apply text-base/[22px] font-extrabold;
+  }
+}
+
+@layer utilities {
+  .body {
+    @apply text-sm font-medium;
+  }
+  .body_title {
+    @apply text-base/[22px] font-bold;
+  }
+  .body_bold {
+    @apply text-[14px]/5 font-extrabold;
+  }
+  .body2 {
+    @apply text-[11px]/4 font-medium;
+  }
+  .body2_bold {
+    @apply text-xs/4 font-bold;
+  }
+  .caption {
+    @apply text-[10px]/[14px] text-muted-foreground font-medium;
+  }
+  .hidden-scrollbar {
+    -ms-overflow-style: none; /* IE, Edge 対応 */
+    scrollbar-width: none; /* Firefox 対応 */
+  }
+  .hidden-scrollbar::-webkit-scrollbar {
+    /* Chrome, Safari 対応 */
+    display: none;
+  }
+  .bg-truly-transparent {
+    background-color: transparent !important;
   }
 }

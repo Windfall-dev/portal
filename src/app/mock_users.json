@@ -1,0 +1,32 @@
+[
+  {
+    "rank": "1",
+    "avatar": "/pfp_sample.png",
+    "name": "User Name Abc",
+    "points": "1,234,567"
+  },
+  {
+    "rank": "2",
+    "avatar": "/pfp_sample2.png",
+    "name": "Windfaller",
+    "points": "1,118,323"
+  },
+  {
+    "rank": "3",
+    "avatar": "/pfp_sample3.png",
+    "name": "user no5",
+    "points": "988,765"
+  },
+  {
+    "rank": "4",
+    "avatar": "/pfp_sample4.png",
+    "name": "764,219",
+    "points": "764,219"
+  },
+  {
+    "rank": "5",
+    "avatar": "/pfp_sample5.png",
+    "name": "fall girl",
+    "points": "623,128"
+  }
+]
