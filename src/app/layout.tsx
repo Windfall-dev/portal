@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <script src="https://telegram.org/js/telegram-web-app.js" async />
         <Script src="/register-sw.js" />
       </head>
-      <body className={`${mPlusRounded1c.variable} font-sans`}>
+      <body className={`${mPlusRounded1c.variable} font-sans max-w-[420px]`}>
         <Providers>
           <div className="flex flex-col h-dvh mx-auto">
             <StatusBar />

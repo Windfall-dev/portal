@@ -7,7 +7,7 @@ import TopKv from "@/components/TopKv";
 
 export default async function Page() {
   return (
-    <main className="flex-grow overflow-y-auto">
+    <main className="flex-grow overflow-x-hidden overflow-y-auto max-w-[420px] mx-auto">
       <TopKv />
       <Games />
       <Ranker />
