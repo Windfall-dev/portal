@@ -8,13 +8,13 @@ function Nextaction() {
         height="100"
         width="100"
         alt="logo"
-        className="absolute -top-0"
+        className="absolute top-1"
       />
-      <div className="text-center bg-wf-yellow w-full pt-5 pb-7">
+      <div className="text-center bg-wf-yellow w-full pt-5 pb-7 space-y-1">
         <h3>
           MORE WILL <br /> BE REVEALED
         </h3>
-        <p className="body2 text-muted-foreground">
+        <p className="text-body2 text-muted-foreground">
           ABCDE12345 ABCDE12345 ABCDE12345 <br /> ABCDE12345ABCDE12345
         </p>
       </div>

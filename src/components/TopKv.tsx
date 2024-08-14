@@ -11,7 +11,7 @@ function TopKv() {
           <h2>
             Catch copy <br /> ABCD12345
           </h2>
-          <p className="body_bold text-muted-foreground">
+          <p className="text-body-bold text-muted-foreground">
             Sub copy ABCDE12345 ABCDE12345ABCDE12345
           </p>
         </div>

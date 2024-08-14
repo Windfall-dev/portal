@@ -8,10 +8,10 @@ function InfoSingle() {
   return (
     <div className="rounded-lg border-2 border-wf-yellow bg-white bg-opacity-80 shadow-sm">
       <div className="flex justify-between items-center px-4 pt-3 pb-1 space-y-[6px]">
-        <div className="text-wf-red">Total Value Locked</div>
+        <div className="text-wf-red text-body-title">Total Value Locked</div>
         <Link href="/staking">
           <Button size="S">
-            <p className="body2_bold">STAKING &gt;</p>
+            <p className="text-body2_bold">STAKING &gt;</p>
           </Button>
         </Link>
       </div>

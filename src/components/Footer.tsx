@@ -11,7 +11,7 @@ export function Footer() {
           alt="Logo Mono"
           className="opacity-60"
         />
-        <div className="caption">
+        <div className="text-caption text-muted-foreground">
           © 2024 Solana Foundation. All rights reserved.
         </div>
       </div>

@@ -13,7 +13,7 @@ import "../styles/globals.css";
 
 const mPlusRounded1c = M_PLUS_Rounded_1c({
   subsets: ["latin"],
-  weight: ["700", "800"],
+  weight: ["300", "400", "500", "700", "800"],
   variable: "--font-m-plus-rounded-1c",
 });
 

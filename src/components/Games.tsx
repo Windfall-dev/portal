@@ -48,8 +48,8 @@ function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
       </div>
       <div className="flex flex-col space-y-3">
         <div>
-          <p className="body-title h-[22px]">{gameTitle}</p>
-          <p className="caption">{caption}</p>
+          <p className="text-body-title h-[22px]">{gameTitle}</p>
+          <p className="text-caption">{caption}</p>
         </div>
         <Link href={gameUrl}>
           <Button className="w-full">PLAY</Button>

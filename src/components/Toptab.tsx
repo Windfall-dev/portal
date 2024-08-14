@@ -31,7 +31,7 @@ function Toptab() {
           <Link href="/staking">
             <div className="flex flex-row items-center w-full border-r-2 border-border h-5 justify-center">
               <img src="/icon_staking.png" alt="Staking" className="h-5 w-5" />
-              <div className="m-[6px] body2_bold">Staking</div>{" "}
+              <div className="m-[6px] text-body2_bold">Staking</div>{" "}
             </div>
           </Link>
         </TabsTrigger>
@@ -45,7 +45,7 @@ function Toptab() {
           >
             <div className="flex flex-row items-center w-full h-5 justify-center">
               <img src="/icon_game.png" alt="Game" className="h-5 w-5" />
-              <div className="m-[6px] body2_bold">GAMES</div>
+              <div className="m-[6px] text-body2_bold">GAMES</div>
             </div>
           </Link>
         </TabsTrigger>

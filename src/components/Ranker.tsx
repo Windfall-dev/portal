@@ -25,7 +25,7 @@ function Ranker() {
         </div>
         <div className="flex justify-center">
           <Button size="S" className="w-[114px]">
-            <p className="body2_bold">View More &gt;</p>
+            <p className="text-body2_bold">View More &gt;</p>
           </Button>
         </div>
       </div>
@@ -48,11 +48,11 @@ function RankingUser({ ranking, avatar, name, points }: RankingUserProps) {
         <Avatar className="w-8 h-8">
           <AvatarImage src={avatar} alt="avatar" />
         </Avatar>
-        <div className="body-bold">{name}</div>
+        <div className="text-body-bold">{name}</div>
       </div>
       <div className="flex items-center">
-        <div className="body-bold">{points}</div>
-        <div className="body-bold text-wf-orange">pt</div>
+        <div className="text-body-bold">{points}</div>
+        <div className="text-body-bold text-wf-orange">pt</div>
       </div>
     </div>
   );
