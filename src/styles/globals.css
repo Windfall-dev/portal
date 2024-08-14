@@ -35,9 +35,6 @@
     --white: #ffffff;
     --gray: #cccccc;
     --black: #000000;
-    --foreground: #2b221d;
-    --muted-foreground: #7a6a61;
-    --border: #e6e6e6;
     --orange-hover: #ffc14a;
   }
 
@@ -74,7 +71,7 @@
     @apply border-border;
   }
   h1 {
-    @apply text-3xl/10 font-extrabold;
+    @apply text-[32px]/[40px] font-extrabold;
   }
   h2 {
     @apply text-2xl font-extrabold;
@@ -88,23 +85,23 @@
 }
 
 @layer utilities {
+  .text-body-title {
+    @apply text-base/[22px] font-bold;
+  }
+  .text-body-bold {
+    @apply text-sm font-semibold;
+  }
   .body {
     @apply text-sm font-medium;
   }
-  .body_title {
-    @apply text-base/[22px] font-bold;
+  .text-body2_bold {
+    @apply text-[11px]/4 font-bold;
   }
-  .body_bold {
-    @apply text-[14px]/5 font-extrabold;
+  .text-body2 {
+    @apply text-[11px]/4 font-normal;
   }
-  .body2 {
-    @apply text-[11px]/4 font-medium;
-  }
-  .body2_bold {
-    @apply text-xs/4 font-bold;
-  }
-  .caption {
-    @apply text-[10px]/[14px] text-muted-foreground font-medium;
+  .text-caption {
+    @apply text-[10px]/[14px] font-medium;
   }
   .hidden-scrollbar {
     -ms-overflow-style: none; /* IE, Edge 対応 */
@@ -113,8 +110,5 @@
   .hidden-scrollbar::-webkit-scrollbar {
     /* Chrome, Safari 対応 */
     display: none;
-  }
-  .bg-truly-transparent {
-    background-color: transparent !important;
   }
 }
