@@ -3,10 +3,7 @@ import type { Metadata } from "next";
 import { M_PLUS_Rounded_1c } from "next/font/google";
 import Script from "next/script";
 
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import StatusBar from "@/components/StatusBar";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { InternalLayout } from "@/components/InternalLayout";
 import { Providers } from "@/providers";
 
 import "../styles/globals.css";
@@ -37,17 +34,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Script src="/register-sw.js" />
       </head>
       <body
-        className={`${mPlusRounded1c.variable} font-sans w-full max-w-[420px]`}
+        className={`${mPlusRounded1c.variable} font-sans w-full max-w-[430px]`}
       >
         <Providers>
-          <div className="flex flex-col h-dvh mx-auto">
-            <StatusBar />
-            <Header />
-            <ScrollArea className="h-full">
-              <main>{children}</main>
-              <Footer />
-            </ScrollArea>
-          </div>
+          <InternalLayout>{children}</InternalLayout>
         </Providers>
       </body>
     </html>
