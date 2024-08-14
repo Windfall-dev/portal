@@ -1,8 +1,8 @@
 import React from "react";
 
+import { AlertDialogDemo } from "@/components/AlertDialog";
 import { InfoDouble } from "@/components/Info";
 import SectionTitle from "@/components/SectionTitle";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -15,7 +15,7 @@ function StakingPage() {
       </div>
       <div>
         <Tabs defaultValue="deposit" className="px-5 mb-10">
-          <TabsList className="flex w-full  bg-border p-1.5">
+          <TabsList className="flex w-full  bg-border p-1.5 h-11">
             <TabsTrigger value="deposit" className="rounded-s w-full">
               Deposit
             </TabsTrigger>
@@ -36,7 +36,7 @@ function StakingPage() {
 }
 
 interface TabCardProps {
-  value?: string;
+  value: string;
 }
 
 function TabCard({ value }: TabCardProps) {
@@ -45,13 +45,13 @@ function TabCard({ value }: TabCardProps) {
       <h3 className="px-5 py-4">{value}</h3>
       <div className="px-5">
         <Input
-          className="px-5 text-foreground body"
+          className="px-5 text-gray body"
           type="number"
-          placeholder={`Enter amount to ${value?.toLowerCase()}`}
+          placeholder={`Enter amount to ${value.toLowerCase()}`}
         />
       </div>
       <div className="p-5">
-        <Button className="w-full">{value}</Button>
+        <AlertDialogDemo ButtonText={value} />
       </div>
     </div>
   );

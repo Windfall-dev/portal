@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const GamePage: React.FC = () => (
   <main className="mx-auto bg-transparent">
-    <div className="relative max-h-[420px] aspect-square overflow-hidden">
+    <div className="relative max-h-[430px] aspect-square overflow-hidden">
       <Image
         src="/game_thumb_sample1.png"
         fill={true}
@@ -15,7 +15,7 @@ const GamePage: React.FC = () => (
         className="scale-[1.12]"
       />
     </div>
-    <div className="relative top-[-70px] pb-20">
+    <div className="relative top-[-70px]">
       <div className="flex flex-col items-center">
         <div className="flex justify-center bg-gradient-to-t from-white to-white/0 w-full">
           <Image
