@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Script src="/register-sw.js" />
       </head>
       <body
-        className={`${mPlusRounded1c.variable} font-sans w-full max-w-[430px]`}
+        className={`${mPlusRounded1c.variable} font-sans mx-auto w-full max-w-[430px]`}
       >
         <Providers>
           <InternalLayout>{children}</InternalLayout>
