@@ -22,23 +22,23 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="overflow-hidden">
       <head>
         <meta
           name="viewport"
-          content="width=device-width,initial-scale=1,shrink-to-fit=no"
+          content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no"
         />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <script src="https://telegram.org/js/telegram-web-app.js" async />
         <Script src="/register-sw.js" />
       </head>
-      <body
-        className={`${mPlusRounded1c.variable} font-sans mx-auto w-full max-w-[430px]`}
-      >
-        <Providers>
-          <InternalLayout>{children}</InternalLayout>
-        </Providers>
+      <body className={`${mPlusRounded1c.variable} bg-white font-sans`}>
+        <div className="mx-auto w-full max-w-[430px]">
+          <Providers>
+            <InternalLayout>{children}</InternalLayout>
+          </Providers>
+        </div>
       </body>
     </html>
   );
