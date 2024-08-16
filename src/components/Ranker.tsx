@@ -9,10 +9,10 @@ import users from "../app/mock_users.json";
 
 function Ranker() {
   return (
-    <div className="pt-5 pb-[60px]">
+    <div className="pb-[60px] pt-5">
       <SectionTitle title="Top Ranker" />
       <div className="flex flex-col">
-        <div className="space-y-3 mb-3">
+        <div className="mb-3 space-y-3">
           {users.map((user, index) => (
             <RankingUser
               key={index}
@@ -42,10 +42,10 @@ interface RankingUserProps {
 
 function RankingUser({ ranking, avatar, name, points }: RankingUserProps) {
   return (
-    <div className="flex flex-row px-5 h-[32px] justify-between">
+    <div className="flex h-[32px] flex-row justify-between px-5">
       <div className="flex flex-1 items-center space-x-[6px]">
         <h4>{ranking}</h4>
-        <Avatar className="w-8 h-8">
+        <Avatar className="h-8 w-8">
           <AvatarImage src={avatar} alt="avatar" />
         </Avatar>
         <div className="text-body-bold">{name}</div>

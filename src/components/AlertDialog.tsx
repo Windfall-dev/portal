@@ -23,12 +23,12 @@ export function AlertDialogDemo({ ButtonText }: AlertProp) {
           {ButtonText}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="rounded-2xl p-6 max-w-[335px] w-[90vw] mx-auto">
+      <AlertDialogContent className="mx-auto w-[90vw] max-w-[335px] rounded-2xl p-6">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-left">
             Are you sure?
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-left body">
+          <AlertDialogDescription className="body text-left">
             This action cannot be undone.
             ほんとうにやるのか確認する説明文。Abcde fghijk lmn opqrst. Are you
             absolutely sure?

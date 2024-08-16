@@ -14,12 +14,12 @@ function StakingPage() {
         <InfoDouble />
       </div>
       <div>
-        <Tabs defaultValue="deposit" className="px-5 mb-10">
-          <TabsList className="flex w-full  bg-border p-1.5 h-11">
-            <TabsTrigger value="deposit" className="rounded-s w-full">
+        <Tabs defaultValue="deposit" className="mb-10 px-5">
+          <TabsList className="flex h-11 w-full bg-border p-1.5">
+            <TabsTrigger value="deposit" className="w-full rounded-s">
               Deposit
             </TabsTrigger>
-            <TabsTrigger value="withdraw" className="rounded-s w-full">
+            <TabsTrigger value="withdraw" className="w-full rounded-s">
               Withdraw
             </TabsTrigger>
           </TabsList>
@@ -41,11 +41,11 @@ interface TabCardProps {
 
 function TabCard({ value }: TabCardProps) {
   return (
-    <div className="flex flex-col border border-border rounded-md">
+    <div className="flex flex-col rounded-md border border-border">
       <h3 className="px-5 py-4">{value}</h3>
       <div className="px-5">
         <Input
-          className="px-5 text-gray body"
+          className="body px-5 text-gray"
           type="number"
           placeholder={`Enter amount to ${value.toLowerCase()}`}
         />

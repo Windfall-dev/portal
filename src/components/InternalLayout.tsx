@@ -12,7 +12,7 @@ export function InternalLayout({ children }: { children: React.ReactNode }) {
     return <div>{children}</div>;
   } else {
     return (
-      <div className="flex flex-col h-dvh mx-auto">
+      <div className="mx-auto flex h-dvh flex-col">
         <Header />
         <ScrollArea className="h-full">
           <main>{children}</main>

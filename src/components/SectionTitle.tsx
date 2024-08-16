@@ -7,7 +7,7 @@ interface SectionTitleProps {
 
 function SectionTitle({ title }: SectionTitleProps) {
   return (
-    <div className="flex flex-row items-center px-5 py-4 space-x-2">
+    <div className="flex flex-row items-center space-x-2 px-5 py-4">
       <Image
         src="/section_title_bar.png"
         alt="Section Title Bar"

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 function Nextaction() {
   return (
-    <div className="relative z-0 flex flex-col items-center h-[216px] justify-end">
+    <div className="relative z-0 flex h-[216px] flex-col items-center justify-end">
       <Image
         src="/windfall_icon.png"
         height="100"
@@ -10,7 +10,7 @@ function Nextaction() {
         alt="logo"
         className="absolute top-1"
       />
-      <div className="text-center bg-wf-yellow w-full pt-5 pb-7 space-y-1">
+      <div className="w-full space-y-1 bg-wf-yellow pb-7 pt-5 text-center">
         <h3>
           MORE WILL <br /> BE REVEALED
         </h3>
