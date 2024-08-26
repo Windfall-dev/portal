@@ -17,7 +17,6 @@ function Ranker() {
             <RankingUser
               key={index}
               ranking={user.rank}
-              avatar={user.avatar}
               name={user.name}
               points={user.points}
             />
@@ -35,18 +34,20 @@ function Ranker() {
 
 interface RankingUserProps {
   ranking: string;
-  avatar: string;
   name: string;
   points: string;
 }
 
-function RankingUser({ ranking, avatar, name, points }: RankingUserProps) {
+function RankingUser({ ranking, name, points }: RankingUserProps) {
   return (
     <div className="flex h-[32px] flex-row justify-between px-5">
       <div className="flex flex-1 items-center space-x-[6px]">
         <h4>{ranking}</h4>
         <Avatar className="h-8 w-8">
-          <AvatarImage src={avatar} alt="avatar" />
+          <AvatarImage
+            src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${name}`}
+            alt="avatar"
+          />
         </Avatar>
         <div className="text-body-bold">{name}</div>
       </div>

@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@circle-fin/w3s-pw-web-sdk": "^1.1.1",
+    "@dicebear/collection": "^9.2.1",
+    "@dicebear/core": "^9.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
