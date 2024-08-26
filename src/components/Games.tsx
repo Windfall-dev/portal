@@ -12,7 +12,7 @@ function Games() {
   return (
     <div className="py-5">
       <SectionTitle title="GAMES" />
-      <div className="flex px-5 space-x-2 overflow-x-auto hidden-scrollbar">
+      <div className="hidden-scrollbar flex space-x-2 overflow-x-auto px-5">
         {games.map((game, index) => (
           <GameCard
             key={index}
@@ -36,7 +36,7 @@ interface GameCardProps {
 
 function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
   return (
-    <Link href="/game" className="w-40 space-y-3 flex-shrink-0">
+    <Link href="/game" className="w-40 flex-shrink-0 space-y-3">
       <div className="relative h-[120px]">
         <Image
           src={imagePath}

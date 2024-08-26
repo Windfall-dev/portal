@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import nacl from "tweetnacl";
 
+import SeasonResult from "@/components/SeasonResult";
+import Toptab from "@/components/Toptab";
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
 import { useTelegram } from "@/hooks/useTelegram";
 import { truncate } from "@/lib/utils";
-
-import Toptab from "./Toptab";
 
 nacl.sign.detached.verify;
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
   return (
     <div className="flex flex-col">
       <div
-        className={`p-3 flex justify-between items-center ${pathname !== "/game/play" ? "bg-gray-200" : "absolute top-0 left-0 w-full z-10"}`}
+        className={`flex items-center justify-between p-3 ${pathname !== "/game/play" ? "bg-gray-200" : "absolute left-0 top-0 z-10 w-full"}`}
       >
         <Link href="/">
           <Image
@@ -34,6 +34,7 @@ export function Header() {
             height={40}
           />
         </Link>
+        <SeasonResult />
         <div>
           {telegram.isLoading && !telegram.isEnabled && (
             <Button disabled>Detecting Platform......</Button>
