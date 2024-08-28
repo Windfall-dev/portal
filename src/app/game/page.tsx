@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const GamePage: React.FC = () => (
   <main className="mx-auto bg-transparent">
-    <div className="relative max-h-[420px] aspect-square overflow-hidden">
+    <div className="relative aspect-square max-h-[430px] overflow-hidden">
       <Image
         src="/game_thumb_sample1.png"
         fill={true}
@@ -15,9 +15,9 @@ const GamePage: React.FC = () => (
         className="scale-[1.12]"
       />
     </div>
-    <div className="relative top-[-70px] pb-20">
+    <div className="relative top-[-70px]">
       <div className="flex flex-col items-center">
-        <div className="flex justify-center bg-gradient-to-t from-white to-white/0 w-full">
+        <div className="flex w-full justify-center bg-gradient-to-t from-white to-white/0">
           <Image
             src="/game_icon.png"
             height={120}
@@ -26,8 +26,8 @@ const GamePage: React.FC = () => (
             className="rounded-xl"
           />
         </div>
-        <div className="text-center px-5 py-4">
-          <p className="body-bold text-muted-foreground">Puzzle</p>
+        <div className="px-5 py-4 text-center">
+          <p className="text-body-bold text-muted-foreground">Puzzle</p>
           <h3>Game Title ABCDE</h3>
           <p className="body text-muted-foreground">
             Game Description abcd efghijk. Game Description abcd efghijk.Game
@@ -35,7 +35,7 @@ const GamePage: React.FC = () => (
           </p>
         </div>
         <Link href="../../game/play">
-          <Button size="L" className="px-[30px] w-[315px] rounded-xl">
+          <Button size="L" className="w-[315px] rounded-xl px-[30px]">
             <h2>PLAY</h2>
           </Button>
         </Link>
