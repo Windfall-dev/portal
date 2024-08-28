@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import nacl from "tweetnacl";
 
-import SeasonResult from "@/components/SeasonResult";
+// import SeasonResult from "@/components/SeasonResult";
 import Toptab from "@/components/Toptab";
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
@@ -34,7 +34,7 @@ export function Header() {
             height={40}
           />
         </Link>
-        <SeasonResult />
+        {/* <SeasonResult /> */}
         <div>
           {telegram.isLoading && !telegram.isEnabled && (
             <Button disabled>Detecting Platform......</Button>
