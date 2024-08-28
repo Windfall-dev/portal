@@ -6,7 +6,6 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { useCallback } from "react";
 
-import * as actions from "@/app/actions";
 import { useAuth } from "@/hooks/useAuth";
 import { useTelegram } from "@/hooks/useTelegram";
 import {
@@ -34,9 +33,21 @@ export function SolanaWalletProvider({
       }
       const input = await createSignInData();
       const output = await adapter.signIn(input);
-      const accessToken = await actions.getAccessTokenBySIWSData(
-        serialiseSIWEData(input, output),
-      );
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API_URL}/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            provider: "wallet",
+            credential: serialiseSIWEData(input, output),
+          }),
+        },
+      ).then((response) => response.json());
+      console.log("response", response);
+      const { access_token: accessToken } = response;
       setAccessToken(accessToken);
       return false;
     },

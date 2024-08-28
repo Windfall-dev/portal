@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 
-import { AuthTokenPayload } from "@/types/auth-token-payload";
+export interface AuthTokenPayload {
+  userId: string;
+  provider: string;
+}
 
 const secret = process.env.AUTH_SECRET!;
 

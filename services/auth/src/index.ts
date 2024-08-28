@@ -1,9 +1,10 @@
+import cors from "cors";
 import express, { Request, Response } from "express";
 
-import { handleLogin } from "./lib";
+import { handleLogin, handleVerify } from "./handler";
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
@@ -18,14 +19,29 @@ app.post("/login", (req: Request, res: Response) => {
   }
 
   try {
-    handleLogin(provider, credential);
-    res
-      .status(200)
-      .send({ message: `Login handled for provider: ${provider}` });
+    const accessToken = handleLogin(provider, credential);
+    res.status(200).send({ access_token: accessToken });
   } catch (error: unknown) {
     const err = error as Error;
     const errorMessage = err.message || "An unexpected error occurred";
     res.status(400).send({ error: errorMessage });
+  }
+});
+
+app.post("/verify", (req: Request, res: Response) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    return res.status(400).send({ error: "Access token is required" });
+  }
+
+  try {
+    const decoded = handleVerify(accessToken);
+    res.status(200).send({ decoded });
+  } catch (error: unknown) {
+    const err = error as Error;
+    const errorMessage = err.message || "Invalid or expired token";
+    res.status(401).send({ error: errorMessage });
   }
 });
 

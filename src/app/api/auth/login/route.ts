@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    handleLogin(provider, credential);
+    const accessToken = handleLogin(provider, credential);
     return NextResponse.json({
-      message: `Login handled for provider: ${provider}`,
+      access_token: accessToken,
     });
   } catch (error: unknown) {
     const err = error as Error;

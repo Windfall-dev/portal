@@ -1,44 +1,27 @@
 "use server";
 
-import { createAccessToken, verifyAccessToken } from "@/lib/auth";
-import * as db from "@/lib/db";
 import * as programmableWallet from "@/lib/programmable-wallet";
-import {
-  deserialiseSIWEData,
-  getWalletAddressFromSIWSData,
-} from "@/lib/solana-wallet";
-import { getTelegramIdFromInitData } from "@/lib/telegram";
-
-export async function getAccessTokenByTelegramInitData(initData: string) {
-  const telegramId = await getTelegramIdFromInitData(initData);
-  const user = await db.getOrCreateUser("telegram", telegramId);
-  return createAccessToken({
-    userId: user.id,
-    provider: "telegram",
-    providerUserId: telegramId,
-  });
-}
-
-export async function getAccessTokenBySIWSData(siwsData: string) {
-  const { input, output } = deserialiseSIWEData(siwsData);
-  const walletAddress = getWalletAddressFromSIWSData(input, output);
-  const user = await db.getOrCreateUser("wallet", walletAddress);
-  return createAccessToken({
-    userId: user.id,
-    provider: "wallet",
-    providerUserId: walletAddress,
-  });
-}
 
 export async function getProgrammableWallet(accessToken: string) {
-  const payload = verifyAccessToken(accessToken);
-  if (!payload) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_AUTH_API_URL}/verify`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: accessToken }),
+    },
+  );
+  const { decoded } = await response.json();
+  if (!decoded) {
     throw new Error("Invalid access token");
   }
-  if (payload.provider !== "telegram") {
+  if (decoded.provider !== "telegram") {
     throw new Error("Invalid access token provider");
   }
-  const { userId } = payload;
+  const { userId } = decoded;
+
   const isUserCreated = await programmableWallet.checkIsUserCreated(userId);
   if (!isUserCreated) {
     await programmableWallet.createUser(userId);
