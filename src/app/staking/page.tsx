@@ -11,7 +11,18 @@ function StakingPage() {
     <main className="space-y-10">
       <div>
         <SectionTitle title="Staking" />
-        <InfoDouble />
+        <div className="px-5">
+          <InfoDouble
+            text1a="Total Value Locked"
+            text1b="10,000,000"
+            image1="/icon_dollar.png"
+            alt1="Dollar"
+            text2a="Prize Pool"
+            text2b="50,000.000"
+            image2="/icon_dollar.png"
+            alt2="Dollar"
+          />
+        </div>
       </div>
       <div>
         <Tabs defaultValue="deposit" className="mb-10 px-5">

@@ -29,9 +29,7 @@ export function AlertDialogDemo({ ButtonText }: AlertProp) {
             Are you sure?
           </AlertDialogTitle>
           <AlertDialogDescription className="body text-left">
-            This action cannot be undone.
-            ほんとうにやるのか確認する説明文。Abcde fghijk lmn opqrst. Are you
-            absolutely sure?
+            You can withdraw your deposited $SOL at any time.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-row items-center justify-end space-x-[10px]">

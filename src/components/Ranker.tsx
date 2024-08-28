@@ -3,8 +3,8 @@ import React from "react";
 
 import SectionTitle from "@/components/SectionTitle";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 
+// import { Button } from "@/components/ui/button";
 import users from "../app/mock_users.json";
 
 function Ranker() {
@@ -22,11 +22,11 @@ function Ranker() {
             />
           ))}
         </div>
-        <div className="flex justify-center">
+        {/* <div className="flex justify-center">
           <Button size="S" className="w-[114px]">
             <p className="text-body2_bold">View More &gt;</p>
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

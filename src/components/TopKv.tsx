@@ -9,10 +9,11 @@ function TopKv() {
       <div className="relative z-10 flex h-full flex-col justify-between pb-6">
         <div className="w-[220px] space-y-[10px]">
           <h2>
-            Catch copy <br /> ABCD12345
+            Enjoy &quot;No Risk <br />
+            High Return&quot;
           </h2>
           <p className="text-body-bold text-muted-foreground">
-            Sub copy ABCDE12345 ABCDE12345ABCDE12345
+            Earn Prizes through Staking and Playing Games!
           </p>
         </div>
         <InfoSingle />

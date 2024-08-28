@@ -11,11 +11,10 @@ function Nextaction() {
         className="absolute top-1"
       />
       <div className="w-full space-y-1 bg-wf-yellow pb-7 pt-5 text-center">
-        <h3>
-          MORE WILL <br /> BE REVEALED
-        </h3>
+        <h3>Riding the Post-Hackathon high</h3>
         <p className="text-body2 text-muted-foreground">
-          ABCDE12345 ABCDE12345 ABCDE12345 <br /> ABCDE12345ABCDE12345
+          We&apos;re relentlessly pushing forward, <br /> coding our way to
+          launch day.
         </p>
       </div>
     </div>
