@@ -20,7 +20,7 @@ export const createSignInData = async () => {
     domain,
     statement: `Clicking Sign or Approve only means you have proved this wallet is owned by you. This request will not trigger any blockchain transaction or cost any gas fee.`,
     version: "1",
-    chainId: "mainnet",
+    chainId: "devnet",
   };
   return signInData;
 };

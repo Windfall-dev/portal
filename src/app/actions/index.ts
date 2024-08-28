@@ -1,6 +1,7 @@
 "use server";
 
 import * as programmableWallet from "@/lib/programmable-wallet";
+import { circleUserSdk } from "@/lib/programmable-wallet";
 
 export async function getProgrammableWallet(accessToken: string) {
   const response = await fetch(
@@ -47,12 +48,29 @@ export async function getInitializeChallengeId(userToken: string) {
 
 export async function getSignMessageChallengeId(
   userToken: string,
-  userId: string,
+  walletId: string,
   message: string,
 ) {
-  return await programmableWallet.getSignMessageChallengeId(
+  const result = await circleUserSdk.signMessage({
     userToken,
-    userId,
+    walletId,
     message,
-  );
+  });
+  if (!result.data) {
+    throw new Error("Failed to get sign message challenge id");
+  }
+  return result.data.challengeId;
+}
+
+export async function getSignTransactionChallengId(
+  userToken: string,
+  walletId: string,
+  transaction: string,
+) {
+  const result = await circleUserSdk.signTransaction({
+    userToken,
+    walletId,
+    transaction,
+  });
+  return result;
 }
