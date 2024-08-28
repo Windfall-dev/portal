@@ -1,12 +1,11 @@
 services:
-  postgres:
-    image: postgres:14
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgresuser
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: postgresdb
+  auth:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-    volumes:
-      - ./data:/var/lib/postgresql/data
+      - "3001:3001"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import * as actions from "@/app/actions";
 import { TelegramContext } from "@/contexts/TelegramContext";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -22,8 +21,20 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           tgWebApp.ready();
           const initData = tgWebApp.initData;
           if (initData) {
-            const accessToken =
-              await actions.getAccessTokenByTelegramInitData(initData);
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_AUTH_API_URL}/login`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  provider: "wallet",
+                  credential: initData,
+                }),
+              },
+            ).then((response) => response.json());
+            const { access_token: accessToken } = response;
             setAccessToken(accessToken);
             setIsEnabled(true);
           }

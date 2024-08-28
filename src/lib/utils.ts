@@ -13,8 +13,3 @@ export function uint8ArrayToBase64(uint8Array: Uint8Array): string {
   const buffer = Buffer.from(uint8Array);
   return buffer.toString("base64");
 }
-
-export function base64ToUint8Array(base64: string): Uint8Array {
-  const buffer = Buffer.from(base64, "base64");
-  return new Uint8Array(buffer);
-}
