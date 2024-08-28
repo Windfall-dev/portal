@@ -1,20 +1,23 @@
 [
   {
     "imagePath": "/game_thumb_sample1.png",
-    "gameTitle": "Game Title",
-    "caption": "Game genre",
-    "gameUrl": "game/play"
+    "gameTitle": "Beat Pet",
+    "caption": "Music",
+    "gameUrl": "game/play",
+    "isPlayable": true
   },
   {
     "imagePath": "/game_thumb_sample2.png",
-    "gameTitle": "Sample Game abce...",
-    "caption": "Puzzle",
-    "gameUrl": "game/play"
+    "gameTitle": "Sample Game Title",
+    "caption": "Sports",
+    "gameUrl": "game/play",
+    "isPlayable": false
   },
   {
     "imagePath": "/game_thumb_sample3.png",
-    "gameTitle": "Game Title 123",
-    "caption": "Action",
-    "gameUrl": "game/play"
+    "gameTitle": "Sample Game Title",
+    "caption": "Simulation",
+    "gameUrl": "game/play",
+    "isPlayable": false
   }
 ]

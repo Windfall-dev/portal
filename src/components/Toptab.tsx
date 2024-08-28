@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ function Toptab() {
   return (
     <Tabs
       value={activeTab}
-      className="flex justify-center items-center bg-white h-10 border-y border-border"
+      className="flex h-10 items-center justify-center border-y border-border bg-white"
     >
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger
@@ -29,9 +30,14 @@ function Toptab() {
           className="data-[state=active]:text-wf-orange"
         >
           <Link href="/staking">
-            <div className="flex flex-row items-center w-full border-r-2 border-border h-5 justify-center">
-              <img src="/icon_staking.png" alt="Staking" className="h-5 w-5" />
-              <div className="m-[6px] body2_bold">Staking</div>{" "}
+            <div className="flex h-5 w-full flex-row items-center justify-center border-r-2 border-border">
+              <Image
+                src="/icon_staking.png"
+                alt="Staking"
+                height={20}
+                width={20}
+              />
+              <div className="text-body2_bold m-[6px]">Staking</div>{" "}
             </div>
           </Link>
         </TabsTrigger>
@@ -41,11 +47,16 @@ function Toptab() {
         >
           <Link
             href="/game"
-            className="flex-1 flex items-center justify-center"
+            className="flex flex-1 items-center justify-center"
           >
-            <div className="flex flex-row items-center w-full h-5 justify-center">
-              <img src="/icon_game.png" alt="Game" className="h-5 w-5" />
-              <div className="m-[6px] body2_bold">GAMES</div>
+            <div className="flex h-5 w-full flex-row items-center justify-center">
+              <Image
+                src="/icon_game.png"
+                alt="Staking"
+                height={20}
+                width={20}
+              />
+              <div className="text-body2_bold m-[6px]">GAMES</div>
             </div>
           </Link>
         </TabsTrigger>

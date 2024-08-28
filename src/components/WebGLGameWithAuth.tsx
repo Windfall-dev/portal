@@ -36,6 +36,6 @@ export function WebGLGameWithAuth({ url }: { url: string }) {
   }, [requestOrigin, accessToken]);
 
   return (
-    <iframe ref={ref} src={url} className="bg-black w-full h-screen"></iframe>
+    <iframe ref={ref} src={url} className="h-screen w-full bg-black"></iframe>
   );
 }

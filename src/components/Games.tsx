@@ -10,9 +10,9 @@ import SectionTitle from "./SectionTitle";
 
 function Games() {
   return (
-    <div className="w-screen py-5">
+    <div className="py-5">
       <SectionTitle title="GAMES" />
-      <div className="flex px-5 space-x-2 overflow-x-auto hidden-scrollbar">
+      <div className="hidden-scrollbar flex space-x-2 overflow-x-auto px-5">
         {games.map((game, index) => (
           <GameCard
             key={index}
@@ -20,6 +20,7 @@ function Games() {
             gameTitle={game.gameTitle}
             caption={game.caption}
             gameUrl={game.gameUrl}
+            isPlayable={game.isPlayable}
           />
         ))}
       </div>
@@ -32,11 +33,20 @@ interface GameCardProps {
   gameTitle: string;
   caption: string;
   gameUrl: string;
+  isPlayable: boolean;
 }
 
-function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
+function GameCard({
+  imagePath,
+  gameTitle,
+  caption,
+  isPlayable,
+}: GameCardProps) {
   return (
-    <Link href="/game" className="w-40 space-y-3 flex-shrink-0">
+    <Link
+      href={isPlayable ? "/game" : ""}
+      className="w-40 flex-shrink-0 space-y-3"
+    >
       <div className="relative h-[120px]">
         <Image
           src={imagePath}
@@ -48,12 +58,16 @@ function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
       </div>
       <div className="flex flex-col space-y-3">
         <div>
-          <p className="body-title h-[22px]">{gameTitle}</p>
-          <p className="caption">{caption}</p>
+          <p className="text-body-title h-[22px]">{gameTitle}</p>
+          <p className="text-caption">{caption}</p>
         </div>
-        <Link href={gameUrl}>
+        {isPlayable ? (
           <Button className="w-full">PLAY</Button>
-        </Link>
+        ) : (
+          <Button className="w-full" variant="disabled" disabled>
+            Coming Soon
+          </Button>
+        )}
       </div>
     </Link>
   );
