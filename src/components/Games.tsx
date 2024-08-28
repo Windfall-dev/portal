@@ -20,6 +20,7 @@ function Games() {
             gameTitle={game.gameTitle}
             caption={game.caption}
             gameUrl={game.gameUrl}
+            isPlayable={game.isPlayable}
           />
         ))}
       </div>
@@ -32,11 +33,20 @@ interface GameCardProps {
   gameTitle: string;
   caption: string;
   gameUrl: string;
+  isPlayable: boolean;
 }
 
-function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
+function GameCard({
+  imagePath,
+  gameTitle,
+  caption,
+  isPlayable,
+}: GameCardProps) {
   return (
-    <Link href="/game" className="w-40 flex-shrink-0 space-y-3">
+    <Link
+      href={isPlayable ? "/game" : ""}
+      className="w-40 flex-shrink-0 space-y-3"
+    >
       <div className="relative h-[120px]">
         <Image
           src={imagePath}
@@ -51,9 +61,13 @@ function GameCard({ imagePath, gameTitle, caption, gameUrl }: GameCardProps) {
           <p className="text-body-title h-[22px]">{gameTitle}</p>
           <p className="text-caption">{caption}</p>
         </div>
-        <Link href={gameUrl}>
+        {isPlayable ? (
           <Button className="w-full">PLAY</Button>
-        </Link>
+        ) : (
+          <Button className="w-full" variant="disabled" disabled>
+            Coming Soon
+          </Button>
+        )}
       </div>
     </Link>
   );
