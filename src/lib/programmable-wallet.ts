@@ -1,7 +1,14 @@
+import { initiateUserControlledWalletsClient } from "@circle-fin/user-controlled-wallets";
 import { v4 as uuidv4 } from "uuid";
 
-const circleApiUrl = process.env.CIRCLE_API_URL;
-const circleApiKey = process.env.CIRCLE_API_KEY;
+const circleApiKey = process.env.CIRCLE_API_KEY || "";
+const circleApiBaseUrl = process.env.CIRCLE_API_BASE_URL;
+const circleApiUrl = `${circleApiBaseUrl}/v1/w3s`;
+
+export const circleUserSdk = initiateUserControlledWalletsClient({
+  apiKey: circleApiKey,
+  baseUrl: circleApiBaseUrl,
+});
 
 export async function checkIsUserCreated(userId: string) {
   const userCheckResponse = await fetch(`${circleApiUrl}/users/${userId}`, {
@@ -89,34 +96,6 @@ export async function getInitializeChallengeId(
     body: JSON.stringify({
       idempotencyKey: uuidv4(),
       blockchains: ["SOL-DEVNET"],
-    }),
-  });
-
-  if (!challengeResponse.ok) {
-    throw new Error("Failed to fetch challenge");
-  }
-
-  const {
-    data: { challengeId },
-  } = await challengeResponse.json();
-  return challengeId;
-}
-
-export async function getSignMessageChallengeId(
-  userToken: string,
-  walletId: string,
-  message: string,
-): Promise<string> {
-  const challengeResponse = await fetch(`${circleApiUrl}/user/sign/message`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Token": userToken,
-      Authorization: `Bearer ${circleApiKey}`,
-    },
-    body: JSON.stringify({
-      walletId,
-      message,
     }),
   });
 

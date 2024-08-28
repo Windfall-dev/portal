@@ -6,7 +6,7 @@ interface ProgrammableWalletContextProps {
   walletAddress: string;
   createWallet: () => void;
   signMessage: (message: string) => void;
-  sendTransaction: (to: string, value: string, args: []) => void;
+  sendTransaction: (transaction: string) => void;
 }
 
 export const ProgrammableWalletContext = createContext<

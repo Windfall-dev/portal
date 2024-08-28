@@ -80,14 +80,43 @@ export function ProgrammableWalletsProvider({
     });
   }
 
-  function signMessage(message: string) {
-    console.log("signMessage: ", message);
-    throw new Error("Not implemented");
+  async function signMessage(message: string) {
+    if (!userToken) {
+      throw new Error("User token is not defined");
+    }
+    if (!walletId) {
+      throw new Error("Wallet id is not defined");
+    }
+    if (!sdk) {
+      throw new Error("SDK is not defined");
+    }
+    const challengeId = await actions.getSignMessageChallengeId(
+      userToken,
+      walletId,
+      message,
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sdk.execute(challengeId, async (_, result: any) => {
+      console.log("result.data.signature: ", result.data.signature);
+    });
   }
 
-  function sendTransaction(to: string, value: string, args: []) {
-    console.log("sendTransaction: ", to, value, args);
-    throw new Error("Not implemented");
+  async function sendTransaction(transaction: string) {
+    if (!userToken) {
+      throw new Error("User token is not defined");
+    }
+    if (!walletId) {
+      throw new Error("Wallet id is not defined");
+    }
+    if (!sdk) {
+      throw new Error("SDK is not defined");
+    }
+    const challengeId = await actions.getSignTransactionChallengId(
+      userToken,
+      walletId,
+      transaction,
+    );
+    console.log("sendTransaction: ", challengeId);
   }
 
   return (
