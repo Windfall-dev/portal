@@ -72,5 +72,5 @@ export async function getSignTransactionChallengId(
     walletId,
     transaction,
   });
-  console.log("result", result);
+  return result;
 }
