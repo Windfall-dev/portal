@@ -46,8 +46,7 @@ export function SolanaWalletProvider({
           }),
         },
       ).then((response) => response.json());
-      console.log("response", response);
-      const { access_token: accessToken } = response;
+      const { accessToken: accessToken } = response;
       setAccessToken(accessToken);
       return false;
     },

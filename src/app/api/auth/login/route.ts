@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { handleLogin } from "../../../../../services/auth/src/lib";
+import { handleLogin } from "../../../../../services/auth/src/handler";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const accessToken = handleLogin(provider, credential);
     return NextResponse.json({
-      access_token: accessToken,
+      accessToken: accessToken,
     });
   } catch (error: unknown) {
     const err = error as Error;

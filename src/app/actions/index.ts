@@ -10,7 +10,7 @@ export async function getProgrammableWallet(accessToken: string) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ token: accessToken }),
+      body: JSON.stringify({ accessToken }),
     },
   );
   const { decoded } = await response.json();

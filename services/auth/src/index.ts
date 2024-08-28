@@ -20,7 +20,7 @@ app.post("/login", (req: Request, res: Response) => {
 
   try {
     const accessToken = handleLogin(provider, credential);
-    res.status(200).send({ access_token: accessToken });
+    res.status(200).send({ accessToken: accessToken });
   } catch (error: unknown) {
     const err = error as Error;
     const errorMessage = err.message || "An unexpected error occurred";

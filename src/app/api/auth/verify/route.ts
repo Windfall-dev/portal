@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { verifyAccessToken } from "../../../../../services/auth/src/lib/auth";
+import { handleVerify } from "../../../../../services/auth/src/handler";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const decoded = verifyAccessToken(accessToken);
+    const decoded = handleVerify(accessToken);
+
     return NextResponse.json({
       decoded,
     });
