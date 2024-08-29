@@ -5,8 +5,9 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
-  Transaction,
+  VersionedTransaction,
 } from "@solana/web3.js";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
@@ -20,6 +21,7 @@ export default function SandboxWalletPage() {
     sendTransaction: sendTransactionSolana,
   } = useWallet();
   const walletAddressSolana = publicKey?.toBase58();
+  const [swapStatus, setSwapStatus] = useState("");
 
   const handleSignMessage = () => {
     signMessage("Hello");
@@ -56,27 +58,61 @@ export default function SandboxWalletPage() {
     signMessageSolana(message);
   };
 
-  const handleSendTransactionSolana = async () => {
-    if (!publicKey) {
-      throw new Error("No Solana wallet connected");
-    }
-    const connection = new Connection("https://api.devnet.solana.com");
-    const { blockhash } = await connection.getLatestBlockhash();
-    const transaction = new Transaction({
-      recentBlockhash: blockhash,
-      feePayer: publicKey,
-    });
-    // need to be update with actual transaction
-    const instruction = SystemProgram.transfer({
-      fromPubkey: publicKey,
-      toPubkey: publicKey,
-      lamports: 0, // 0 SOL transfer for this example
-    });
-    transaction.add(instruction);
-    const signature = await sendTransactionSolana(transaction, connection);
-    const result = await connection.confirmTransaction(signature, "processed");
-    console.log("Transaction confirmed", result);
-  };
+  const handleSendTransactionSolana =
+    (
+      inputMint: string,
+      outputMint: string,
+      amount: number,
+      slippageBps: number,
+    ) =>
+    async () => {
+      if (!publicKey) {
+        setSwapStatus("No Solana wallet connected");
+        return;
+      }
+
+      setSwapStatus("Initiating swap...");
+
+      const connection = new Connection(
+        "https://alpha-omniscient-silence.solana-mainnet.quiknode.pro/9cce57ab92b024ae3b69476ca0beecc729e9ba20/",
+      );
+      try {
+        const quoteResponse = await fetch(
+          `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`,
+        ).then((res) => res.json());
+        setSwapStatus("Quote received. Preparing transaction...");
+
+        const { swapTransaction } = await fetch(
+          "https://quote-api.jup.ag/v6/swap",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              quoteResponse,
+              userPublicKey: publicKey.toString(),
+              wrapAndUnwrapSol: true,
+            }),
+          },
+        ).then((res) => res.json());
+        const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+        const transaction =
+          VersionedTransaction.deserialize(swapTransactionBuf);
+        setSwapStatus("Transaction prepared. Sending for approval...");
+
+        const signature = await sendTransactionSolana(transaction, connection);
+        setSwapStatus("Transaction sent. Awaiting confirmation...");
+
+        const result = await connection.confirmTransaction(
+          signature,
+          "processed",
+        );
+        setSwapStatus(`Swap completed! Transaction ID: ${signature}`);
+        console.log("Swap transaction confirmed", result);
+      } catch (error) {
+        console.error("Swap failed:", error);
+        setSwapStatus(`Swap failed: ${error.message}`);
+      }
+    };
 
   return (
     <div>
@@ -98,9 +134,27 @@ export default function SandboxWalletPage() {
           <p>Wallet Address: {walletAddressSolana}</p>
           <div className="flex flex-col space-y-2">
             <Button onClick={handleSignMessageSolana}>Sign Message</Button>
-            <Button onClick={handleSendTransactionSolana}>
-              Send Transaction
+            <Button
+              onClick={handleSendTransactionSolana(
+                "So11111111111111111111111111111111111111112",
+                "5oVNBeEEQvYi1cX3ir8Dx5n1P7pdxydbGF2X4TxVusJm",
+                10000000,
+                50,
+              )}
+            >
+              Send Transaction(Swap wSOL to INF)
             </Button>
+            <Button
+              onClick={handleSendTransactionSolana(
+                "5oVNBeEEQvYi1cX3ir8Dx5n1P7pdxydbGF2X4TxVusJm",
+                "So11111111111111111111111111111111111111112",
+                5000000,
+                50,
+              )}
+            >
+              Send Transaction(Swap INF to wSOL)
+            </Button>
+            <p>{swapStatus}</p>
           </div>
         </>
       )}
