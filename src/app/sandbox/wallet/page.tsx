@@ -5,6 +5,7 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
+  Transaction,
   VersionedTransaction,
 } from "@solana/web3.js";
 import { useState } from "react";
@@ -110,7 +111,7 @@ export default function SandboxWalletPage() {
         console.log("Swap transaction confirmed", result);
       } catch (error) {
         console.error("Swap failed:", error);
-        setSwapStatus(`Swap failed: ${error.message}`);
+        setSwapStatus(`Swap failed: ${(error as Error).message}`);
       }
     };
 
