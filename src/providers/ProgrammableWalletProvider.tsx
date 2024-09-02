@@ -8,6 +8,51 @@ import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext"
 import { useAuth } from "@/hooks/useAuth";
 import { useTelegram } from "@/hooks/useTelegram";
 
+// API通信のレスポンスの型を定義
+interface ApiResponse {
+  ok: boolean;
+  points: number;
+  username: string;
+}
+
+// API通信
+async function communicateWithAPI(
+  token: string,
+  userId: string,
+): Promise<ApiResponse> {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          user_id: userId,
+        }),
+      },
+    );
+
+    console.log(
+      JSON.stringify({
+        token: token,
+        user_id: userId,
+      }),
+    );
+    if (!response.ok) {
+      throw new Error("API communication failed");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error communicating with API:", error);
+    throw error;
+  }
+}
+
 export function ProgrammableWalletsProvider({
   children,
 }: {
@@ -25,6 +70,8 @@ export function ProgrammableWalletsProvider({
   const [, setEncryptionKey] = useState("");
   const [walletId, setWalletId] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [points, setPoints] = useState(0);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -45,6 +92,21 @@ export function ProgrammableWalletsProvider({
           userToken,
           encryptionKey,
         });
+        // APIとの通信を追加
+        try {
+          // console.log(accessToken)
+          // console.log(walletAddress)
+          const apiResponse = await communicateWithAPI(
+            accessToken,
+            walletAddress,
+          );
+          if (apiResponse.ok) {
+            setPoints(apiResponse.points);
+            setUsername(apiResponse.username);
+          }
+        } catch (error) {
+          console.error("Error in API communication:", error);
+        }
         setUserToken(userToken);
         setEncryptionKey(encryptionKey);
         setWalletId(walletId);
@@ -128,6 +190,8 @@ export function ProgrammableWalletsProvider({
         walletAddress,
         signMessage,
         sendTransaction,
+        points,
+        username,
       }}
     >
       {children}
