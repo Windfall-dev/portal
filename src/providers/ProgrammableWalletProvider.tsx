@@ -19,6 +19,7 @@ interface ApiResponse {
 async function communicateWithAPI(
   token: string,
   userId: string,
+  userName: string,
 ): Promise<ApiResponse> {
   try {
     const response = await fetch(
@@ -31,16 +32,11 @@ async function communicateWithAPI(
         body: JSON.stringify({
           token: token,
           user_id: userId,
+          user_name: userName,
         }),
       },
     );
 
-    console.log(
-      JSON.stringify({
-        token: token,
-        user_id: userId,
-      }),
-    );
     if (!response.ok) {
       throw new Error("API communication failed");
     }
@@ -59,7 +55,7 @@ export function ProgrammableWalletsProvider({
   children: React.ReactNode;
 }) {
   const { isEnabled: telegramEnabled } = useTelegram();
-  const { accessToken } = useAuth();
+  const { accessToken, username } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -71,7 +67,6 @@ export function ProgrammableWalletsProvider({
   const [walletId, setWalletId] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [points, setPoints] = useState(0);
-  const [username, setUsername] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -99,10 +94,10 @@ export function ProgrammableWalletsProvider({
           const apiResponse = await communicateWithAPI(
             accessToken,
             walletAddress,
+            username,
           );
           if (apiResponse.ok) {
             setPoints(apiResponse.points);
-            setUsername(apiResponse.username);
           }
         } catch (error) {
           console.error("Error in API communication:", error);
