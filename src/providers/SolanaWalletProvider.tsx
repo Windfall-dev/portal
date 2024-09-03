@@ -61,7 +61,7 @@ export function SolanaWalletProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { setAccessToken, setUsername } = useAuth();
+  const { setAccessToken, setUsername, setUserId } = useAuth();
   const { isEnabled: telegramEnabled } = useTelegram();
 
   const autoSignIn = useCallback(
@@ -97,6 +97,7 @@ export function SolanaWalletProvider({
         const authData = await response.json();
         const { accessToken } = authData;
         setAccessToken(accessToken);
+        setUserId(userId);
 
         // 別のAPI通信 (communicateWithAPI) を実行
         // TODO:solanaはユーザ名が取得できないので空とする
@@ -112,7 +113,7 @@ export function SolanaWalletProvider({
       }
       return false;
     },
-    [setAccessToken, setUsername],
+    [setAccessToken, setUsername, setUserId],
   );
 
   return (

@@ -55,7 +55,7 @@ export function ProgrammableWalletsProvider({
   children: React.ReactNode;
 }) {
   const { isEnabled: telegramEnabled } = useTelegram();
-  const { accessToken, username } = useAuth();
+  const { accessToken, username, setUserId } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -103,6 +103,7 @@ export function ProgrammableWalletsProvider({
           console.error("Error in API communication:", error);
         }
         setUserToken(userToken);
+        setUserId(walletAddress);
         setEncryptionKey(encryptionKey);
         setWalletId(walletId);
         setWalletAddress(walletAddress);
