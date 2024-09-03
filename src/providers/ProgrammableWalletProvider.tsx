@@ -111,7 +111,7 @@ export function ProgrammableWalletsProvider({
         setIsLoading(false);
       }
     })();
-  }, [accessToken, telegramEnabled]);
+  }, [accessToken, setUserId, telegramEnabled, username]);
 
   async function createWallet() {
     if (!sdk) {
