@@ -61,20 +61,18 @@
               : {
                   session_id: event.data.session_id,
                   game_id: event.data.game_id,
-                  // tap_data: event.data.tap_data,
+                  tap_data: event.data.tap_data,
                   judgment_data: event.data.judgment_data,
                   end_time: event.data.end_time,
                   score: event.data.score,
                   token: event.data.token,
                   user_id: event.data.user_id
                 };
-                console.log(apiUrl)
-                console.log(body)
           fetch(apiUrl, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
-                  // "Authorization": `Bearer ${accessToken}`,
+                  "Authorization": `Bearer ${event.data.token}`,
               },
               body: JSON.stringify(body),
           })
