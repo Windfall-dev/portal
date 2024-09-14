@@ -46,21 +46,3 @@ To simplify onboarding for Telegram users, we utilize programmable wallets speci
 ### Solana LST Integration
 
 Integration is being tested using the Jupiter API, initially focusing on trading INT. In the main scenario, we plan to use own Samctum and Jito LST/LRT in the future.
-
-## Local Development
-
-To start the development server on localhost:3000, follow these steps:
-
-Install the necessary dependencies:
-
-```
-npm install
-```
-
-Start the development server:
-
-```
-npm run dev
-```
-
-This will launch the application at http://localhost:3000.
