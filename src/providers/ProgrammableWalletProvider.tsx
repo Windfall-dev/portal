@@ -159,7 +159,7 @@ export function ProgrammableWalletsProvider({
     });
   }
 
-  async function sendTransaction(transaction: string) {
+  async function signTransaction(transaction: string) {
     if (!userToken) {
       throw new Error("User token is not defined");
     }
@@ -174,7 +174,20 @@ export function ProgrammableWalletsProvider({
       walletId,
       transaction,
     );
-    console.log("sendTransaction: ", challengeId);
+    const signedTransaction = await new Promise((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sdk.execute(challengeId, (error: any, result: any) => {
+        if (error) {
+          return reject(error);
+        }
+        if (result && result.data && result.data.signedTransaction) {
+          resolve(result.data.signedTransaction);
+        } else {
+          reject(new Error("Signed transaction not found in result"));
+        }
+      });
+    });
+    return signedTransaction as string;
   }
 
   return (
@@ -185,7 +198,7 @@ export function ProgrammableWalletsProvider({
         createWallet,
         walletAddress,
         signMessage,
-        sendTransaction,
+        signTransaction,
         points,
         username,
       }}

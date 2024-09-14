@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
 
 export default function SandboxWalletPage() {
-  const { walletAddress, signMessage, sendTransaction } =
+  const { walletAddress, signMessage, signTransaction } =
     useProgrammableWallet();
   const {
     publicKey,
@@ -48,7 +48,18 @@ export default function SandboxWalletPage() {
       requireAllSignatures: false,
       verifySignatures: false,
     });
-    sendTransaction(`0x${serializedTransaction.toString("hex")}`);
+    const signedTransactionBase64 = await signTransaction(
+      serializedTransaction.toString("base64"),
+    );
+    const signedTransaction = Buffer.from(signedTransactionBase64, "base64");
+    try {
+      const txId = await connection.sendRawTransaction(signedTransaction);
+      console.log("Transaction sent! Transaction ID:", txId);
+      const confirmation = await connection.confirmTransaction(txId);
+      console.log("Transaction confirmed:", confirmation);
+    } catch (error) {
+      console.error("Error broadcasting transaction:", error);
+    }
   };
 
   const handleSignMessageSolana = async () => {
