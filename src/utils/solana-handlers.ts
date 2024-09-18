@@ -14,10 +14,10 @@ const WindfallPublicKey = process.env.NEXT_PUBLIC_WINDFALL_PUBLIC_KEY;
 export const handleDepositSol = async (
   publicKey: PublicKey,
   sendTransactionSolana: WalletAdapterProps["sendTransaction"],
+  amount: number = 0.0001 * LAMPORTS_PER_SOL,
 ) => {
   if (!publicKey) {
-    console.error("No Solana wallet connected");
-    return;
+    throw new Error("No Solana wallet connected");
   }
 
   try {
@@ -27,7 +27,7 @@ export const handleDepositSol = async (
     );
 
     const toPublicKey = new PublicKey(WindfallPublicKey || "");
-    const lamportsToSend = 0.01 * LAMPORTS_PER_SOL; // 0.01 SOL
+    const lamportsToSend = amount * LAMPORTS_PER_SOL; // 0.01 SOL
 
     const transferTransaction = new Transaction().add(
       SystemProgram.transfer({
@@ -54,12 +54,16 @@ export const handleDepositSol = async (
       "confirmed",
     );
     console.log("Transaction confirmed:", confirmation);
+    return signature;
   } catch (error) {
     console.error("Transaction failed", error);
   }
 };
 
-export const handleWithdrawSol = async (publicKey: PublicKey) => {
+export const handleWithdrawSol = async (
+  publicKey: PublicKey,
+  amount: number = 0.005 * LAMPORTS_PER_SOL,
+) => {
   if (!publicKey) {
     console.error("No Solana wallet connected");
     return;
@@ -69,7 +73,7 @@ export const handleWithdrawSol = async (publicKey: PublicKey) => {
     bs58.decode(process.env.NEXT_PUBLIC_WINDFALL_PRIVATE_KEY || ""),
   );
 
-  const lamportsToSend = 0.005 * LAMPORTS_PER_SOL; // 0.01 SOL
+  const lamportsToSend = amount * LAMPORTS_PER_SOL; // 0.01 SOL
 
   console.log(process.env.NEXT_PUBLIC_WINDFALL_PRIVATE_KEY);
 
@@ -78,9 +82,6 @@ export const handleWithdrawSol = async (publicKey: PublicKey) => {
       "https://api.devnet.solana.com",
       "confirmed",
     );
-
-    const balance = await connection.getBalance(windfallKeypair.publicKey);
-    console.log("Windfall account balance:", balance / LAMPORTS_PER_SOL, "SOL");
 
     const transferTransaction = new Transaction().add(
       SystemProgram.transfer({
@@ -100,15 +101,13 @@ export const handleWithdrawSol = async (publicKey: PublicKey) => {
       transferTransaction.serialize(),
     );
 
-    console.log("Transaction sent:", signature);
-    console.log(`https://solscan.io/tx/${signature}?cluster=devnet`);
-
     const confirmation = await connection.confirmTransaction(
       signature,
       "confirmed",
     );
     console.log("Transaction confirmed:", confirmation);
+    return signature;
   } catch (error) {
-    console.error("Transaction failed", error);
+    throw error;
   }
 };
