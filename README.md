@@ -1,33 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Windfall
 
-## Getting Started
+## Technology Used
 
-1. Add .env.local file
+### Portal
 
-```bash
-TELEGRAM_BOT_TOKEN=
-CIRCLE_API_KEY=
-NEXT_PUBLIC_CIRCLE_APP_ID=
-```
+- Next.js, React, Tailwind CSS, shadcn/ui
+- Portal is DB less architecture to work with game side easily
 
-2. Run local PostgreSQL patabase
+### Game
 
-```bash
-docker-compose up
-```
+- Unity, AWS
 
-2. Run portal app
+## Ensuring Game Result Integrity
 
-```bash
-npm i
-npm run dev
-```
+- This part is implemented in Unity and AWS side.
 
-## Tips
+## Authentication and Authorization
 
-### Clean database
+### Authentication:
 
-```bash
-docker-compose down
-rm -rf data
-```
+- **Telegram Authentication:** Authentication is done via initData sent by the Telegram Bot.
+
+  - https://github.com/Windfall-dev/portal/blob/main/src/providers/TelegramProvider.tsx
+
+- **Solana Wallet Authentication:** Sign In With Solana authentication is used.
+
+  - https://github.com/Windfall-dev/portal/blob/main/src/providers/SolanaWalletProvider.tsx
+
+### Authorization:
+
+- After portal authentication, an access token is issued and passed to the Unity game. The Unity game sends this token in the Authorization header to the backend, which verifies the token to identify the user ID and store data.
+
+![auth](./docs/auth.png)
+
+## Notable Features
+
+### Telegram Bot
+
+Our platform is also available as a Telegram mini app, providing users with seamless access.
+
+### Programmable Wallet
+
+To simplify onboarding for Telegram users, we utilize programmable wallets specifically for users authenticated via Telegram.
+
+### Solana LST Integration
+
+Integration is being tested using the Jupiter API, initially focusing on trading INT. In the main scenario, we plan to use own Samctum and Jito LST/LRT in the future.

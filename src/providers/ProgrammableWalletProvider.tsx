@@ -8,13 +8,54 @@ import { ProgrammableWalletContext } from "@/contexts/ProgrammableWalletContext"
 import { useAuth } from "@/hooks/useAuth";
 import { useTelegram } from "@/hooks/useTelegram";
 
+// API通信のレスポンスの型を定義
+interface ApiResponse {
+  ok: boolean;
+  points: number;
+  username: string;
+}
+
+// API通信
+async function communicateWithAPI(
+  token: string,
+  userId: string,
+  userName: string,
+): Promise<ApiResponse> {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          user_id: userId,
+          user_name: userName,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("API communication failed");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error communicating with API:", error);
+    throw error;
+  }
+}
+
 export function ProgrammableWalletsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { isEnabled: telegramEnabled } = useTelegram();
-  const { accessToken } = useAuth();
+  const { accessToken, username, setUserId } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -25,6 +66,7 @@ export function ProgrammableWalletsProvider({
   const [, setEncryptionKey] = useState("");
   const [walletId, setWalletId] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [points, setPoints] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +87,23 @@ export function ProgrammableWalletsProvider({
           userToken,
           encryptionKey,
         });
+        // APIとの通信を追加
+        try {
+          // console.log(accessToken)
+          // console.log(walletAddress)
+          const apiResponse = await communicateWithAPI(
+            accessToken,
+            walletAddress,
+            username,
+          );
+          if (apiResponse.ok) {
+            setPoints(apiResponse.points);
+          }
+        } catch (error) {
+          console.error("Error in API communication:", error);
+        }
         setUserToken(userToken);
+        setUserId(walletAddress);
         setEncryptionKey(encryptionKey);
         setWalletId(walletId);
         setWalletAddress(walletAddress);
@@ -53,7 +111,7 @@ export function ProgrammableWalletsProvider({
         setIsLoading(false);
       }
     })();
-  }, [accessToken, telegramEnabled]);
+  }, [accessToken, setUserId, telegramEnabled, username]);
 
   async function createWallet() {
     if (!sdk) {
@@ -128,6 +186,8 @@ export function ProgrammableWalletsProvider({
         walletAddress,
         signMessage,
         sendTransaction,
+        points,
+        username,
       }}
     >
       {children}

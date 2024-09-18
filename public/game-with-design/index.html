@@ -27,12 +27,66 @@
       }
 
       function unityReceiveMessage(event) {
+        console.log("unityReceiveMessage")
+        console.log(event)
         if (event.data.type === "SendToken" && event.data.token) {
           if (unityInstance) {
-            unityInstance.SendMessage('TokenReceiver', 'ReceiveToken', event.data.token);
-          } else {
+            // 送信するデータをオブジェクトにまとめる
+            const dataToSend = {
+                token: event.data.token,
+                apiUrl: event.data.apiUrl,
+                userId: event.data.userId,
+            };
+
+            // JSON文字列に変換
+            const jsonString = JSON.stringify(dataToSend);
+
+            // Unityに送信
+            unityInstance.SendMessage('TokenReceiver', 'ReceiveToken', jsonString);
+        } else {
             console.log("Unity instance is not ready yet.");
-          }
+        }
+        } else if (event.data.type === "StartAPI" || event.data.type === "EndAPI") {
+          console.log("StartAPI")
+          const apiUrl = event.data.type === "StartAPI"
+              ? event.data.api_url + '/api/game/start'
+              : event.data.api_url + '/api/game/end';
+          
+          const body = event.data.type === "StartAPI"
+              ? {
+                  session_id: event.data.session_id,
+                  stage: event.data.stage,
+                  start_time: event.data.start_time,
+                }
+              : {
+                  session_id: event.data.session_id,
+                  game_id: event.data.game_id,
+                  tap_data: event.data.tap_data,
+                  judgment_data: event.data.judgment_data,
+                  end_time: event.data.end_time,
+                  score: event.data.score,
+                  token: event.data.token,
+                  user_id: event.data.user_id
+                };
+          fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${event.data.token}`,
+              },
+              body: JSON.stringify(body),
+          })
+          .then(response => response.json())
+          .then(data => {
+              console.log("API response:", data);
+              // 必要に応じてUnityにレスポンスを返す
+              // if (unityInstance) {
+              //     unityInstance.SendMessage('APICallbackReceiver', 'OnAPICallback', JSON.stringify(data));
+              // }
+          })
+          .catch(error => {
+              console.error("API error:", error);
+          });
         }
       }
 

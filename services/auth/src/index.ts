@@ -4,7 +4,12 @@ import express, { Request, Response } from "express";
 import { handleLogin, handleVerify } from "./handler";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // 許可するオリジン
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // 許可するメソッド
+  }),
+);
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
