@@ -1,7 +1,7 @@
 "use client";
 
 import { useWallet } from "@solana/wallet-adapter-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { handleDepositSol, handleWithdrawSol } from "@/utils/solana-handlers";
 
 import Loading from "./Loading";
@@ -20,13 +21,104 @@ import PopupResultDeposit from "./PopupResultDeposit";
 
 type DialogState = "none" | "confirm" | "loading" | "result" | "error";
 
+const MAX_DEPOSIT_AMOUNT = 0.01;
+
 interface AlertProp {
-  ButtonText: string;
+  buttonText: string;
   amount: string;
 }
 
-export function AlertDialogs({ ButtonText, amount }: AlertProp) {
+export interface RankingUserProps {
+  rank: string;
+  name: string;
+  points: string;
+}
+
+export function AlertDialogs({ buttonText, amount }: AlertProp) {
   const [dialogState, setDialogState] = useState<DialogState>("none");
+  const [user, setUser] = useState<RankingUserProps>({
+    rank: "",
+    name: "",
+    points: "",
+  });
+  const context = useAuth();
+  const userId = context.userId.slice(0, 4) + ".." + context.userId.slice(-4);
+  console.log("UserId", userId, "Context", context);
+
+  const handlePointAdd = async (deposit: number, userToken: string) => {
+    if (!deposit || deposit <= 0) {
+      throw new Error("Deposit amount must be a positive number.");
+    }
+
+    if (!userToken) {
+      throw new Error("User token is required to add points.");
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/point/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${context.accessToken}`,
+          },
+          body: JSON.stringify({
+            deposit,
+            token: userToken,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser((prevUser) => ({
+          ...prevUser,
+          points: data.new_point_balance.toString(), // update points
+        }));
+
+        return data;
+      } else if (response.status === 401) {
+        const errorData = await response.json();
+        console.error("Unauthorized:", errorData.message);
+        throw new Error(errorData.message || "Unauthorized");
+      } else {
+        const errorData = await response.json();
+        console.error("Error adding points:", errorData.message);
+        throw new Error(errorData.message || "Failed to add points");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error in handlePointAdd:", error.message);
+        throw new Error(error.message);
+      } else {
+        console.error("An unexpected error occurred in handlePointAdd.");
+        throw new Error("An unexpected error occurred.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchRankings = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/rankings`,
+          {
+            method: "GET",
+          },
+        );
+        const data = await response.json();
+        const user = data.rankings.find(
+          (user: RankingUserProps) => user.name === userId,
+        );
+        console.log("User", user);
+        setUser(user);
+      } catch (error) {
+        console.error("Error fetching rankings:", error);
+      }
+    };
+    fetchRankings();
+  }, [userId]);
 
   const {
     publicKey,
@@ -57,12 +149,15 @@ export function AlertDialogs({ ButtonText, amount }: AlertProp) {
 
   const runTransaction = async () => {
     try {
-      if (ButtonText === "Deposit") {
+      if (buttonText === "Deposit") {
         await handleDepositSol(
           publicKey!,
           sendTransactionSolana,
-          parseFloat(amount) > 0.01 ? 0.01 : parseFloat(amount),
+          parseFloat(amount) > MAX_DEPOSIT_AMOUNT
+            ? MAX_DEPOSIT_AMOUNT
+            : parseFloat(amount),
         );
+        await handlePointAdd(parseFloat(amount), context.userId);
       } else {
         await handleWithdrawSol(publicKey!, parseFloat(amount));
       }
@@ -77,7 +172,7 @@ export function AlertDialogs({ ButtonText, amount }: AlertProp) {
     <div className="relative">
       {/* Button to start the process */}
       <Button variant="standard" className="w-full" onClick={handleButtonClick}>
-        {ButtonText}
+        {buttonText}
       </Button>
 
       {/* Confirm Dialog */}
@@ -89,7 +184,7 @@ export function AlertDialogs({ ButtonText, amount }: AlertProp) {
                 Are you sure?
               </AlertDialogTitle>
               <AlertDialogDescription className="body text-left">
-                {`You are about to ${ButtonText.toLowerCase()} ${amount} SOL.`}
+                {`You are about to ${buttonText.toLowerCase()} ${amount} SOL.`}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex flex-row items-center justify-end space-x-[10px]">
@@ -131,7 +226,7 @@ export function AlertDialogs({ ButtonText, amount }: AlertProp) {
               borderRadius: "12px",
             }}
           >
-            <PopupResultDeposit resetDialog={resetDialog} />
+            <PopupResultDeposit resetDialog={resetDialog} user={user} />
           </AlertDialogContent>
         </AlertDialog>
       )}

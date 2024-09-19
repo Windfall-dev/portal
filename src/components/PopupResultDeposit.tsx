@@ -2,13 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+import { RankingUserProps } from "./AlertDialogs";
 import { InfoDouble } from "./Info";
 
 interface PopupResultDepositProps {
   resetDialog: () => void;
+  user: RankingUserProps;
 }
 
-function PopupResultDeposit({ resetDialog }: PopupResultDepositProps) {
+function PopupResultDeposit({ resetDialog, user }: PopupResultDepositProps) {
   return (
     <div>
       <div className="flex w-[335px] flex-col justify-between space-y-6 px-[30px] py-10">
@@ -19,17 +21,17 @@ function PopupResultDeposit({ resetDialog }: PopupResultDepositProps) {
           </p>
           <InfoDouble
             text1a="Earned Points"
-            text1b="4,321"
+            text1b={user.points}
             image1="/icon_point.png"
             alt1="Dollar"
             text2a="Ranking"
-            text2b="12,345"
+            text2b={user.rank}
             image2="/icon_ranking.png"
             alt2="Dollar"
             image3="/icon_up.png"
           />
         </div>
-        <Link href="/game">
+        <Link href="/">
           <Image
             src="/banner_sample.png"
             alt="banner_sample"

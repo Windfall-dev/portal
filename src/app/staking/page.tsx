@@ -66,7 +66,7 @@ function TabCard({ value }: TabCardProps) {
         />
       </div>
       <div className="p-5">
-        <AlertDialogs ButtonText={value} amount={amount} />
+        <AlertDialogs buttonText={value} amount={amount} />
       </div>
     </div>
   );
