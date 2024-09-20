@@ -19,7 +19,13 @@ import { handleDepositSol, handleWithdrawSol } from "@/utils/solana-handlers";
 import Loading from "./Loading";
 import PopupResultDeposit from "./PopupResultDeposit";
 
-type DialogState = "none" | "confirm" | "loading" | "result" | "error";
+type DialogState =
+  | "none"
+  | "confirm"
+  | "loading"
+  | "depositResult"
+  | "withdrawResult"
+  | "error";
 
 const MAX_DEPOSIT_AMOUNT = 0.01;
 
@@ -158,10 +164,11 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
             : parseFloat(amount),
         );
         await handlePointAdd(parseFloat(amount), context.userId);
+        setDialogState("depositResult");
       } else {
         await handleWithdrawSol(publicKey!, parseFloat(amount));
+        setDialogState("withdrawResult");
       }
-      setDialogState("result");
     } catch (error) {
       setDialogState("error");
       console.error("Transaction failed", error);
@@ -215,8 +222,8 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
         </AlertDialog>
       )}
 
-      {/* Result Dialog */}
-      {dialogState === "result" && (
+      {/* DepositResult Dialog */}
+      {dialogState === "depositResult" && (
         <AlertDialog open onOpenChange={() => setDialogState("none")}>
           <AlertDialogContent
             style={{
@@ -227,6 +234,28 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
             }}
           >
             <PopupResultDeposit resetDialog={resetDialog} user={user} />
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {/* WithdrawResult Dialog */}
+      {dialogState === "withdrawResult" && (
+        <AlertDialog open onOpenChange={() => setDialogState("none")}>
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-center">
+                Withdrawal has been completed.
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex w-full flex-row items-center">
+              <Button
+                size="M"
+                onClick={() => setDialogState("none")}
+                className="w-full"
+              >
+                OK
+              </Button>
+            </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       )}
