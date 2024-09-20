@@ -32,6 +32,7 @@ interface InfoDoubleProps {
   text2b: string;
   image2: string;
   alt2: string;
+  image3?: string;
 }
 
 /**
@@ -46,6 +47,7 @@ function InfoDouble({
   text2b,
   image2,
   alt2,
+  image3 = undefined,
 }: InfoDoubleProps) {
   return (
     <div className="rounded-lg border-2 border-wf-yellow">
@@ -66,8 +68,9 @@ function InfoDouble({
         <div className="flex items-center space-x-1 px-4 pb-3">
           <Image src={image2} width={24} height={24} alt={alt2} />
           <h2>{text2b}</h2>
+          {image3 && <Image src={image3} width={24} height={24} alt={alt2} />}
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }
