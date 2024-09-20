@@ -26,6 +26,11 @@
         window.parent.postMessage({ type: "RequestToken" }, "*");
       }
 
+      // URLに遷移させるためのJavaScript関数
+      function OpenURL(url) {
+            window.location.href = url;
+        }
+
       function unityReceiveMessage(event) {
         console.log("unityReceiveMessage")
         console.log(event)
