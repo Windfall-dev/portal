@@ -49,7 +49,6 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
   });
   const context = useAuth();
   const userId = context.userId.slice(0, 4) + ".." + context.userId.slice(-4);
-  console.log("UserId", userId, "Context", context);
 
   const handlePointAdd = async (deposit: number, userToken: string) => {
     if (!deposit || deposit <= 0) {
@@ -156,13 +155,17 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
   const runTransaction = async () => {
     try {
       if (buttonText === "Deposit") {
-        await handleDepositSol(
+        const signature = await handleDepositSol(
           publicKey!,
           sendTransactionSolana,
           parseFloat(amount) > MAX_DEPOSIT_AMOUNT
             ? MAX_DEPOSIT_AMOUNT
             : parseFloat(amount),
         );
+        if (!signature) {
+          setDialogState("error");
+          return;
+        }
         await handlePointAdd(parseFloat(amount), context.userId);
         setDialogState("depositResult");
       } else {
