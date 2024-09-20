@@ -79,10 +79,6 @@
           .then(response => response.json())
           .then(data => {
               console.log("API response:", data);
-              // 必要に応じてUnityにレスポンスを返す
-              // if (unityInstance) {
-              //     unityInstance.SendMessage('APICallbackReceiver', 'OnAPICallback', JSON.stringify(data));
-              // }
           })
           .catch(error => {
               console.error("API error:", error);
