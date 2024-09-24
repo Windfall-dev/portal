@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-
+    console.log("provider", provider);
+    console.log("credential", credential);
     const accessToken = handleLogin(provider, credential);
     return NextResponse.json({
       accessToken: accessToken,

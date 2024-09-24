@@ -66,6 +66,7 @@ export function SolanaWalletProvider({
 
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
+      console.log("SolanaWalletProvider: autoSignIn");
       if (adapter.name == "Mobile Wallet Adapter") {
         return false;
       }
