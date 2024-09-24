@@ -1,11 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
 
 export function WebGLGameWithAuth({ url }: { url: string }) {
   const { accessToken, userId } = useAuth();
+
+  const router = useRouter();
 
   const ref = useRef<HTMLIFrameElement>(null);
   const [requestOrigin, setRequestOrigin] = useState<string>("");
@@ -21,9 +24,17 @@ export function WebGLGameWithAuth({ url }: { url: string }) {
         setRequestOrigin(event.origin);
       }
     };
+    const handleGoHomeRequest = (event: MessageEvent) => {
+      if (event.data.type === "goToHome") {
+        console.log("completed");
+        router.push("/");
+      }
+    };
     window.addEventListener("message", handleTokenRequest);
+    window.addEventListener("message", handleGoHomeRequest);
     return () => {
       window.removeEventListener("message", handleTokenRequest);
+      window.removeEventListener("message", handleGoHomeRequest);
     };
   }, []);
 
