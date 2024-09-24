@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import nacl from "tweetnacl";
 
-// import SeasonResult from "@/components/SeasonResult";
+import SeasonResult from "@/components/SeasonResult";
 import Toptab from "@/components/Toptab";
 import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
@@ -26,15 +26,18 @@ export function Header() {
       <div
         className={`flex items-center justify-between p-3 ${pathname !== "/game/play" ? "bg-gray-200" : "absolute left-0 top-0 z-10 w-full"}`}
       >
-        <Link href="/">
-          <Image
-            src="/windfall_logo_h.png"
-            alt="Windfall"
-            width={150}
-            height={40}
-          />
-        </Link>
-        {/* <SeasonResult /> */}
+        {pathname !== "/" ? (
+          <Link href="/">
+            <Image
+              src="/windfall_logo_h.png"
+              alt="Windfall"
+              width={150}
+              height={40}
+            />
+          </Link>
+        ) : (
+          <SeasonResult />
+        )}
         <div>
           {telegram.isLoading && !telegram.isEnabled && (
             <Button disabled>Detecting Platform......</Button>

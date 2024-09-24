@@ -20,11 +20,17 @@
     </div>
     <script>
 
+
       let unityInstance = null;
 
       function onUnityLoaded() {
         window.parent.postMessage({ type: "RequestToken" }, "*");
       }
+
+      // URLに遷移させるためのJavaScript関数
+      function OpenURL(url) {
+            window.top.location = url;
+        }
 
       function unityReceiveMessage(event) {
         console.log("unityReceiveMessage")
@@ -43,9 +49,9 @@
 
             // Unityに送信
             unityInstance.SendMessage('TokenReceiver', 'ReceiveToken', jsonString);
-        } else {
-            console.log("Unity instance is not ready yet.");
-        }
+          } else {
+              console.log("Unity instance is not ready yet.");
+          }
         } else if (event.data.type === "StartAPI" || event.data.type === "EndAPI") {
           console.log("StartAPI")
           const apiUrl = event.data.type === "StartAPI"
@@ -79,13 +85,34 @@
           .then(response => response.json())
           .then(data => {
               console.log("API response:", data);
-              // 必要に応じてUnityにレスポンスを返す
-              // if (unityInstance) {
-              //     unityInstance.SendMessage('APICallbackReceiver', 'OnAPICallback', JSON.stringify(data));
-              // }
           })
           .catch(error => {
               console.error("API error:", error);
+          });
+        } else if (event.data.type === "RankAPI") {
+          const apiUrl = event.data.api_url + '/api/point/rank';
+          
+          const body = {
+                  point: event.data.point,
+                };
+          fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${event.data.token}`,
+              },
+              body: JSON.stringify(body),
+          })
+          .then(response => response.json())
+          .then(data => {
+              console.log("API response:", data);
+              if (unityInstance) {
+                  unityInstance.SendMessage('APICallbackReceiver', 'OnAPICallback', JSON.stringify(data));
+              }
+          })
+          .catch(error => {
+              console.error("API error:", error);
+              
           });
         }
       }
