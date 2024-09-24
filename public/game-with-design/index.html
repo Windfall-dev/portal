@@ -29,8 +29,8 @@
 
       // URLに遷移させるためのJavaScript関数
       function OpenURL(url) {
-            window.top.location = url;
-        }
+        window.parent.postMessage({ type: "goToHome" }, "*");
+      }
 
       function unityReceiveMessage(event) {
         console.log("unityReceiveMessage")
