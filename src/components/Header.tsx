@@ -1,6 +1,6 @@
 "use client";
 
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+// import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
 import { useTelegram } from "@/hooks/useTelegram";
 import { truncate } from "@/lib/utils";
+
+import { CustomWalletMultiButton } from "./CustomWalletMultiButton";
 
 nacl.sign.detached.verify;
 export function Header() {
@@ -68,7 +70,12 @@ export function Header() {
               )}
             </>
           )}
-          {!telegram.isLoading && !telegram.isEnabled && <WalletMultiButton />}
+          {!telegram.isLoading && !telegram.isEnabled && (
+            <CustomWalletMultiButton
+              style={{ backgroundColor: "#FF9100" }}
+              className="h-7 w-20"
+            />
+          )}
         </div>
       </div>
       <Toptab />

@@ -19,7 +19,7 @@ const GamePage: React.FC = () => (
       <div className="flex flex-col items-center">
         <div className="flex w-full justify-center bg-gradient-to-t from-white to-white/0">
           <Image
-            src="/game_icon.png"
+            src="/game_icon_01.png"
             height={120}
             width={120}
             alt="game icon"
