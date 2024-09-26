@@ -6,7 +6,7 @@ interface ProgrammableWalletContextProps {
   walletAddress: string;
   createWallet: () => void;
   signMessage: (message: string) => void;
-  sendTransaction: (transaction: string) => void;
+  signTransaction: (transaction: string) => Promise<string>;
   points: number;
   username: string;
 }

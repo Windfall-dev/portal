@@ -67,10 +67,12 @@ export async function getSignTransactionChallengId(
   walletId: string,
   transaction: string,
 ) {
-  const result = await circleUserSdk.signTransaction({
+  const _result = await circleUserSdk.signTransaction({
     userToken,
     walletId,
     transaction,
   });
-  return result;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = _result as any;
+  return result.data.challengeId;
 }
