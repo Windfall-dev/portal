@@ -74,6 +74,7 @@ export function ProgrammableWalletsProvider({
         return;
       }
       if (!initialized.current) {
+        console.log("ProgrammableWalletsProvider: init");
         initialized.current = true;
         setIsLoading(true);
         const { userToken, encryptionKey, walletId, walletAddress } =
