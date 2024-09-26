@@ -25,6 +25,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en" suppressHydrationWarning className="overflow-hidden">
       <head>
         <meta
+          http-equiv="Permissions-Policy"
+          content="clipboard-write=(self)"
+        />
+        <meta
           name="viewport"
           content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no"
         />
