@@ -36,7 +36,7 @@ export function WebGLGameWithAuth({ url }: { url: string }) {
       window.removeEventListener("message", handleTokenRequest);
       window.removeEventListener("message", handleGoHomeRequest);
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (requestOrigin && ref.current && ref.current.contentWindow) {
