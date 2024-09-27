@@ -27,8 +27,8 @@ const GamePage: React.FC = () => (
           />
         </div>
         <div className="px-5 py-4 text-center">
-          <p className="text-body-bold text-muted-foreground">Puzzle</p>
-          <h3>Game Title ABCDE</h3>
+          <p className="text-body-bold text-muted-foreground">Music</p>
+          <h3>BEAT PET</h3>
           <p className="body text-muted-foreground">
             Game Description abcd efghijk. Game Description abcd efghijk.Game
             Description.
