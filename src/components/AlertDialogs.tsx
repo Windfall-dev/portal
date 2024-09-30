@@ -28,8 +28,6 @@ type DialogState =
   | "withdrawResult"
   | "error";
 
-const MAX_DEPOSIT_AMOUNT = 0.01;
-
 interface AlertProp {
   actionType: "deposit" | "withdraw";
   amount: string;
@@ -48,7 +46,6 @@ export function AlertDialogs({ actionType, amount }: AlertProp) {
     amount,
     contextUserId: context.userId,
     handleAddPoints,
-    MAX_DEPOSIT_AMOUNT,
   });
 
   const userId = context.userId.slice(0, 4) + ".." + context.userId.slice(-4);
@@ -72,7 +69,7 @@ export function AlertDialogs({ actionType, amount }: AlertProp) {
       }
     };
     fetchRankings();
-  }, [userId, user, setUser]);
+  }, [userId, setUser]);
 
   const handleButtonClick = () => {
     if (!amount || parseFloat(amount) <= 0) {

@@ -51,13 +51,12 @@ export function useDepositSol(): useDepositSolResult {
       );
 
       const toPublicKey = new PublicKey(WindfallPublicKey);
-      const lamportsToSend = amount * LAMPORTS_PER_SOL;
 
       const transferTransaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: toPublicKey,
-          lamports: lamportsToSend,
+          lamports: amount,
         }),
       );
 
@@ -90,7 +89,7 @@ export function useDepositSol(): useDepositSolResult {
   const depositTelegram = async () => {
     const connection = new Connection("https://api.devnet.solana.com");
     const { blockhash } = await connection.getLatestBlockhash();
-    const amount = 0.01 * LAMPORTS_PER_SOL;
+    const lamportAmount = 0.01;
     const transaction = new Transaction({
       recentBlockhash: blockhash,
       feePayer: new PublicKey(walletAddress),
@@ -98,7 +97,7 @@ export function useDepositSol(): useDepositSolResult {
     const instruction = SystemProgram.transfer({
       fromPubkey: new PublicKey(walletAddress),
       toPubkey: new PublicKey(WindfallPublicKey),
-      lamports: amount,
+      lamports: lamportAmount * LAMPORTS_PER_SOL,
     });
     console.log("instruction", instruction);
     transaction.add(instruction);

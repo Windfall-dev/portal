@@ -17,14 +17,19 @@ export function useAddPoints() {
 
   const context = useAuth();
 
-  const handleAddPoints = async (Deposit: number, userToken: string) => {
-    if (!Deposit || Deposit <= 0) {
+  const handleAddPoints = async (deposit: number, userToken: string) => {
+    if (!deposit || deposit <= 0) {
       throw new Error("Deposit amount must be a positive number.");
     }
 
     if (!userToken) {
       throw new Error("User token is required to add points.");
     }
+
+    const requestBody = {
+      deposit,
+      token: userToken,
+    };
 
     try {
       const response = await fetch(
@@ -35,10 +40,7 @@ export function useAddPoints() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${context.accessToken}`,
           },
-          body: JSON.stringify({
-            Deposit,
-            token: userToken,
-          }),
+          body: JSON.stringify(requestBody),
         },
       );
 
