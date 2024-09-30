@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-import { RankingUserProps } from "./AlertDialogs";
+import { RankingUserProps } from "@/hooks/useAddPoints";
+
 import { InfoDouble } from "./Info";
 
 interface PopupResultDepositProps {
