@@ -37,10 +37,10 @@ function StakingPage() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="deposit" className="">
-            <TabCard value="Deposit" />
+            <TabCard actionType="deposit" />
           </TabsContent>
           <TabsContent value="withdraw" className="">
-            <TabCard value="Withdraw" />
+            <TabCard actionType="withdraw" />
           </TabsContent>
         </Tabs>
       </div>
@@ -49,24 +49,24 @@ function StakingPage() {
 }
 
 interface TabCardProps {
-  value: string;
+  actionType: "deposit" | "withdraw";
 }
 
-function TabCard({ value }: TabCardProps) {
+function TabCard({ actionType }: TabCardProps) {
   const [amount, setAmount] = useState("");
 
   return (
     <div className="flex flex-col rounded-md border border-border">
-      <h3 className="px-5 py-4">{value}</h3>
+      <h3 className="px-5 py-4 capitalize">{actionType}</h3>
       <div className="px-5">
         <Input
           className="body px-5 text-gray"
-          placeholder={`Enter amount to ${value.toLowerCase()}`}
+          placeholder={`Enter amount to ${actionType}`}
           onChange={(e) => setAmount(e.target.value)}
         />
       </div>
       <div className="p-5">
-        <AlertDialogs buttonText={value} amount={amount} />
+        <AlertDialogs actionType={actionType} amount={amount} />
       </div>
     </div>
   );

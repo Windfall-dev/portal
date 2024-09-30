@@ -13,8 +13,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { RankingUserProps, useAddPoints } from "@/hooks/useAddPoints";
 import { useAuth } from "@/hooks/useAuth";
-import { handleDepositSol, handleWithdrawSol } from "@/utils/solana-handlers";
+import { useTransaction } from "@/hooks/useTransaction";
 
 import Loading from "./Loading";
 import PopupResultDeposit from "./PopupResultDeposit";
@@ -30,78 +31,27 @@ type DialogState =
 const MAX_DEPOSIT_AMOUNT = 0.01;
 
 interface AlertProp {
-  buttonText: string;
+  actionType: "deposit" | "withdraw";
   amount: string;
 }
 
-export interface RankingUserProps {
-  rank: string;
-  name: string;
-  points: string;
-}
-
-export function AlertDialogs({ buttonText, amount }: AlertProp) {
+export function AlertDialogs({ actionType, amount }: AlertProp) {
   const [dialogState, setDialogState] = useState<DialogState>("none");
-  const [user, setUser] = useState<RankingUserProps>({
-    rank: "",
-    name: "",
-    points: "",
-  });
+
   const context = useAuth();
+  const { publicKey, sendTransaction } = useWallet();
+  const { handleAddPoints, user, setUser } = useAddPoints();
+  const { runTransaction } = useTransaction({
+    publicKey,
+    sendTransaction,
+    actionType,
+    amount,
+    contextUserId: context.userId,
+    handleAddPoints,
+    MAX_DEPOSIT_AMOUNT,
+  });
+
   const userId = context.userId.slice(0, 4) + ".." + context.userId.slice(-4);
-
-  const handlePointAdd = async (deposit: number, userToken: string) => {
-    if (!deposit || deposit <= 0) {
-      throw new Error("Deposit amount must be a positive number.");
-    }
-
-    if (!userToken) {
-      throw new Error("User token is required to add points.");
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/point/add`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${context.accessToken}`,
-          },
-          body: JSON.stringify({
-            deposit,
-            token: userToken,
-          }),
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser((prevUser) => ({
-          ...prevUser,
-          points: data.new_point_balance.toString(), // update points
-        }));
-
-        return data;
-      } else if (response.status === 401) {
-        const errorData = await response.json();
-        console.error("Unauthorized:", errorData.message);
-        throw new Error(errorData.message || "Unauthorized");
-      } else {
-        const errorData = await response.json();
-        console.error("Error adding points:", errorData.message);
-        throw new Error(errorData.message || "Failed to add points");
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error in handlePointAdd:", error.message);
-        throw new Error(error.message);
-      } else {
-        console.error("An unexpected error occurred in handlePointAdd.");
-        throw new Error("An unexpected error occurred.");
-      }
-    }
-  };
 
   useEffect(() => {
     const fetchRankings = async () => {
@@ -116,20 +66,13 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
         const user = data.rankings.find(
           (user: RankingUserProps) => user.name === userId,
         );
-        console.log("User", user);
         setUser(user);
       } catch (error) {
         console.error("Error fetching rankings:", error);
       }
     };
     fetchRankings();
-  }, [userId]);
-
-  const {
-    publicKey,
-    sendTransaction: sendTransactionSolana,
-    connected,
-  } = useWallet();
+  }, [userId, user, setUser]);
 
   const handleButtonClick = () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -139,50 +82,29 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
     setDialogState("confirm");
   };
 
-  const handleTransaction = () => {
-    if (!connected || !publicKey) {
-      setDialogState("error");
-      return;
-    }
+  const handleTransaction = async () => {
     setDialogState("loading");
-    runTransaction();
+
+    try {
+      await runTransaction();
+      setDialogState(
+        actionType === "deposit" ? "depositResult" : "withdrawResult",
+      );
+    } catch (error) {
+      console.error(error);
+      setDialogState("error");
+    }
   };
 
   const resetDialog = () => {
     setDialogState("none");
   };
 
-  const runTransaction = async () => {
-    try {
-      if (buttonText === "Deposit") {
-        const signature = await handleDepositSol(
-          publicKey!,
-          sendTransactionSolana,
-          parseFloat(amount) > MAX_DEPOSIT_AMOUNT
-            ? MAX_DEPOSIT_AMOUNT
-            : parseFloat(amount),
-        );
-        if (!signature) {
-          setDialogState("error");
-          return;
-        }
-        await handlePointAdd(parseFloat(amount), context.userId);
-        setDialogState("depositResult");
-      } else {
-        await handleWithdrawSol(publicKey!, parseFloat(amount));
-        setDialogState("withdrawResult");
-      }
-    } catch (error) {
-      setDialogState("error");
-      console.error("Transaction failed", error);
-    }
-  };
-
   return (
     <div className="relative">
       {/* Button to start the process */}
       <Button variant="standard" className="w-full" onClick={handleButtonClick}>
-        {buttonText}
+        {actionType}
       </Button>
 
       {/* Confirm Dialog */}
@@ -194,7 +116,7 @@ export function AlertDialogs({ buttonText, amount }: AlertProp) {
                 Are you sure?
               </AlertDialogTitle>
               <AlertDialogDescription className="body text-left">
-                {`You are about to ${buttonText.toLowerCase()} ${amount} SOL.`}
+                {`You are about to ${actionType} ${amount} SOL.`}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex flex-row items-center justify-end space-x-[10px]">
