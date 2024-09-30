@@ -32,9 +32,9 @@ export function useDepositSol(): useDepositSolResult {
   const depositSolana = async (
     publicKey: PublicKey,
     sendTransactionSolana: WalletAdapterProps["sendTransaction"],
-    lamportAmount: number = 0.01 * LAMPORTS_PER_SOL,
+    amount: number,
   ): Promise<string | undefined> => {
-    console.log("walletAddress", walletAddress);
+    const lamportAmount = amount * LAMPORTS_PER_SOL;
     if (!publicKey) {
       const err = new Error("No Solana wallet connected");
       setError(err);
@@ -89,7 +89,7 @@ export function useDepositSol(): useDepositSolResult {
   const depositTelegram = async () => {
     const connection = new Connection("https://api.devnet.solana.com");
     const { blockhash } = await connection.getLatestBlockhash();
-    const lamportAmount = 0.01;
+    const lamportAmount = 0.01 * LAMPORTS_PER_SOL;
     const transaction = new Transaction({
       recentBlockhash: blockhash,
       feePayer: new PublicKey(walletAddress),
@@ -97,7 +97,7 @@ export function useDepositSol(): useDepositSolResult {
     const instruction = SystemProgram.transfer({
       fromPubkey: new PublicKey(walletAddress),
       toPubkey: new PublicKey(WindfallPublicKey),
-      lamports: lamportAmount * LAMPORTS_PER_SOL,
+      lamports: lamportAmount,
     });
     console.log("instruction", instruction);
     transaction.add(instruction);
