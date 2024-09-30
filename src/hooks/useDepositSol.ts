@@ -32,7 +32,7 @@ export function useDepositSol(): useDepositSolResult {
   const depositSolana = async (
     publicKey: PublicKey,
     sendTransactionSolana: WalletAdapterProps["sendTransaction"],
-    amount: number = 0.01,
+    lamportAmount: number = 0.01 * LAMPORTS_PER_SOL,
   ): Promise<string | undefined> => {
     console.log("walletAddress", walletAddress);
     if (!publicKey) {
@@ -56,7 +56,7 @@ export function useDepositSol(): useDepositSolResult {
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: toPublicKey,
-          lamports: amount,
+          lamports: lamportAmount,
         }),
       );
 
