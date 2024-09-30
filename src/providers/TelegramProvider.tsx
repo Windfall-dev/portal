@@ -24,7 +24,9 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
         if (window.Telegram?.WebApp) {
           const tgWebApp = window.Telegram.WebApp;
           tgWebApp.ready();
-          const initData = tgWebApp.initData;
+          // const initData = tgWebApp.initData;
+          const initData =
+            "query_id=AAGpYo4jAAAAAKlijiOttpMm&user=%7B%22id%22%3A596533929%2C%22first_name%22%3A%22Taiju%22%2C%22last_name%22%3A%22Sanagi%22%2C%22username%22%3A%22taijusanagi%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1727167066&hash=8f6c8e56cebaea97b0eff53ad07499696e65ab1ff2ceec3f6f2a7bdfda80780a";
           // console.log("initData", initData);
           if (initData) {
             setIsEnabled(true);
