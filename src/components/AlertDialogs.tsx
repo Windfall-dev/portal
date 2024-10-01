@@ -127,22 +127,7 @@ export function AlertDialogs({ actionType, amount }: AlertProp) {
       )}
 
       {/* Loading Dialog */}
-      {dialogState === "loading" && (
-        <AlertDialog open onOpenChange={() => setDialogState("none")}>
-          <AlertDialogContent
-            style={{
-              margin: "unset",
-              padding: "unset",
-              border: "unset",
-              borderRadius: "12px",
-            }}
-          >
-            <div className="flex flex-col items-center">
-              <Loading />
-            </div>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      {dialogState === "loading" && <Loading />}
 
       {/* DepositResult Dialog */}
       {dialogState === "depositResult" && (
