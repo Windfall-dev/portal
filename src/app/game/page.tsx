@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const GamePage: React.FC = () => (
   <main className="mx-auto bg-transparent">
-    <div className="relative aspect-square max-h-[430px] overflow-hidden">
+    <div className="relative aspect-square overflow-hidden">
       <Image
         src="/game_thumb_sample1.png"
         fill={true}
@@ -30,8 +30,8 @@ const GamePage: React.FC = () => (
           <p className="text-body-bold text-muted-foreground">Music</p>
           <h3>BEAT PET</h3>
           <p className="body text-muted-foreground">
-            Game Description abcd efghijk. Game Description abcd efghijk.Game
-            Description.
+            In Beat Pet, cute pets will test your sense of <br /> rhythm and
+            luck!
           </p>
         </div>
         <Link href="../../game/play">
