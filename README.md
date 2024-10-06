@@ -11,6 +11,13 @@
 
 - Unity, AWS
 
+### Solana Contracts
+
+- Light Protocol (ZK Compression)
+- MagicBlock Ephemeral Rollups
+- Metaplex Core NFT
+- Solana Actions & Blinks
+
 ## Ensuring Game Result Integrity
 
 - This part is implemented in Unity and AWS side.
@@ -69,3 +76,34 @@ To simplify onboarding for Telegram users, we utilize programmable wallets speci
 ### Solana LST Integration
 
 Integration is being tested using the Jupiter API, initially focusing on trading INT. In the main scenario, we plan to use own Samctum and Jito LST/LRT in the future.
+
+
+## Solana Programs
+
+Solana program prototypes are stored in separate subdirectories.
+For now, we are focusing on verifying technical feasibility and are actively working on incorporating advanced technologies.
+
+### Staking
+
+`staking` program is located in the `programs/staking` directory.
+
+The deposit and withdrawal functionalities are not implemented yet.
+Currently, we are verifying the process of minting a Metaplex Core NFT programmatically when a user creates an account at the start of staking.
+We are also conducting experiments with Attribute plugin to dynamically add attributes to NFTs.
+
+### Raffle
+
+`raffle` program is located in the `programs/raffle` directory.
+
+Since our raffles are held daily, creating an account to store user lottery information each time would result in non-negligible account costs.
+To address this, we utilize Light Protocol's ZK Compression to manage user information in compressed accounts.
+Additionally, to accommodate large-scale users who may hold numerous lottery tickets, we have designed the lottery drawing process to be executable using MagicBlock's Ephemeral Rollups.
+We aim to reduce costs through its gasless transactions.
+
+### Blinks
+
+Solana Actions & Blinks implementation can be found in the `programs/blinks` directory.
+
+The Solana program in this directory is fundamentally similar to the raffle program, but it is designed in a gacha-style format.
+By implementing Blinks, we aim to provide an easy way for users to participate in the lottery through X (formerly Twitter) posts and, in the future, other social media platforms.
+
