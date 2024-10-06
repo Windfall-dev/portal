@@ -83,26 +83,29 @@ Integration is being tested using the Jupiter API, initially focusing on trading
 Solana program prototypes are stored in separate subdirectories.
 For now, we are focusing on verifying technical feasibility and are actively working on incorporating advanced technologies.
 
-### Staking
-
-`staking` program is located in the `programs/staking` directory.
-
-The deposit and withdrawal functionalities are not implemented yet.
-Currently, we are verifying the process of minting a Metaplex Core NFT programmatically when a user creates an account at the start of staking.
-We are also conducting experiments with Attribute plugin to dynamically add attributes to NFTs.
-
 ### Raffle
 
 `raffle` program is located in the `programs/raffle` directory.
+For details on how to build and run the program, please refer to [programs/raffle/README.md](programs/raffle/README.md).
 
 Since our raffles are held daily, creating an account to store user lottery information each time would result in non-negligible account costs.
 To address this, we utilize Light Protocol's ZK Compression to manage user information in compressed accounts.
 Additionally, to accommodate large-scale users who may hold numerous lottery tickets, we have designed the lottery drawing process to be executable using MagicBlock's Ephemeral Rollups.
 We aim to reduce costs through its gasless transactions.
 
+### Staking
+
+`staking` program is located in the `programs/staking` directory.
+For more details, please see [programs/staking/README.md](programs/staking/README.md).
+
+The deposit and withdrawal functionalities are not implemented yet.
+Currently, we are verifying the process of minting a Metaplex Core NFT programmatically when a user creates an account at the start of staking.
+We are also conducting experiments with Attribute plugin to dynamically add attributes to NFTs.
+
 ### Blinks
 
 Solana Actions & Blinks implementation can be found in the `programs/blinks` directory.
+Please refer to [programs/blinks/README.md](programs/blinks/README.md) for more information.
 
 The Solana program in this directory is fundamentally similar to the raffle program, but it is designed in a gacha-style format.
 By implementing Blinks, we aim to provide an easy way for users to participate in the lottery through X (formerly Twitter) posts and, in the future, other social media platforms.

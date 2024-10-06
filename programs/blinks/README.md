@@ -1,4 +1,4 @@
-# Prototype Raffle Program
+# Prototype Raffle Program and Blinks
 
 This repository contains a prototype Raffle program built on the Solana blockchain as well as the implementation of corresponding Blinks.
 The program allows users to create and participate in raffles, as well as draw tickets to win prizes.
