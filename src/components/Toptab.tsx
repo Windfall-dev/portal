@@ -32,7 +32,11 @@ function Toptab() {
           <Link href="/staking">
             <div className="flex h-5 w-full flex-row items-center justify-center border-r-2 border-border">
               <Image
-                src="/icon_staking.png"
+                src={
+                  activeTab === "staking"
+                    ? "icon_staking_orange.svg"
+                    : "/icon_staking.svg"
+                }
                 alt="Staking"
                 height={20}
                 width={20}
@@ -51,7 +55,11 @@ function Toptab() {
           >
             <div className="flex h-5 w-full flex-row items-center justify-center">
               <Image
-                src="/icon_game.png"
+                src={
+                  activeTab === "game"
+                    ? "icon_game_orange.svg"
+                    : "/icon_game.svg"
+                }
                 alt="Staking"
                 height={20}
                 width={20}

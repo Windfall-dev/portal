@@ -10,6 +10,7 @@ import nacl from "tweetnacl";
 import SeasonResult from "@/components/SeasonResult";
 import Toptab from "@/components/Toptab";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { useProgrammableWallet } from "@/hooks/useProgrammableWallet";
 import { useTelegram } from "@/hooks/useTelegram";
 import { truncate } from "@/lib/utils";
@@ -18,6 +19,7 @@ import { CustomWalletMultiButton } from "./CustomWalletMultiButton";
 
 nacl.sign.detached.verify;
 export function Header() {
+  const context = useAuth();
   const telegram = useTelegram();
   const programmableWallet = useProgrammableWallet();
 
@@ -52,8 +54,15 @@ export function Header() {
               height={40}
             />
           </Link>
-        ) : (
+        ) : context.accessToken != "" ? (
           <SeasonResult />
+        ) : (
+          <Image
+            src="/windfall_logo_h.png"
+            alt="Windfall"
+            width={150}
+            height={40}
+          />
         )}
         <div>
           {telegram.isLoading && !telegram.isEnabled && (

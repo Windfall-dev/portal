@@ -84,6 +84,7 @@ function SeasonResult() {
                 image2="/icon_ranking.png"
                 alt2="Ranking"
                 optionStyle={["text-center", "justify-center"]}
+                isSol={true}
               />
             </div>
 
