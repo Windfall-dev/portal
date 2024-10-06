@@ -33,10 +33,21 @@
 
 ![auth](./docs/auth.png)
 
-## Demo Play Instructions
+## App Demo Play Instructions
 
 ### Preparation
-1. 
+1. Switch the wallet to Solana Devnet
+2. Prepare a faucet with more than 0.01 SOL
+
+### Launching Demo
+1. Access URL (https://windfall-prototype.vercel.app/).
+2. Press the Staking button.
+3. Enter 0.01 and press the Deposit button (The depositable amount is fixed at 0.01 SOL).
+4. Confirm that points and rankings have increased.
+5. Press the Games button and play BEAT PET.
+6. Confirm that points and rankings have changed based on the play results.
+7. Press the ✕ button on the game title screen to return to the TOP page.
+8. Press the Staking button, select the Withdraw tab from the Staking screen, enter 0.01, and withdraw SOL.
 
 
 ## Notable Features
