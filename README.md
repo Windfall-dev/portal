@@ -49,6 +49,12 @@
 7. Press the ✕ button on the game title screen to return to the TOP page.
 8. Press the Staking button, select the Withdraw tab from the Staking screen, enter 0.01, and withdraw SOL.
 
+## Blinks Lottery Demo Play Instructions
+
+### Preparation & play
+1. Switch the wallet to Solana mainnet.
+2. Turn on Solana Actions on X.com from Experimental Features.
+3. Access X from this URL and press the Pull Now button to draw the lottery.
 
 ## Notable Features
 
