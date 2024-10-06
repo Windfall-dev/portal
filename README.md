@@ -33,6 +33,12 @@
 
 ![auth](./docs/auth.png)
 
+## Demo Play Instructions
+
+### Preparation
+1. 
+
+
 ## Notable Features
 
 ### Telegram Bot
