@@ -93,6 +93,16 @@ To address this, we utilize Light Protocol's ZK Compression to manage user infor
 Additionally, to accommodate large-scale users who may hold numerous lottery tickets, we have designed the lottery drawing process to be executable using MagicBlock's Ephemeral Rollups.
 We aim to reduce costs through its gasless transactions.
 
+#### Technical Implementation Highlights
+
+1. **ZK Compressed Accounts**: We leverage Light Protocol's compressed accounts to significantly reduce on-chain storage costs. This allows for efficient storage of user data and raffle entries.
+
+2. **Ephemeral Rollups**: Our integration with MagicBlock's Ephemeral Rollups enables gas-less transactions for drawing winners, enhancing scalability and reducing on-chain transaction costs.
+
+3. **Verifiable Random Function (VRF)** (in progress): We incorporate a secure randomness source using a VRF, ensuring fair and tamper-resistant prize drawings.
+
+4. **Merkle Tree for Eligibility** (confirmed in prototype): For private raffles, we use a Merkle tree to efficiently verify user eligibility without storing all eligible addresses on-chain.
+
 ### Staking
 
 `staking` program is located in the `programs/staking` directory.
@@ -101,6 +111,18 @@ For more details, please see [programs/staking/README.md](programs/staking/READM
 The deposit and withdrawal functionalities are not implemented yet.
 Currently, we are verifying the process of minting a Metaplex Core NFT programmatically when a user creates an account at the start of staking.
 We are also conducting experiments with Attribute plugin to dynamically add attributes to NFTs.
+
+#### Technical Implementation Highlights
+
+1. **Player Profile NFT**: We have adopted Metaplex's Core Asset for Core NFT implementation. When a user creates a staking account, an NFT is automatically minted by the contract. User status, which reflects the user's rank and staking amount, is associated with the NFT's attributes. Users can transfer and/or trade their NFTs along with their status.
+
+2. **Integration with Metaplex**: By utilizing Metaplex's Core Asset plugin architecture, we open up various possibilities for NFT utilization. This approach ensures compatibility with a wide range of existing Solana NFT infrastructure and marketplaces, while also enabling flexible extensions and customizations.
+
+3. **Efficient Staking Mechanism**: We provide a platform where users can enjoy the benefits of DeFi, such as Solana's liquid staking and restaking, simply by playing the game, without needing to deeply understand these new technologies.
+
+4. **Scalable Reward Distribution** (planned): We will implement a scalable reward distribution mechanism that can handle a large number of stakers without significant performance degradation. To achieve this, we plan to utilize Light Protocol's ZK Compressed Token mechanism, which will allow us to efficiently compress and store large amounts of reward data on-chain, enabling us to manage rewards for a vast number of participants while maintaining high performance and low costs.
+
+5. **Composability with Other Solana Programs**: Our staking program is designed to be easily composable with other Solana programs, allowing for future expansions and integrations.
 
 ### Blinks
 
