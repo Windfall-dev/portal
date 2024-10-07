@@ -11,7 +11,7 @@ function InfoSingle() {
         <div className="text-body-title text-wf-red">Prize Pool</div>
         <Link href="/staking">
           <Button size="S">
-            <p className="text-body2_bold">STAKING &gt;</p>
+            <p className="text-body2_bold">DEPOSIT &gt;</p>
           </Button>
         </Link>
       </div>

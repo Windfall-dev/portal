@@ -29,10 +29,10 @@ const GamePage: React.FC = () => (
         <div className="px-5 py-4 text-center">
           <p className="text-body-bold text-muted-foreground">Music</p>
           <h3>BEAT PET</h3>
-          <p className="body text-muted-foreground">
+          {/* <p className="body text-muted-foreground">
             In Beat Pet, cute pets will test your sense of <br /> rhythm and
             luck!
-          </p>
+          </p> */}
         </div>
         <Link href="../../game/play">
           <Button size="L" className="w-[315px] rounded-xl px-[30px]">

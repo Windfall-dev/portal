@@ -41,7 +41,7 @@ function Toptab() {
                 height={20}
                 width={20}
               />
-              <div className="text-body2_bold m-[6px]">Staking</div>{" "}
+              <div className="text-body2_bold m-[6px]">Deposit</div>{" "}
             </div>
           </Link>
         </TabsTrigger>
