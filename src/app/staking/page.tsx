@@ -11,7 +11,7 @@ function StakingPage() {
   return (
     <main className="space-y-10 overflow-y-auto">
       <div>
-        <SectionTitle title="Staking" />
+        <SectionTitle title="Deposit" />
         <div className="px-5">
           <InfoDouble
             text1a="Total Value Locked"
