@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Notes
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - UIFront
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Effect
+    uniqueID: 1605649979
+    locked: 0
+  - name: Title
+    uniqueID: 2140546287
+    locked: 0
+  - name: Text
+    uniqueID: 2536960343
+    locked: 0
+  - name: UI
+    uniqueID: 1940802855
+    locked: 0
+  - name: UIFront
+    uniqueID: 485766675
+    locked: 0
+  - name: Character
+    uniqueID: 1792963561
+    locked: 0

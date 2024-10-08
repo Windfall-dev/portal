@@ -1,0 +1,29 @@
+info face=bpet_number_yellow size=300 bold=0 italic=0 charset= unicode= stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0 outline=0
+common lineHeight=300 base=300 scaleW=2048 scaleH=1024 pages=1 packed=0
+page id=0 file="bpet_number_yellow.png"
+chars count=23
+char id=49 x=32 y=0 width=128 height=288 xoffset=0 yoffset=0 xadvance=128 page=0 chnl=0 letter="1"
+char id=50 x=192 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="2"
+char id=51 x=384 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="3"
+char id=52 x=576 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="4"
+char id=53 x=768 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="5"
+char id=54 x=960 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="6"
+char id=55 x=1152 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="7"
+char id=56 x=1344 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="8"
+char id=57 x=1536 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="9"
+char id=48 x=1728 y=0 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="0"
+char id=58 x=1920 y=0 width=128 height=288 xoffset=0 yoffset=0 xadvance=128 page=0 chnl=0 letter=":"
+char id=37 x=0 y=288 width=128 height=288 xoffset=0 yoffset=0 xadvance=200 page=0 chnl=0 letter="%"
+char id=63 x=192 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=200 page=0 chnl=0 letter="?"
+char id=33 x=384 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=180 page=0 chnl=0 letter="!"
+char id=47 x=576 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter="/"
+char id=40 x=768 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter="("
+char id=41 x=960 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter=")"
+char id=112 x=1152 y=288 width=128 height=288 xoffset=0 yoffset=0 xadvance=140 page=0 chnl=0 letter="p"
+char id=43 x=1344 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter="+"
+char id=45 x=1536 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter="-"
+char id=120 x=1728 y=288 width=192 height=288 xoffset=0 yoffset=0 xadvance=192 page=0 chnl=0 letter="x"
+char id=46 x=1920 y=288 width=128 height=288 xoffset=0 yoffset=0 xadvance=128 page=0 chnl=0 letter="."
+char id=32 x=1 y=1 width=1 height=1 xoffset=0 yoffset=0 xadvance=120 page=0 chnl=0
+
+kernings count=0

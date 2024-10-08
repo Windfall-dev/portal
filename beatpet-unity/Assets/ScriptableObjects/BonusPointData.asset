@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cd64e35a1444bbc836ed579554ee0a, type: 3}
+  m_Name: BonusPointData
+  m_EditorClassIdentifier: 
+  BonusPointList:
+  - rouletteType: 0
+    Point_Section1: 0
+    Point_Section2: 5
+    Point_Section3: 5
+    Point_Section4: 0
+    Point_Section5: 0
+    Point_Section6: 5
+    Point_Section7: 5
+    Point_Section8: 0
+  - rouletteType: 1
+    Point_Section1: 0
+    Point_Section2: 5
+    Point_Section3: 5
+    Point_Section4: 20
+    Point_Section5: 0
+    Point_Section6: 5
+    Point_Section7: 5
+    Point_Section8: 20
+  - rouletteType: 2
+    Point_Section1: 100
+    Point_Section2: 0
+    Point_Section3: 10
+    Point_Section4: 10
+    Point_Section5: 50
+    Point_Section6: 50
+    Point_Section7: 10
+    Point_Section8: 10
