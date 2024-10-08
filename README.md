@@ -65,7 +65,7 @@ The backend system is set up using AWS services, with API Gateway handling the H
 ### Preparation & play
 1. Switch the wallet to Solana mainnet.
 2. Turn on Solana Actions on X.com from Experimental Features.
-3. Access X from 'https://x.com/T315475286/status/1842823734052425940' and press the Pull Now button to draw the lottery.
+3. Access X from '[https://x.com/T315475286/status/1842823734052425940](https://x.com/SouthCloud0703/status/1843578694734131422)' and press the Pull Now button to draw the lottery.
 
 > This demo was originally designed to allow only one draw per wallet. However, for the purpose of the hackathon review, we have enabled multiple draws.
 > Please note that the best rank previously achieved by that wallet will be displayed each time.
