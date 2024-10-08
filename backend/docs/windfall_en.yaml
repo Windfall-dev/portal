@@ -1,0 +1,562 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Windfall API
+  description: |
+    ## Overview
+    - This is the API specification for the Windfall service.
+
+    ## Common Points
+    - Regarding the success or failure of requests:
+      - Any response with a status code other than 200 indicates failure.
+
+    ## Common API Response Fields
+    - HTTP status code 200
+    - The following fields are always returned in the response:
+      - ok (boolean) - A flag indicating success or failure.
+      ```json
+        {
+          "ok": true
+        }
+      ```
+
+    ## Common API Error Format
+    - If the HTTP status code is not 200.
+    - If there is an error due to server-side authentication checks, input validation, etc., the response will follow the format below:
+      ```json
+      {
+        "ok": false,
+        "error": "Error message, error info: E010003001",
+        "error_code": "E010003001",
+        "error_info": ""
+      }
+      ```
+
+    | HTTP Status Code | Error Description |
+    |--------------------|----------|
+    | 400  | Input validation error |
+    | 401  | Authentication error |
+    | 403  | Permission error |
+    | 429  | Too many requests |
+    | 500  | System error |
+    | 503  | Maintenance |
+
+    - Error Details
+      - The `error_code` is a unique identifier for each error.
+      - Additionally, the `error` field includes error information at the end as "Error info: E*******" for inquiry purposes.
+      - The `error_info` field is reserved for cases where special actions are required on the front-end side.
+
+    | error_info | Error Description |
+    |--------------------|----------|
+    | INVALID_ACCESSTOKEN  | Failed access token authentication |
+
+servers:
+  - url: http://127.0.0.1:8000
+    description: Local server
+    variables:
+      port:
+        default: "8000"
+
+paths:
+  /api/auth/login:
+    post:
+      summary: User login or registration
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              user_id: "user123"
+              token: "sample_token_123"
+              user_name: "JohnDoe"
+      responses:
+        '200':
+          description: Successful login or registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                success:
+                  summary: Example of a successful response
+                  value:
+                    ok: true
+                    user_id: "user123"
+                    points: 0
+                    username: "JohnDoe"
+        '404':
+          description: User not found
+        '401':
+          description: Invalid token
+      tags:
+        - User
+
+  /api/game/start:
+    post:
+      summary: Record the start of a game
+      operationId: startGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameStartRequest'
+            example:
+              session_id: "session1234"
+              stage: "stage_1"
+              start_time: 1633095600
+      responses:
+        '200':
+          description: Successfully recorded the game start
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+        '401':
+          description: Authentication failed
+      tags:
+        - Game
+      security:
+        - BearerAuth: []
+
+  /api/game/end:
+    post:
+      summary: Record the end of a game and update scores and rankings
+      operationId: endGame
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameEndRequest'
+            example:
+              game_id: "game123"
+              session_id: "session1234"
+              end_time: 1633098600
+              score: 15000
+              tap_data:
+                - time: 1633095601
+                  position: { x: 120, y: 340 }
+              judgment_data: ["perfect", "good", "miss"]
+              token: "sample_token_123"
+              user_id: "user123"
+      responses:
+        '200':
+          description: Successfully recorded the game end
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameEndResponse'
+              examples:
+                success:
+                  summary: Example of a successful response
+                  value:
+                    ok: true
+                    game_result:
+                      score: 15000
+                      rankings:
+                        - rank: "1"
+                          avatar: "/pfp_sample.png"
+                          name: "user1..23"
+                          points: "20,000"
+                        - rank: "2"
+                          avatar: "/pfp_sample.png"
+                          name: "user2..56"
+                          points: "18,500"
+                      new_point_balance: 20000
+        '404':
+          description: User or game session not found
+      tags:
+        - Game
+
+  /api/rankings:
+    get:
+      summary: Retrieve user rankings
+      operationId: getRankingsApi
+      responses:
+        '200':
+          description: Successfully retrieved ranking information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankingsResponse'
+              examples:
+                success:
+                  summary: Example of successful ranking retrieval
+                  value:
+                    rankings:
+                      - rank: "1"
+                        avatar: "/pfp_sample.png"
+                        name: "user1..23"
+                        points: "20,000"
+                      - rank: "2"
+                        avatar: "/pfp_sample.png"
+                        name: "user2..56"
+                        points: "18,500"
+      tags:
+        - Rankings
+
+  /api/point/add:
+    post:
+      summary: Add points to a user
+      operationId: addPoints
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointRequest'
+            example:
+              deposit: 1.5
+      responses:
+        '200':
+          description: Successfully added points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPointsResponse'
+              examples:
+                success:
+                  summary: Example of successful point addition
+                  value:
+                    ok: true
+                    user_id: "user123"
+                    new_point_balance: 15000
+        '404':
+          description: User not found
+      tags:
+        - Points
+
+  /api/point/rank:
+    post:
+      summary: Retrieve ranking after adding specified points
+      operationId: getPointRank
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointRankRequest'
+            example:
+              point: 5000
+      responses:
+        '200':
+          description: Successfully retrieved ranking after point addition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointRankResponse'
+              examples:
+                success:
+                  summary: Example of successful ranking retrieval
+                  value:
+                    ok: true
+                    targetRank: 3
+                    userPoint: 12000
+        '404':
+          description: User not found
+      tags:
+        - Points
+
+components:
+  schemas:
+    CommonResponse: 
+      type: boolean
+      example: true
+
+    LoginRequest:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: The unique ID of the user.
+          example: "user123"
+        token:
+          type: string
+          description: The user's authentication token.
+          example: "sample_token_123"
+        user_name:
+          type: string
+          description: The username. If not specified, a random username will be generated.
+          example: "JohnDoe"
+      required:
+        - user_id
+        - token
+
+    LoginResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indicates whether the login or registration was successful.
+          example: true
+        user_id:
+          type: string
+          description: The unique ID of the user.
+          example: "user123"
+        points:
+          type: integer
+          description: The current points of the user.
+          example: 0
+        username:
+          type: string
+          description: The username of the user.
+          example: "JohnDoe"
+
+    GameStartRequest:
+      type: object
+      properties:
+        session_id:
+          type: string
+          description: The unique ID of the game session.
+          example: "session1234"
+        stage:
+          type: string
+          description: The stage name of the game the player is starting.
+          example: "stage_1"
+        start_time:
+          type: integer
+          description: The UNIX timestamp of when the game started.
+          example: 1633095600
+      required:
+        - session_id
+        - stage
+        - start_time
+
+    GameEndRequest:
+      type: object
+      properties:
+        game_id:
+          type: string
+          description: The ID of the game.
+          example: "game123"
+        session_id:
+          type: string
+          description: The unique ID of the game session.
+          example: "session1234"
+        end_time:
+          type: integer
+          description: The UNIX timestamp of when the game ended.
+          example: 1633098600
+        score:
+          type: integer
+          description: The score of the game.
+          example: 15000
+        tap_data:
+          type: array
+          description: A list of data of the user's taps.
+          items:
+            $ref: '#/components/schemas/TapData'
+        judgment_data:
+          type: array
+          description: Judgment data of the user's taps (e.g., "perfect", "good", "miss").
+          items:
+            type: string
+          example:
+            - "perfect"
+            - "good"
+            - "miss"
+        token:
+          type: string
+          description: The user's authentication token.
+          example: "sample_token_123"
+        user_id:
+          type: string
+          description: The unique ID of the user.
+          example: "user123"
+      required:
+        - game_id
+        - session_id
+        - end_time
+        - score
+        - tap_data
+        - judgment_data
+        - user_id
+
+    TapData:
+      type: object
+      properties:
+        time:
+          type: integer
+          description: The UNIX timestamp of when the tap occurred.
+          example: 1633095601
+        position:
+          $ref: '#/components/schemas/Position'
+
+    Position:
+      type: object
+      properties:
+        x:
+          type: integer
+          description: The X-coordinate of the tap position.
+          example: 120
+        y:
+          type: integer
+          description: The Y-coordinate of the tap position.
+          example: 340
+
+    GameEndResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indicates whether the request was successful.
+          example: true
+        game_result:
+          type: object
+          properties:
+            score:
+              type: integer
+              description: The score at the end of the game.
+              example: 15000
+            rankings:
+              type: array
+              description: Rankings based on points.
+              items:
+                type: object
+                properties:
+                  rank:
+                    type: string
+                    description: The rank in the leaderboard.
+                    example: "1"
+                  avatar:
+                    type: string
+                    description: The path to the user's avatar image.
+                    example: "/pfp_sample.png"
+                  name:
+                    type: string
+                    description: The username displayed in the leaderboard (partially hidden).
+                    example: "user1..23"
+                  points:
+                    type: string
+                    description: The user's current points (comma-separated).
+                    example: "20,000"
+            new_point_balance:
+              type: integer
+              description: The updated point balance of the user.
+              example: 20000
+
+    RankingsResponse:
+      type: object
+      properties:
+        rankings:
+          type: array
+          description: A list of user information based on ranking.
+          items:
+            type: object
+            properties:
+              rank:
+                type: string
+                description: The rank in the leaderboard.
+                example: "1"
+              avatar:
+                type: string
+                description: The path to the user's avatar image.
+                example: "/pfp_sample.png"
+              name:
+                type: string
+                description: The username (partially hidden).
+                example: "user1..23"
+              points:
+                type: string
+                description: The user's points (comma-separated).
+                example: "20,000"
+
+    PointRequest:
+      type: object
+      properties:
+        deposit:
+          type: number
+          description: The deposit amount to be converted to points. The deposit amount is multiplied by 10,000 and added as points.
+          example: 1.5
+      required:
+        - deposit
+
+    AddPointsResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indicates whether the request was successful.
+          example: true
+        user_id:
+          type: string
+          description: The unique ID of the user.
+          example: "user123"
+        new_point_balance:
+          type: integer
+          description: The updated point balance of the user.
+          example: 15000
+
+    PointRankRequest:
+      type: object
+      properties:
+        point:
+          type: integer
+          description: The points to be added.
+          example: 5000
+      required:
+        - point
+
+    PointRankResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indicates whether the request was successful.
+          example: true
+        targetRank:
+          type: integer
+          description: The rank after the points are added.
+          example: 3
+        userPoint:
+          type: integer
+          description: The total points after addition.
+          example: 12000
+
+  parameters:
+    AccessTokenParameter:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        example: Bearer {ACCESS_TOKEN}
+      description: Specify the access token.
+
+    AuthenticationKbnParameter:
+      name: X-Authentication-Kbn
+      in: header
+      required: true
+      schema:
+        type: string
+        example: 0
+      description: Specify the authentication category code.
+
+  securitySchemes:
+    BearerAuth: 
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - 
+    name: "User"
+    description: ''
+  - 
+    name: "Game"
+    description: ''

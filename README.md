@@ -18,6 +18,13 @@
 - Metaplex Core NFT
 - Solana Actions & Blinks
 
+### AWS API Gateway, Lambda (FastAPI), and DynamoDB Integration
+
+The backend system is set up using AWS services, with API Gateway handling the HTTP requests, Lambda (running FastAPI) managing the serverless backend logic, and DynamoDB used as the primary database.
+
+- The FastAPI application logic is placed in the `backend/fastapi/app.py` file.
+- The API design documentation, including Swagger definitions, is located in the `backend/docs/windfall_en.yaml` file.
+
 ## Ensuring Game Result Integrity
 
 - This part is implemented in Unity and AWS side.
