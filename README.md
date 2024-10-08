@@ -60,6 +60,8 @@ The backend system is set up using AWS services, with API Gateway handling the H
 7. Press the ✕ button on the game title screen to return to the TOP page.
 8. Press the Staking button, select the Withdraw tab from the Staking screen, enter 0.01, and withdraw SOL.
 
+- Please refer to this video for the demo steps (https://www.youtube.com/watch?v=W4AC9u_Ebs8)
+
 ## Blinks Lottery Demo Play Instructions
 
 ### Preparation & play
