@@ -25,7 +25,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           const tgWebApp = window.Telegram.WebApp;
           tgWebApp.ready();
           const initData = tgWebApp.initData;
-          // console.log("initData", initData);
+          console.log("initData", initData);
           if (initData) {
             setIsEnabled(true);
             console.log("telegram enabled");
