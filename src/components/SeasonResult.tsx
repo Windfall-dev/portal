@@ -57,7 +57,7 @@ function SeasonResult() {
         />
       </DialogTrigger>
       <DialogContent className="w-full max-w-[350px] overflow-hidden rounded-2xl p-0">
-        <Card className="w-full overflow-hidden rounded-2xl border-0">
+        <Card className="w-full overflow-hidden border-0">
           <CardHeader className="relative h-[186px] p-0">
             <Image
               src="/image_season_result.png"
@@ -75,14 +75,16 @@ function SeasonResult() {
                 Your Results
               </p>
               <InfoDouble
-                text1a="Earned Points"
+                text1a="Prize"
                 text1b={user?.points || ""}
-                image1="/icon_point.png"
-                alt1="Point"
-                text2a="Ranking"
+                image1="/sol.png"
+                alt1="Sol"
+                text2a="Final Ranking"
                 text2b={user?.rank || ""}
                 image2="/icon_ranking.png"
                 alt2="Ranking"
+                optionStyle={["text-center", "justify-center"]}
+                isSol={true}
               />
             </div>
 

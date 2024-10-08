@@ -5,16 +5,13 @@ import { InfoSingle } from "./Info";
 
 function TopKv() {
   return (
-    <div className="relative z-0 h-80 px-[30px] pt-10">
-      <div className="relative z-10 flex h-full flex-col justify-between pb-6">
-        <div className="w-[220px] space-y-[10px]">
-          <h2>
-            Enjoy &quot;No Risk <br />
-            High Return&quot;
-          </h2>
-          <p className="text-body-bold text-muted-foreground">
+    <div className="relative z-0 h-80 px-[30px] pb-[30px] pt-10">
+      <div className="relative z-10 flex h-full flex-col justify-between">
+        <div className="w-[220px] space-y-2">
+          <h2>Enjoy &quot;Lossless & Fun&quot; Gaming</h2>
+          {/* <p className="text-body-bold text-muted-foreground">
             Earn Prizes through Staking and Playing Games!
-          </p>
+          </p> */}
         </div>
         <InfoSingle />
       </div>
