@@ -75,6 +75,7 @@ The backend system is set up using AWS services, with API Gateway handling the H
 ### Telegram Bot
 
 Our platform is also available as a Telegram mini app, providing users with seamless access.
+[here](https://t.me/wf_demo_1_bot/webapp) is a tg ver link.
 
 ### Programmable Wallet
 
@@ -82,8 +83,7 @@ To simplify onboarding for Telegram users, we utilize programmable wallets speci
 
 ### Solana LST Integration
 
-Integration is being tested using the Jupiter API, initially focusing on trading INT. In the main scenario, we plan to use own Samctum and Jito LST/LRT in the future.
-
+Since LSTs cannot be issued on devnet, we have not yet been able to integrate them, but we are preparing validators and communicating with teams and [communities](https://research.sanctum.so/t/new-lst-sanctum-pets-gaming-proposal-windsol/310) to issue LSTs in Season 2 of Sanctum, so we are ready.
 
 ## Solana Programs
 
