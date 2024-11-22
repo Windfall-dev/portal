@@ -8,6 +8,13 @@ import { clusterApiUrl } from "@solana/web3.js";
 
 import { uint8ArrayToBase64 } from "./utils";
 
+export const networks = [
+  { name: "mainnet-beta", value: `${process.env.NODE_API_KEY}` },
+  { name: "devnet", value: "https://api.devnet.solana.com" },
+  { name: "eclipse-mainnet", value: "https://mainnetbeta-rpc.eclipse.xyz" },
+  // { name: "zeus-mainnet", value: "" },
+];
+
 const network = WalletAdapterNetwork.Devnet;
 export const endpoint = clusterApiUrl(network);
 export const wallets = [new PhantomWalletAdapter()];
