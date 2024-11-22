@@ -433,20 +433,6 @@ export function AlertDialogs({ actionType, amount }: AlertProp) {
         throw new Error("Withdraw transaction failed.");
       }
       return signature;
-      //   let signature: string | undefined;
-      //   if (walletAddress != "") {
-      //     console.log("WithdrawTelegram Called");
-      //     signature = await withdrawTelegram();
-      //   } else {
-      //     if (!publicKey || !sendTransaction) {
-      //       throw new Error("Wallet is not connected.");
-      //     }
-      //     signature = await withdrawSolana(publicKey, lamportAmount);
-      //   }
-      //   if (!signature) {
-      //     throw new Error("Withdraw transaction failed.");
-      //   }
-      //   return signature;
     }
   };
 
