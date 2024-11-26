@@ -4,9 +4,10 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { NetworkSelectorContext } from "@/hooks/useNetworkSelector";
 import { useTelegram } from "@/hooks/useTelegram";
 import {
   createSignInData,
@@ -63,7 +64,11 @@ export function SolanaWalletProvider({
 }) {
   const { setAccessToken, setUsername, setUserId } = useAuth();
   const { isEnabled: telegramEnabled } = useTelegram();
+  const [currentEndpoint, setCurrentEndpoint] = useState(endpoint);
 
+  const handleNetworkChange = (networkValue: string) => {
+    setCurrentEndpoint(networkValue);
+  };
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
       console.log("SolanaWalletProvider: autoSignIn");
@@ -118,13 +123,17 @@ export function SolanaWalletProvider({
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider
-        wallets={wallets}
-        autoConnect={!telegramEnabled && autoSignIn}
-      >
-        <WalletModalProvider>{children}</WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <NetworkSelectorContext.Provider
+      value={{ handleNetworkChange, currentEndpoint }}
+    >
+      <ConnectionProvider endpoint={currentEndpoint}>
+        <WalletProvider
+          wallets={wallets}
+          autoConnect={!telegramEnabled && autoSignIn}
+        >
+          <WalletModalProvider>{children}</WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </NetworkSelectorContext.Provider>
   );
 }
