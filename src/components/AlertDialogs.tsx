@@ -132,6 +132,7 @@ export function AlertDialogs({ actionType, amount }: AlertProp) {
     };
     fetchBalance();
     // setDepositAmount(Number(amount));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, publicKey, amount]);
 
   const handleDeposit = async () => {
