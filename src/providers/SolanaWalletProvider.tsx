@@ -129,7 +129,7 @@ export function SolanaWalletProvider({
       }
       return false;
     },
-    [setAccessToken, setUsername, setUserId],
+    [setAccessToken, setUsername, setUserId, currentNetwork.chainId],
   );
 
   return (
