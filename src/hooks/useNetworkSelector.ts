@@ -1,12 +1,20 @@
 import { createContext, useContext } from "react";
 
+import { DEFAULT_NETWORK, NETWORKS, NetworkConfig } from "@/lib/solana-wallet";
+
 interface NetworkSelectorContextType {
-  handleNetworkChange: (networkValue: string) => void;
-  currentEndpoint: string;
+  currentNetwork: NetworkConfig;
+  setCurrentNetwork: (network: NetworkConfig) => void;
+  networks: NetworkConfig[];
 }
 
-export const NetworkSelectorContext =
-  createContext<NetworkSelectorContextType | null>(null);
+export const NetworkSelectorContext = createContext<NetworkSelectorContextType>(
+  {
+    currentNetwork: DEFAULT_NETWORK,
+    setCurrentNetwork: () => {},
+    networks: NETWORKS,
+  },
+);
 
 export function useNetworkSelector() {
   const context = useContext(NetworkSelectorContext);

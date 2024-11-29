@@ -4,14 +4,16 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { NetworkSelectorContext } from "@/hooks/useNetworkSelector";
 import { useTelegram } from "@/hooks/useTelegram";
 import {
+  DEFAULT_NETWORK,
+  NETWORKS,
+  NetworkConfig,
   createSignInData,
-  endpoint,
   serialiseSIWEData,
   wallets,
 } from "@/lib/solana-wallet";
@@ -64,11 +66,18 @@ export function SolanaWalletProvider({
 }) {
   const { setAccessToken, setUsername, setUserId } = useAuth();
   const { isEnabled: telegramEnabled } = useTelegram();
-  const [currentEndpoint, setCurrentEndpoint] = useState(endpoint);
+  const [currentNetwork, setCurrentNetwork] =
+    useState<NetworkConfig>(DEFAULT_NETWORK);
 
-  const handleNetworkChange = (networkValue: string) => {
-    setCurrentEndpoint(networkValue);
-  };
+  const networkContextValue = useMemo(
+    () => ({
+      currentNetwork,
+      setCurrentNetwork,
+      networks: NETWORKS,
+    }),
+    [currentNetwork],
+  );
+
   const autoSignIn = useCallback(
     async (adapter: Adapter) => {
       console.log("SolanaWalletProvider: autoSignIn");
@@ -79,7 +88,8 @@ export function SolanaWalletProvider({
         return true;
       }
       try {
-        const input = await createSignInData();
+        console.log("chainId: ", currentNetwork.chainId);
+        const input = await createSignInData(currentNetwork.chainId);
         const output = await adapter.signIn(input);
 
         // output.account.address を userId として使用
@@ -119,14 +129,12 @@ export function SolanaWalletProvider({
       }
       return false;
     },
-    [setAccessToken, setUsername, setUserId],
+    [setAccessToken, setUsername, setUserId, currentNetwork.chainId],
   );
 
   return (
-    <NetworkSelectorContext.Provider
-      value={{ handleNetworkChange, currentEndpoint }}
-    >
-      <ConnectionProvider endpoint={currentEndpoint}>
+    <NetworkSelectorContext.Provider value={networkContextValue}>
+      <ConnectionProvider endpoint={currentNetwork.value}>
         <WalletProvider
           wallets={wallets}
           autoConnect={!telegramEnabled && autoSignIn}
