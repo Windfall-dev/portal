@@ -7,11 +7,16 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { useAnchorWallet, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { DialogState } from "../components/Popup";
-import { getMint, getVaultType, setupProgram } from "../utils/solana";
+import { getMint, getVaultType, setupProgram } from "../utils/vaultUtils";
 
 interface VaultProp {
   amount: string;
@@ -22,6 +27,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const { connected, publicKey, sendTransaction } = useWallet();
   const wallet = useAnchorWallet();
+  const amountInLamport = Number(amount) * LAMPORTS_PER_SOL;
 
   // vault に預けられているトークン数量を decimal と関係なく整数値のままで取得
   const getBalance = async (): Promise<number> => {
@@ -34,8 +40,8 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       const walletPubkey = new PublicKey(publicKey);
       const vaultType = getVaultType();
       const { program } = setupProgram(wallet);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [vault, _] = PublicKey.findProgramAddressSync(
+
+      const [vault] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("vault"),
           vaultType.toBuffer(),
@@ -76,8 +82,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       const { connection, program } = setupProgram(wallet);
       const vaultType = getVaultType();
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [vault, _] = PublicKey.findProgramAddressSync(
+      const [vault] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("vault"),
           vaultType.toBuffer(),
@@ -140,7 +145,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
           SystemProgram.transfer({
             fromPubkey: publicKey,
             toPubkey: ata,
-            lamports: Number(amount),
+            lamports: Number(amountInLamport),
           }),
           createSyncNativeInstruction(ata),
         );
@@ -148,11 +153,12 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
       // deposit to vault
       const depositIx = await program.methods
-        .deposit(new anchor.BN(amount))
+        .deposit(new anchor.BN(amountInLamport))
         .accounts({
           vault,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error          vaultType,
+          // @ts-expect-error
+          vaultType,
           owner: publicKey,
           payer: publicKey,
           pool: vaultTypeAccount.pool,
@@ -171,8 +177,8 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
       const signature = await sendTransaction(transaction, connection);
 
-      // 残高を更新 (最大20秒間、1秒ごとに更新)
-      for (let i = 0; i < 20; i++) {
+      // 残高を更新 (最大30秒間、1秒ごとに更新)
+      for (let i = 0; i < 30; i++) {
         await getBalance();
         await new Promise((resolve) => setTimeout(resolve, 1000));
         if (Number(tokenBalance) >= Number(amount)) {
@@ -181,7 +187,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       }
     } catch (error) {
       console.error("Deposit failed:", error);
-      alert("入金に失敗しました");
+      setDialogState("error");
     }
   };
 
@@ -193,8 +199,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       const { connection, program } = setupProgram(wallet);
       const vaultType = getVaultType();
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [vault, _] = PublicKey.findProgramAddressSync(
+      const [vault] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("vault"),
           vaultType.toBuffer(),
@@ -246,7 +251,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
         transaction.add(deactivateIx);
       }
 
-      const amountBn = new anchor.BN(amount);
+      const amountBn = new anchor.BN(amountInLamport);
 
       // withdraw from vault
       const withdrawIx = await program.methods
@@ -272,8 +277,9 @@ export function useVault({ amount, setDialogState }: VaultProp) {
         );
       }
 
-      const signature = await sendTransaction(transaction, connection);
+      await getBalance();
       const prevBalance = Number(tokenBalance);
+      const signature = await sendTransaction(transaction, connection);
 
       // 残高を更新 (最大20秒間、1秒ごとに更新)
       for (let i = 0; i < 20; i++) {
