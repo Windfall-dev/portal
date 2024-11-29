@@ -4,13 +4,11 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import React, { useState } from "react";
 
-import { useNetworkSelector } from "@/hooks/useNetworkSelector";
-import { networks } from "@/lib/solana-wallet";
+import { NETWORKS } from "@/lib/solana-wallet";
 
 const NetworkSelector: React.FC = () => {
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [balance, setBalance] = useState<number>(0);
-  const { handleNetworkChange } = useNetworkSelector();
   const { publicKey } = useWallet();
 
   const fetchBalance = async (network: string) => {
@@ -32,7 +30,6 @@ const NetworkSelector: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newNetwork = event.target.value;
     setSelectedNetwork(newNetwork);
-    handleNetworkChange(newNetwork);
     if (newNetwork) {
       fetchBalance(newNetwork);
     }
@@ -50,9 +47,9 @@ const NetworkSelector: React.FC = () => {
         className="dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-md border bg-white p-2"
       >
         <option value="">Select a network</option>
-        {networks.map((network) => (
+        {NETWORKS.map((network) => (
           <option key={network.value} value={network.value}>
-            {network.name}
+            {network.chainId}
           </option>
         ))}
       </select>
