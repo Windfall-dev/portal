@@ -27,7 +27,7 @@ export const NETWORKS: NetworkConfig[] = [
   // { name: "zeus-mainnet", value: "" },
 ];
 
-export const DEFAULT_NETWORK = NETWORKS[0];
+export const DEFAULT_NETWORK = NETWORKS[1];
 export const wallets = [new PhantomWalletAdapter()];
 
 export const createSignInData = async (chainId: string) => {
