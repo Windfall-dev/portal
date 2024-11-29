@@ -95,7 +95,7 @@ export function Popup({ actionType, amount }: AlertProp) {
       throw new Error("Wallet is not connected.");
     }
     if (actionType === "deposit") {
-      const signature = handleDeposit();
+      const signature = await handleDeposit();
       if (!signature) {
         throw new Error("Deposit transaction failed.");
       }
