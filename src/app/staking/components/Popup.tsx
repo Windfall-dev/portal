@@ -100,7 +100,13 @@ export function Popup({ actionType, amount }: AlertProp) {
         throw new Error("Deposit transaction failed.");
       }
 
-      await handleAddPoints(parseFloat(amount), context.userId);
+      await handleAddPoints(
+        signature,
+        publicKey,
+
+        parseFloat(amount),
+        context.userId,
+      );
       return signature;
     }
     if (actionType === "withdraw") {
