@@ -7,21 +7,23 @@ export async function POST(req: NextRequest) {
     const { provider, credential } = await req.json();
 
     if (typeof provider !== "string" || typeof credential !== "string") {
-      return NextResponse.json(
-        { error: "Invalid provider or credential" },
-        { status: 400 },
-      );
+      throw new Error("Invalid provider or credential");
     }
-    // console.log("provider", provider);
-    // console.log("credential", credential);
+
+    console.log("Provider:", provider);
+    console.log("Credential:", credential);
+
     const accessToken = handleLogin(provider, credential);
-    // console.log("accessToken", accessToken);
+
     return NextResponse.json({
       accessToken: accessToken,
     });
   } catch (error: unknown) {
+    console.error("Error in API:", error);
     const err = error as Error;
-    const errorMessage = err.message || "An unexpected error occurred";
-    return NextResponse.json({ error: errorMessage }, { status: 400 });
+    return NextResponse.json(
+      { error: err.message || "An unexpected error occurred" },
+      { status: 400 },
+    );
   }
 }
