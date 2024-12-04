@@ -16,6 +16,7 @@ import {
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { DialogState } from "../components/Popup";
+import { useVaultContext } from "../context/VaultContext";
 import { getMint, getVaultType, setupProgram } from "../utils/vaultUtils";
 
 interface VaultProp {
@@ -28,6 +29,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
   const { connected, publicKey, sendTransaction } = useWallet();
   const wallet = useAnchorWallet();
   const amountInLamport = Number(amount) * LAMPORTS_PER_SOL;
+  const { selectedVault } = useVaultContext();
 
   // vault に預けられているトークン数量を decimal と関係なく整数値のままで取得
   const getBalance = async (): Promise<number> => {
@@ -38,7 +40,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
     try {
       const walletPubkey = new PublicKey(publicKey);
-      const vaultType = getVaultType();
+      const vaultType = getVaultType(selectedVault);
       const { program } = setupProgram(wallet);
 
       const [vault] = PublicKey.findProgramAddressSync(
@@ -80,8 +82,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
     setDialogState("loading");
     try {
       const { connection, program } = setupProgram(wallet);
-      const vaultType = getVaultType();
-
+      const vaultType = getVaultType(selectedVault);
       const [vault] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("vault"),
@@ -197,8 +198,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
     setDialogState("loading");
     try {
       const { connection, program } = setupProgram(wallet);
-      const vaultType = getVaultType();
-
+      const vaultType = getVaultType(selectedVault);
       const [vault] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("vault"),
