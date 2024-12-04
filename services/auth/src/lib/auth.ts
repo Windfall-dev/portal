@@ -8,6 +8,7 @@ export interface AuthTokenPayload {
 const secret = process.env.AUTH_SECRET!;
 
 export function createAccessToken(payload: AuthTokenPayload): string {
+  console.log("AUTH_SECRET:", secret);
   return jwt.sign(payload, secret);
 }
 
