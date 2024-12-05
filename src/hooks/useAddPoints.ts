@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 
 import { useAuth } from "./useAuth";
@@ -17,8 +18,20 @@ export function useAddPoints() {
 
   const context = useAuth();
 
-  const handleAddPoints = async (deposit: number, userToken: string) => {
-    if (!deposit || deposit <= 0) {
+  /**
+   * 署名を検証するにはいくつかのパラメータが必要らしくて、一旦この形にしました
+   * RPCのgetTransaction endpointを叩くイメージだと思います
+   * @param transactionSignature　RPCからtx情報を取得、そしてリプレイ攻撃を制御
+   * @param publicKey ユーザーウォレットの公開鍵とRPCからの情報を比較できます
+   * @param depositAmount ユーザーがデポジットしたトークンの数です。postTokenBalances - preTokenBalances + feesと一致するはずです
+   */
+  const handleAddPoints = async (
+    transactionSignature: string,
+    publicKey: PublicKey,
+    depositAmount: number,
+    userToken: string,
+  ) => {
+    if (!depositAmount || depositAmount <= 0) {
       throw new Error("Deposit amount must be a positive number.");
     }
 
@@ -27,7 +40,9 @@ export function useAddPoints() {
     }
 
     const requestBody = {
-      deposit,
+      transactionSignature,
+      publicKey,
+      depositAmount,
       token: userToken,
     };
 
