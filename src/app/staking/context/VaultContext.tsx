@@ -2,19 +2,17 @@
 
 import React, { ReactNode, createContext, useContext, useState } from "react";
 
-import { VAULT_CONFIGS } from "../utils/vaultUtils";
+import { VAULT_CONFIGS, VaultConfig } from "../utils/vaultUtils";
 
 interface VaultContextType {
-  selectedVault: string;
-  setSelectedVault: (vault: string) => void;
+  selectedVault: VaultConfig;
+  setSelectedVault: (vault: VaultConfig) => void;
 }
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
 
 export function VaultProvider({ children }: { children: ReactNode }) {
-  const [selectedVault, setSelectedVault] = useState(
-    VAULT_CONFIGS["SOL"].vaultName,
-  );
+  const [selectedVault, setSelectedVault] = useState(VAULT_CONFIGS["SOL"]);
 
   return (
     <VaultContext.Provider value={{ selectedVault, setSelectedVault }}>

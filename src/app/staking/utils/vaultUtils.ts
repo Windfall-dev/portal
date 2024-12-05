@@ -14,6 +14,7 @@ export interface VaultConfig {
   vaultName: string;
   vaultType: string;
   mint: string;
+  logo: string;
 }
 
 export const VAULT_CONFIGS: Record<string, VaultConfig> = {
@@ -21,11 +22,13 @@ export const VAULT_CONFIGS: Record<string, VaultConfig> = {
     vaultName: "SOL",
     vaultType: "AS2UQURPKTpjiyV5eSTQwRtCns2Lya3sgUKLfSCca8q8",
     mint: NATIVE_MINT.toString(),
+    logo: "./icon_sol.svg",
   },
   tBTC: {
     vaultName: "tBTC",
-    vaultType: "Placeholder",
+    vaultType: "raFF1erSr2mGtH49bfELEpFfNmvBYSM5r6UU6ruAiVc",
     mint: "Placeholder",
+    logo: "icon_tbtc.svg",
   },
 } as const;
 
@@ -33,17 +36,12 @@ export function getConnection() {
   return new Connection("https://api.devnet.solana.com");
 }
 
-export const getVaultType = (vaultName: string) => {
-  const config = VAULT_CONFIGS[vaultName];
-  if (!config) {
-    throw new Error(`No vault configuration found for ${vaultName}`);
-  }
-  console.log("config: ", config);
-  return new PublicKey(config.vaultType);
+export const getVaultType = (vault: VaultConfig) => {
+  return new PublicKey(vault.vaultType);
 };
 
-export function getMint() {
-  return new PublicKey(NATIVE_MINT);
+export function getMint(vault: VaultConfig) {
+  return new PublicKey(vault.mint);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

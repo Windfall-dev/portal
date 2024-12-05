@@ -93,7 +93,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       );
 
       const vaultTypeAccount = await program.account.vaultType.fetch(vaultType);
-      const mint = getMint();
+      const mint = getMint(selectedVault);
 
       const transaction = new Transaction();
       try {
@@ -210,7 +210,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
       const vaultTypeAccount = await program.account.vaultType.fetch(vaultType);
       const vaultAccount = await program.account.vault.fetch(vault);
-      const mint = getMint();
+      const mint = getMint(selectedVault);
 
       const transaction = new Transaction();
 
