@@ -1,5 +1,5 @@
 {
-  "address": "Ds1WLBK4R44S3bk1DeDiUrwxQ9ydrdjn7hkrY61EDVXF",
+  "address": "vauLT785GULpEsFx9L7AVdCrGvy6tDX2WvWgN5BrftL",
   "metadata": {
     "name": "vault",
     "version": "0.1.0",
@@ -7,6 +7,41 @@
     "description": "Created with Anchor"
   },
   "instructions": [
+    {
+      "name": "accept_vault_type_authority",
+      "discriminator": [60, 36, 224, 175, 94, 84, 235, 218],
+      "accounts": [
+        {
+          "name": "vault_type",
+          "writable": true
+        },
+        {
+          "name": "new_authority",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "activate",
+      "discriminator": [194, 203, 35, 100, 151, 55, 170, 82],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "vault_type",
+          "relations": ["vault"]
+        },
+        {
+          "name": "user_authority",
+          "signer": true,
+          "relations": ["vault"]
+        }
+      ],
+      "args": []
+    },
     {
       "name": "close_vault",
       "discriminator": [141, 103, 17, 126, 72, 75, 29, 29],
@@ -20,7 +55,7 @@
           "relations": ["vault"]
         },
         {
-          "name": "owner",
+          "name": "user_authority",
           "signer": true,
           "relations": ["vault"]
         },
@@ -28,10 +63,6 @@
           "name": "payer",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
@@ -45,41 +76,18 @@
           "writable": true
         },
         {
-          "name": "owner",
+          "name": "authority",
           "signer": true,
           "relations": ["vault_type"]
         },
         {
           "name": "pool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "vault_type"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "vault_type.mint",
-                "account": "VaultType"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          },
+          "writable": true,
+          "relations": ["vault_type"]
+        },
+        {
+          "name": "reserve",
+          "writable": true,
           "relations": ["vault_type"]
         },
         {
@@ -88,8 +96,8 @@
           "signer": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "token_program",
+          "relations": ["vault_type"]
         }
       ],
       "args": []
@@ -107,7 +115,7 @@
           "relations": ["vault"]
         },
         {
-          "name": "owner",
+          "name": "user_authority",
           "signer": true,
           "relations": ["vault"]
         }
@@ -128,7 +136,7 @@
           "relations": ["vault"]
         },
         {
-          "name": "owner",
+          "name": "user_authority",
           "signer": true,
           "relations": ["vault"]
         },
@@ -139,34 +147,6 @@
         {
           "name": "pool",
           "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "vault_type"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          },
           "relations": ["vault_type"]
         },
         {
@@ -174,17 +154,35 @@
           "writable": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "token_program"
+          "name": "token_program",
+          "relations": ["vault_type"]
         }
       ],
       "args": [
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "lock_vault_type",
+      "discriminator": [32, 245, 195, 5, 217, 65, 165, 36],
+      "accounts": [
+        {
+          "name": "vault_type",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": ["vault_type"]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_locked",
+          "type": "bool"
         }
       ]
     },
@@ -207,7 +205,7 @@
               },
               {
                 "kind": "account",
-                "path": "owner"
+                "path": "user_authority"
               }
             ]
           }
@@ -216,7 +214,7 @@
           "name": "vault_type"
         },
         {
-          "name": "owner",
+          "name": "user_authority",
           "signer": true
         },
         {
@@ -250,44 +248,23 @@
               },
               {
                 "kind": "account",
-                "path": "owner"
+                "path": "authority"
               }
             ]
           }
         },
         {
-          "name": "owner",
+          "name": "authority",
           "signer": true
         },
         {
           "name": "mint"
         },
         {
-          "name": "pool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "vault_type"
-              },
-              {
-                "kind": "account",
-                "path": "token_program"
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          }
+          "name": "pool"
+        },
+        {
+          "name": "reserve"
         },
         {
           "name": "payer",
@@ -312,6 +289,10 @@
           "type": "i64"
         },
         {
+          "name": "deactivation_lock_window",
+          "type": "i64"
+        },
+        {
           "name": "cooldown_window",
           "type": "i64"
         },
@@ -326,6 +307,26 @@
       ]
     },
     {
+      "name": "nominate_vault_type_authority",
+      "discriminator": [217, 203, 70, 4, 242, 147, 61, 120],
+      "accounts": [
+        {
+          "name": "vault_type",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": ["vault_type"]
+        },
+        {
+          "name": "new_authority",
+          "docs": ["the `accept_vault_type_authority` instruction."]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "roll_over_vault_type",
       "discriminator": [233, 161, 46, 228, 96, 94, 245, 57],
       "accounts": [
@@ -337,14 +338,14 @@
       "args": []
     },
     {
-      "name": "transfer_from_pool",
-      "discriminator": [136, 167, 45, 66, 74, 252, 0, 16],
+      "name": "transfer_vault_type_token",
+      "discriminator": [205, 135, 61, 255, 94, 248, 153, 69],
       "accounts": [
         {
           "name": "vault_type"
         },
         {
-          "name": "owner",
+          "name": "authority",
           "signer": true,
           "relations": ["vault_type"]
         },
@@ -353,48 +354,16 @@
           "relations": ["vault_type"]
         },
         {
-          "name": "pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "vault_type"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          },
-          "relations": ["vault_type"]
+          "name": "source",
+          "writable": true
         },
         {
           "name": "destination",
           "writable": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "token_program"
+          "name": "token_program",
+          "relations": ["vault_type"]
         }
       ],
       "args": [
@@ -418,7 +387,7 @@
           "relations": ["vault"]
         },
         {
-          "name": "owner",
+          "name": "user_authority",
           "signer": true,
           "relations": ["vault"]
         },
@@ -429,34 +398,11 @@
         {
           "name": "pool",
           "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "vault_type"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          },
+          "relations": ["vault_type"]
+        },
+        {
+          "name": "reserve",
+          "writable": true,
           "relations": ["vault_type"]
         },
         {
@@ -464,11 +410,8 @@
           "writable": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "token_program"
+          "name": "token_program",
+          "relations": ["vault_type"]
         }
       ],
       "args": [
@@ -496,8 +439,8 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "owner",
-            "docs": ["The pubkey of the owner."],
+            "name": "user_authority",
+            "docs": ["The pubkey of the authority (usually the user)."],
             "type": "pubkey"
           },
           {
@@ -563,9 +506,28 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "owner",
-            "docs": ["The pubkey of the owner."],
+            "name": "identity",
+            "docs": [
+              "The identity pubkey which matches the authority initially.",
+              "It is maintained separately from the authority to allow changing the authority without affecting the PDA."
+            ],
             "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "The pubkey of the authority which can be changed with `update_vault_type_authority` instruction."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pending_authority",
+            "docs": [
+              "The pubkey of the pending authority which will be set after `update_vault_type_authority` instruction."
+            ],
+            "type": {
+              "option": "pubkey"
+            }
           },
           {
             "name": "mint",
@@ -576,6 +538,13 @@
             "name": "pool",
             "docs": [
               "The pubkey of the pool token account where deposited tokens are collected."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "reserve",
+            "docs": [
+              "The pubkey of the reserve token account where tokens are collected for withdrawal."
             ],
             "type": "pubkey"
           },
@@ -597,9 +566,18 @@
             "type": "i64"
           },
           {
+            "name": "deactivation_lock_window",
+            "docs": [
+              "The duration, while users cannot initiate deactivation, at the end of each season, in seconds."
+            ],
+            "type": "i64"
+          },
+          {
             "name": "cooldown_window",
             "docs": [
-              "The duration of the cooldown period at the end of each season, in seconds."
+              "The duration of the cooldown period at the end of each season, in seconds,",
+              "during which administrators perform maintenance work on the vaults.",
+              "Currently not used to restrict any operations, but may be used in the future to disable deposits."
             ],
             "type": "i64"
           },
@@ -622,6 +600,14 @@
             "docs": [
               "If true, users can instantly deactivate their vaults to Inactive state.",
               "Otherwise, vaults enter Deactivating state and can transition to Inactive at the start of next season."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "is_locked",
+            "docs": [
+              "If true, belonging vaults are locked and cannot be deactivated for withdrawal.",
+              "This does not affect already deactivating and inactive vaults."
             ],
             "type": "bool"
           },
