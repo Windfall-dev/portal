@@ -14,6 +14,41 @@ export type Vault = {
   };
   instructions: [
     {
+      name: "acceptVaultTypeAuthority";
+      discriminator: [60, 36, 224, 175, 94, 84, 235, 218];
+      accounts: [
+        {
+          name: "vaultType";
+          writable: true;
+        },
+        {
+          name: "newAuthority";
+          signer: true;
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "activate";
+      discriminator: [194, 203, 35, 100, 151, 55, 170, 82];
+      accounts: [
+        {
+          name: "vault";
+          writable: true;
+        },
+        {
+          name: "vaultType";
+          relations: ["vault"];
+        },
+        {
+          name: "userAuthority";
+          signer: true;
+          relations: ["vault"];
+        },
+      ];
+      args: [];
+    },
+    {
       name: "closeVault";
       discriminator: [141, 103, 17, 126, 72, 75, 29, 29];
       accounts: [
@@ -26,7 +61,7 @@ export type Vault = {
           relations: ["vault"];
         },
         {
-          name: "owner";
+          name: "userAuthority";
           signer: true;
           relations: ["vault"];
         },
@@ -34,10 +69,6 @@ export type Vault = {
           name: "payer";
           writable: true;
           signer: true;
-        },
-        {
-          name: "systemProgram";
-          address: "11111111111111111111111111111111";
         },
       ];
       args: [];
@@ -51,99 +82,18 @@ export type Vault = {
           writable: true;
         },
         {
-          name: "owner";
+          name: "authority";
           signer: true;
           relations: ["vaultType"];
         },
         {
           name: "pool";
-          pda: {
-            seeds: [
-              {
-                kind: "account";
-                path: "vaultType";
-              },
-              {
-                kind: "const";
-                value: [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169,
-                ];
-              },
-              {
-                kind: "account";
-                path: "vault_type.mint";
-                account: "vaultType";
-              },
-            ];
-            program: {
-              kind: "const";
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89,
-              ];
-            };
-          };
+          writable: true;
+          relations: ["vaultType"];
+        },
+        {
+          name: "reserve";
+          writable: true;
           relations: ["vaultType"];
         },
         {
@@ -152,8 +102,8 @@ export type Vault = {
           signer: true;
         },
         {
-          name: "systemProgram";
-          address: "11111111111111111111111111111111";
+          name: "tokenProgram";
+          relations: ["vaultType"];
         },
       ];
       args: [];
@@ -171,7 +121,7 @@ export type Vault = {
           relations: ["vault"];
         },
         {
-          name: "owner";
+          name: "userAuthority";
           signer: true;
           relations: ["vault"];
         },
@@ -192,7 +142,7 @@ export type Vault = {
           relations: ["vault"];
         },
         {
-          name: "owner";
+          name: "userAuthority";
           signer: true;
           relations: ["vault"];
         },
@@ -203,92 +153,6 @@ export type Vault = {
         {
           name: "pool";
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "account";
-                path: "vaultType";
-              },
-              {
-                kind: "const";
-                value: [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169,
-                ];
-              },
-              {
-                kind: "account";
-                path: "mint";
-              },
-            ];
-            program: {
-              kind: "const";
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89,
-              ];
-            };
-          };
           relations: ["vaultType"];
         },
         {
@@ -296,17 +160,35 @@ export type Vault = {
           writable: true;
         },
         {
-          name: "systemProgram";
-          address: "11111111111111111111111111111111";
-        },
-        {
           name: "tokenProgram";
+          relations: ["vaultType"];
         },
       ];
       args: [
         {
           name: "amount";
           type: "u64";
+        },
+      ];
+    },
+    {
+      name: "lockVaultType";
+      discriminator: [32, 245, 195, 5, 217, 65, 165, 36];
+      accounts: [
+        {
+          name: "vaultType";
+          writable: true;
+        },
+        {
+          name: "authority";
+          signer: true;
+          relations: ["vaultType"];
+        },
+      ];
+      args: [
+        {
+          name: "isLocked";
+          type: "bool";
         },
       ];
     },
@@ -329,7 +211,7 @@ export type Vault = {
               },
               {
                 kind: "account";
-                path: "owner";
+                path: "userAuthority";
               },
             ];
           };
@@ -338,7 +220,7 @@ export type Vault = {
           name: "vaultType";
         },
         {
-          name: "owner";
+          name: "userAuthority";
           signer: true;
         },
         {
@@ -372,13 +254,13 @@ export type Vault = {
               },
               {
                 kind: "account";
-                path: "owner";
+                path: "authority";
               },
             ];
           };
         },
         {
-          name: "owner";
+          name: "authority";
           signer: true;
         },
         {
@@ -386,59 +268,9 @@ export type Vault = {
         },
         {
           name: "pool";
-          pda: {
-            seeds: [
-              {
-                kind: "account";
-                path: "vaultType";
-              },
-              {
-                kind: "account";
-                path: "tokenProgram";
-              },
-              {
-                kind: "account";
-                path: "mint";
-              },
-            ];
-            program: {
-              kind: "const";
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89,
-              ];
-            };
-          };
+        },
+        {
+          name: "reserve";
         },
         {
           name: "payer";
@@ -463,6 +295,10 @@ export type Vault = {
           type: "i64";
         },
         {
+          name: "deactivationLockWindow";
+          type: "i64";
+        },
+        {
           name: "cooldownWindow";
           type: "i64";
         },
@@ -477,6 +313,26 @@ export type Vault = {
       ];
     },
     {
+      name: "nominateVaultTypeAuthority";
+      discriminator: [217, 203, 70, 4, 242, 147, 61, 120];
+      accounts: [
+        {
+          name: "vaultType";
+          writable: true;
+        },
+        {
+          name: "authority";
+          signer: true;
+          relations: ["vaultType"];
+        },
+        {
+          name: "newAuthority";
+          docs: ["the `accept_vault_type_authority` instruction."];
+        },
+      ];
+      args: [];
+    },
+    {
       name: "rollOverVaultType";
       discriminator: [233, 161, 46, 228, 96, 94, 245, 57];
       accounts: [
@@ -488,14 +344,14 @@ export type Vault = {
       args: [];
     },
     {
-      name: "transferFromPool";
-      discriminator: [136, 167, 45, 66, 74, 252, 0, 16];
+      name: "transferVaultTypeToken";
+      discriminator: [205, 135, 61, 255, 94, 248, 153, 69];
       accounts: [
         {
           name: "vaultType";
         },
         {
-          name: "owner";
+          name: "authority";
           signer: true;
           relations: ["vaultType"];
         },
@@ -504,106 +360,16 @@ export type Vault = {
           relations: ["vaultType"];
         },
         {
-          name: "pool";
+          name: "source";
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "account";
-                path: "vaultType";
-              },
-              {
-                kind: "const";
-                value: [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169,
-                ];
-              },
-              {
-                kind: "account";
-                path: "mint";
-              },
-            ];
-            program: {
-              kind: "const";
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89,
-              ];
-            };
-          };
-          relations: ["vaultType"];
         },
         {
           name: "destination";
           writable: true;
         },
         {
-          name: "systemProgram";
-          address: "11111111111111111111111111111111";
-        },
-        {
           name: "tokenProgram";
+          relations: ["vaultType"];
         },
       ];
       args: [
@@ -627,7 +393,7 @@ export type Vault = {
           relations: ["vault"];
         },
         {
-          name: "owner";
+          name: "userAuthority";
           signer: true;
           relations: ["vault"];
         },
@@ -638,92 +404,11 @@ export type Vault = {
         {
           name: "pool";
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "account";
-                path: "vaultType";
-              },
-              {
-                kind: "const";
-                value: [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169,
-                ];
-              },
-              {
-                kind: "account";
-                path: "mint";
-              },
-            ];
-            program: {
-              kind: "const";
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89,
-              ];
-            };
-          };
+          relations: ["vaultType"];
+        },
+        {
+          name: "reserve";
+          writable: true;
           relations: ["vaultType"];
         },
         {
@@ -731,11 +416,8 @@ export type Vault = {
           writable: true;
         },
         {
-          name: "systemProgram";
-          address: "11111111111111111111111111111111";
-        },
-        {
           name: "tokenProgram";
+          relations: ["vaultType"];
         },
       ];
       args: [
@@ -763,8 +445,8 @@ export type Vault = {
         kind: "struct";
         fields: [
           {
-            name: "owner";
-            docs: ["The pubkey of the owner."];
+            name: "userAuthority";
+            docs: ["The pubkey of the authority (usually the user)."];
             type: "pubkey";
           },
           {
@@ -830,9 +512,28 @@ export type Vault = {
         kind: "struct";
         fields: [
           {
-            name: "owner";
-            docs: ["The pubkey of the owner."];
+            name: "identity";
+            docs: [
+              "The identity pubkey which matches the authority initially.",
+              "It is maintained separately from the authority to allow changing the authority without affecting the PDA.",
+            ];
             type: "pubkey";
+          },
+          {
+            name: "authority";
+            docs: [
+              "The pubkey of the authority which can be changed with `update_vault_type_authority` instruction.",
+            ];
+            type: "pubkey";
+          },
+          {
+            name: "pendingAuthority";
+            docs: [
+              "The pubkey of the pending authority which will be set after `update_vault_type_authority` instruction.",
+            ];
+            type: {
+              option: "pubkey";
+            };
           },
           {
             name: "mint";
@@ -843,6 +544,13 @@ export type Vault = {
             name: "pool";
             docs: [
               "The pubkey of the pool token account where deposited tokens are collected.",
+            ];
+            type: "pubkey";
+          },
+          {
+            name: "reserve";
+            docs: [
+              "The pubkey of the reserve token account where tokens are collected for withdrawal.",
             ];
             type: "pubkey";
           },
@@ -864,9 +572,18 @@ export type Vault = {
             type: "i64";
           },
           {
+            name: "deactivationLockWindow";
+            docs: [
+              "The duration, while users cannot initiate deactivation, at the end of each season, in seconds.",
+            ];
+            type: "i64";
+          },
+          {
             name: "cooldownWindow";
             docs: [
-              "The duration of the cooldown period at the end of each season, in seconds.",
+              "The duration of the cooldown period at the end of each season, in seconds,",
+              "during which administrators perform maintenance work on the vaults.",
+              "Currently not used to restrict any operations, but may be used in the future to disable deposits.",
             ];
             type: "i64";
           },
@@ -889,6 +606,14 @@ export type Vault = {
             docs: [
               "If true, users can instantly deactivate their vaults to Inactive state.",
               "Otherwise, vaults enter Deactivating state and can transition to Inactive at the start of next season.",
+            ];
+            type: "bool";
+          },
+          {
+            name: "isLocked";
+            docs: [
+              "If true, belonging vaults are locked and cannot be deactivated for withdrawal.",
+              "This does not affect already deactivating and inactive vaults.",
             ];
             type: "bool";
           },

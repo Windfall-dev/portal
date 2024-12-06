@@ -19,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { useVaultContext } from "../context/VaultContext";
-import { VAULT_CONFIGS, VaultConfig, getVaultType } from "../utils/vaultUtils";
+import { TOKENS, Token, getVaultType } from "../utils/vaultUtils";
 
 export function ComboBox() {
   const [open, setOpen] = useState(false);
@@ -41,12 +41,12 @@ export function ComboBox() {
         >
           <div className="flex items-center space-x-2">
             <Image
-              src={selectedVault.logo}
-              alt={selectedVault.vaultName}
+              src={selectedVault.icon}
+              alt={selectedVault.name}
               width={24}
               height={24}
             />
-            <p>{selectedVault.vaultName}</p>
+            <p>{selectedVault.name}</p>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -55,27 +55,23 @@ export function ComboBox() {
         <Command>
           <CommandList>
             <CommandGroup>
-              {Object.values(VAULT_CONFIGS).map((vault: VaultConfig) => (
+              {Object.values(TOKENS).map((vault: Token) => (
                 <CommandItem
-                  key={vault.vaultName}
-                  value={vault.vaultName}
-                  onSelect={(currentValue) => {
-                    setSelectedVault(
-                      VAULT_CONFIGS[currentValue] === selectedVault
-                        ? VAULT_CONFIGS["SOL"]
-                        : VAULT_CONFIGS[currentValue],
-                    );
+                  key={vault.name}
+                  value={vault.name}
+                  onSelect={() => {
+                    setSelectedVault(vault);
                     setOpen(false);
                   }}
                 >
                   <div className="flex items-center space-x-2">
                     <Image
-                      src={vault.logo}
-                      alt={vault.vaultName}
+                      src={vault.icon}
+                      alt={vault.name}
                       width={24}
                       height={24}
                     />
-                    <p>{vault.vaultName}</p>
+                    <p>{vault.name}</p>
                   </div>
                   <Check
                     className={cn(

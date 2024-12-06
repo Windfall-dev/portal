@@ -4,15 +4,10 @@ import {
   createAssociatedTokenAccountInstruction,
   createCloseAccountInstruction,
   createSyncNativeInstruction,
-  getAssociatedTokenAddress,
+  getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
 import { useAnchorWallet, useWallet } from "@solana/wallet-adapter-react";
-import {
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { DialogState } from "../components/Popup";
@@ -28,8 +23,8 @@ export function useVault({ amount, setDialogState }: VaultProp) {
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const { connected, publicKey, sendTransaction } = useWallet();
   const wallet = useAnchorWallet();
-  const amountInLamport = Number(amount) * LAMPORTS_PER_SOL;
   const { selectedVault } = useVaultContext();
+  const amountPerDecimal = Number(amount) * selectedVault.decimals;
 
   // vault に預けられているトークン数量を decimal と関係なく整数値のままで取得
   const getBalance = async (): Promise<number> => {
@@ -72,9 +67,8 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       await getBalance();
     };
     fetchBalance();
-    // setDepositAmount(Number(amount));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connected, publicKey, amount]);
+  }, [connected, publicKey]);
 
   const handleDeposit = async () => {
     if (!connected || !publicKey || !amount) return;
@@ -102,12 +96,10 @@ export function useVault({ amount, setDialogState }: VaultProp) {
         // create vault if necessary
         const newVaultIx = await program.methods
           .newVault()
-          .accounts({
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
+          .accountsStrict({
             vault,
             vaultType,
-            owner: publicKey,
+            userAuthority: publicKey,
             payer: publicKey,
             systemProgram: anchor.web3.SystemProgram.programId,
           })
@@ -116,8 +108,8 @@ export function useVault({ amount, setDialogState }: VaultProp) {
         transaction.add(newVaultIx);
       }
 
-      // Get or create ATA
-      const ata = await getAssociatedTokenAddress(mint, publicKey);
+      // Get ATA address
+      const ata = await getAssociatedTokenAddressSync(mint, publicKey);
 
       console.log(
         `wallet ${publicKey.toString()}, vault ${vault.toString()}, ata ${ata.toString()}`,
@@ -126,6 +118,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
       // wrapped SOL の場合は ATA の存在をチェックし、ATA がなければ作成した上で SOL をラップ。
       // それ以外のトークンミントの場合は ATA が存在して、デポジット数量以上のトークンの存在を確認するべきだが、
       // このサンプルではそこまで丁寧な処理はせず、TX を実行して何かがダメなら　TX がエラーになるだけ。
+      // 基本的にデポジットするのだから、ATA が存在して、そこにはトークンがあるはず。
       let wrapped = false;
       if (mint.equals(NATIVE_MINT)) {
         const account = await connection.getAccountInfo(ata);
@@ -146,7 +139,7 @@ export function useVault({ amount, setDialogState }: VaultProp) {
           SystemProgram.transfer({
             fromPubkey: publicKey,
             toPubkey: ata,
-            lamports: Number(amountInLamport),
+            lamports: Number(amountPerDecimal),
           }),
           createSyncNativeInstruction(ata),
         );
@@ -154,35 +147,39 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
       // deposit to vault
       const depositIx = await program.methods
-        .deposit(new anchor.BN(amountInLamport))
-        .accounts({
+        .deposit(new anchor.BN(amountPerDecimal))
+        .accountsStrict({
           vault,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
           vaultType,
-          owner: publicKey,
-          payer: publicKey,
+          userAuthority: publicKey,
+          mint,
           pool: vaultTypeAccount.pool,
           from: ata,
-          systemProgram: anchor.web3.SystemProgram.programId,
           tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         })
         .instruction();
       transaction.add(depositIx);
 
+      // wrapped SOL の場合は ATA を閉じる IX を追加
       if (wrapped) {
         transaction.add(
           createCloseAccountInstruction(ata, publicKey, publicKey),
         );
       }
-
+      const prevBalance = await getBalance();
       const signature = await sendTransaction(transaction, connection);
 
       // 残高を更新 (最大30秒間、1秒ごとに更新)
       for (let i = 0; i < 30; i++) {
-        await getBalance();
+        const currentBalance = await getBalance();
+        console.log(
+          "currentBalance: ",
+          tokenBalance,
+          "prevBalance: ",
+          prevBalance,
+        );
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        if (Number(tokenBalance) >= Number(amount)) {
+        if (Number(currentBalance) > Number(prevBalance)) {
           return signature;
         }
       }
@@ -214,13 +211,13 @@ export function useVault({ amount, setDialogState }: VaultProp) {
 
       const transaction = new Transaction();
 
-      const ata = await getAssociatedTokenAddress(mint, publicKey);
+      const ata = await getAssociatedTokenAddressSync(mint, publicKey);
 
       console.log(
         `wallet ${publicKey.toString()}, vault ${vault.toString()}, ata ${ata.toString()}`,
       );
 
-      // ATA が存在するか確認して、なければ作成
+      // ATA が存在するか確認して、なければ作成する IX 追加
       let created = false;
       const account = await connection.getAccountInfo(ata);
       if (!account) {
@@ -239,32 +236,32 @@ export function useVault({ amount, setDialogState }: VaultProp) {
         // deactivate the vault
         const deactivateIx = await program.methods
           .deactivate()
-          .accounts({
+          .accountsStrict({
             vault,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error            vaultType,
-            owner: publicKey,
-            payer: publicKey,
+            vaultType,
+            userAuthority: publicKey,
           })
           .instruction();
 
         transaction.add(deactivateIx);
       }
 
-      const amountBn = new anchor.BN(amountInLamport);
+      // 実運用が始まると、vault をいったん deactivating にして、次のシーズンまで待つ必要があるが、
+      // いまの devnet の vault_type の設定では、即時に inactive にできるので、
+      // 続けて withdraw を行うことができる。
+      const amountBn = new anchor.BN(amountPerDecimal);
 
       // withdraw from vault
       const withdrawIx = await program.methods
         .withdraw(amountBn)
-        .accounts({
+        .accountsStrict({
           vault,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error          vaultType,
-          owner: publicKey,
-          payer: publicKey,
+          vaultType,
+          userAuthority: publicKey,
+          mint,
           pool: vaultTypeAccount.pool,
+          reserve: vaultTypeAccount.reserve,
           to: ata,
-          systemProgram: anchor.web3.SystemProgram.programId,
           tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         })
         .instruction();

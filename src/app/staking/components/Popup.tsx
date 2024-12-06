@@ -135,7 +135,7 @@ export function Popup({ actionType, amount }: AlertProp) {
                 Are you sure?
               </AlertDialogTitle>
               <AlertDialogDescription className="body text-left">
-                {`You are about to ${actionType} ${amount} ${selectedVault.vaultName}.`}
+                {`You are about to ${actionType} ${amount} ${selectedVault.name}.`}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex flex-row items-center justify-end space-x-[10px]">
@@ -173,7 +173,8 @@ export function Popup({ actionType, amount }: AlertProp) {
           <AlertDialogContent className="rounded-2xl">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-center">
-                Withdrawal has been completed.
+                Withdrawal has been <br />
+                completed.
               </AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex w-full flex-row items-center">

@@ -1,7 +1,7 @@
 import { AnchorProvider, Program, setProvider } from "@coral-xyz/anchor";
 import { NATIVE_MINT } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 import { Vault } from "../vault";
 import idl from "../vault.json";
@@ -10,41 +10,39 @@ import idl from "../vault.json";
 const idl_string = JSON.stringify(idl);
 const idl_object = JSON.parse(idl_string);
 
-export interface VaultConfig {
-  vaultName: string;
-  vaultType: string;
-  mint: string;
-  logo: string;
-}
-
-export const VAULT_CONFIGS: Record<string, VaultConfig> = {
-  SOL: {
-    vaultName: "SOL",
-    vaultType: "AS2UQURPKTpjiyV5eSTQwRtCns2Lya3sgUKLfSCca8q8",
-    mint: NATIVE_MINT.toString(),
-    logo: "./icon_sol.svg",
+export const TOKENS = {
+  wSOL: {
+    mint: NATIVE_MINT,
+    name: "wSOL",
+    symbol: "wSOL",
+    vaultType: "NrdctvrG3VyAYXWMQaGCZ1h94fE5WtMKE2APHsV2a2x",
+    decimals: LAMPORTS_PER_SOL,
+    icon: "./icon_sol.svg",
   },
-  tBTC: {
-    vaultName: "tBTC",
-    vaultType: "raFF1erSr2mGtH49bfELEpFfNmvBYSM5r6UU6ruAiVc",
-    mint: "Placeholder",
-    logo: "icon_tbtc.svg",
+  mBTC: {
+    mint: new PublicKey("CNW66qaixFkEYbJ38HEmgTUqMKHN3ZZvUDTd1oRc8f51"),
+    name: "mBTC",
+    symbol: "mBTC",
+    vaultType: "EpgMDz4aTTtG1xYCpJPzJ68WUTx3NGvNNkcR5wai8BCi",
+    decimals: 10 ** 8,
+    icon: "./icon_tbtc.svg",
   },
 } as const;
+
+export type Token = (typeof TOKENS)[keyof typeof TOKENS];
 
 export function getConnection() {
   return new Connection("https://api.devnet.solana.com");
 }
 
-export const getVaultType = (vault: VaultConfig) => {
+export const getVaultType = (vault: Token) => {
   return new PublicKey(vault.vaultType);
 };
 
-export function getMint(vault: VaultConfig) {
+export function getMint(vault: Token) {
   return new PublicKey(vault.mint);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function setupProgram(wallet: AnchorWallet | undefined) {
   if (!wallet) {
     throw new Error("Wallet not connected");
