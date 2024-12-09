@@ -205,14 +205,13 @@
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-      window.addEventListener("message", unityReceiveMessage, false);
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
+              }).then((instance) => {
+                unityInstance = instance;
                 document.querySelector("#unity-loading-bar").style.display = "none";
                 document.querySelector("#unity-fullscreen-button").onclick = () => {
                   unityInstance.SetFullscreen(1);
                 };
-                console.log("aaaaaa")
                 onUnityLoaded();
               }).catch((message) => {
                 alert(message);
@@ -220,7 +219,7 @@
             };
 
       document.body.appendChild(script);
-
+      window.addEventListener("message", unityReceiveMessage, false);
     </script>
   </body>
 </html>
