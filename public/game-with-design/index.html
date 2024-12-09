@@ -60,24 +60,15 @@
         } else if (event.data.type === "StartAPI" || event.data.type === "EndAPI") {
           console.log("StartAPI")
           const apiUrl = event.data.type === "StartAPI"
-              ? event.data.api_url + '/api/game/start'
-              : event.data.api_url + '/api/game/end';
+              ? event.data.api_url + '/api/game/bet'
+              : event.data.api_url + '/api/game/reward';
           
           const body = event.data.type === "StartAPI"
               ? {
-                  session_id: event.data.session_id,
-                  stage: event.data.stage,
-                  start_time: event.data.start_time,
+                bet_points: event.data.point
                 }
               : {
-                  session_id: event.data.session_id,
-                  game_id: event.data.game_id,
-                  tap_data: event.data.tap_data,
-                  judgment_data: event.data.judgment_data,
-                  end_time: event.data.end_time,
-                  score: event.data.score,
-                  token: event.data.token,
-                  user_id: event.data.user_id
+                reward_points: event.data.point
                 };
           fetch(apiUrl, {
               method: "POST",
@@ -94,12 +85,11 @@
           .catch(error => {
               console.error("API error:", error);
           });
-        } else if (event.data.type === "RankAPI") {
-          const apiUrl = event.data.api_url + '/api/point/rank';
+        } else if (event.data.type === "PointAPI") {
+          const apiUrl = event.data.api_url + '/api/user/get_point';
           
-          const body = {
-                  point: event.data.point,
-                };
+          const body = {};
+
           fetch(apiUrl, {
               method: "POST",
               headers: {
