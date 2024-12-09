@@ -1,3 +1,4 @@
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useState } from "react";
 
 import { useAuth } from "./useAuth";
@@ -17,9 +18,9 @@ export function useAddPoints() {
 
   const context = useAuth();
 
-  const handleAddPoints = async (deposit: number, userToken: string) => {
-    if (!deposit || deposit <= 0) {
-      throw new Error("Deposit amount must be a positive number.");
+  const handleAddPoints = async (signature: string, userToken: string) => {
+    if (!signature) {
+      throw new Error("Failed to retrieve signature");
     }
 
     if (!userToken) {
@@ -27,13 +28,12 @@ export function useAddPoints() {
     }
 
     const requestBody = {
-      deposit,
-      token: userToken,
+      signature,
     };
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/point/add`,
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/point/deposit`,
         {
           method: "POST",
           headers: {
@@ -46,12 +46,20 @@ export function useAddPoints() {
 
       if (response.ok) {
         const data = await response.json();
+        const new_point_balance = Math.floor(
+          data.new_point_balance / LAMPORTS_PER_SOL,
+        );
         setUser((prevUser) => ({
           ...prevUser,
-          points: data.new_point_balance.toString(), // update points
+          points: new_point_balance.toString(), // update points
         }));
 
-        return data;
+        console.log(
+          "Backend Return value is:",
+          data.new_point_balance.toString(),
+        );
+        console.log("New Point Balance is: ", new_point_balance);
+        return new_point_balance;
       } else if (response.status === 401) {
         const errorData = await response.json();
         console.error("Unauthorized:", errorData.message);

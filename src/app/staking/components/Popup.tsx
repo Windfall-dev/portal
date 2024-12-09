@@ -46,7 +46,6 @@ export function Popup({ actionType, amount }: AlertProp) {
   });
 
   const userId = context.userId.slice(0, 4) + ".." + context.userId.slice(-4);
-
   useEffect(() => {
     const fetchRankings = async () => {
       try {
@@ -100,7 +99,7 @@ export function Popup({ actionType, amount }: AlertProp) {
         throw new Error("Deposit transaction failed.");
       }
 
-      await handleAddPoints(parseFloat(amount), context.userId);
+      await handleAddPoints(signature, context.userId);
       return signature;
     }
     if (actionType === "withdraw") {
