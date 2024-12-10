@@ -13,7 +13,7 @@ function TopKv() {
   useEffect(() => {
     fetchPoints();
     console.log("userpoints: ", user.points);
-  }, [user, fetchPoints]);
+  }, [fetchPoints]);
 
   return (
     <div className="relative z-0 h-80 px-[30px] pb-[30px] pt-10">

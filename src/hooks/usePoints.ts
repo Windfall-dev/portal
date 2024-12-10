@@ -1,4 +1,3 @@
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useCallback, useState } from "react";
 
 import { useAuth } from "./useAuth";
@@ -90,20 +89,17 @@ export function usePoints() {
 
       if (response.ok) {
         const data = await response.json();
-        const new_point_balance = Math.floor(
-          data.new_point_balance / LAMPORTS_PER_SOL,
-        );
         setUser((prevUser) => ({
           ...prevUser,
-          points: new_point_balance.toString(), // update points
+          points: data.new_point_balance.toString(), // update points
         }));
 
         console.log(
           "Backend Return value is:",
           data.new_point_balance.toString(),
         );
-        console.log("New Point Balance is: ", new_point_balance);
-        return new_point_balance;
+        console.log("New Point Balance is: ", data.new_point_balance);
+        return data.new_point_balance;
       } else if (response.status === 401) {
         const errorData = await response.json();
         console.error("Unauthorized:", errorData.message);
