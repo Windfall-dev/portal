@@ -1,5 +1,5 @@
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useAuth } from "./useAuth";
 
@@ -9,16 +9,60 @@ export interface RankingUserProps {
   points: string;
 }
 
-export function useAddPoints() {
+interface ApiResponse {
+  ok: boolean;
+  points: number;
+  username: string;
+}
+
+export function usePoints() {
   const [user, setUser] = useState<RankingUserProps>({
     rank: "",
     name: "",
-    points: "",
+    points: "0",
   });
 
-  const context = useAuth();
+  const { accessToken, userId, username } = useAuth();
 
-  const handleAddPoints = async (signature: string, userToken: string) => {
+  const fetchPoints = useCallback(async () => {
+    if (!accessToken || !userId) {
+      throw new Error("No authentication data available");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: accessToken,
+            user_id: userId,
+            user_name: username || "",
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch points");
+      }
+      const data: ApiResponse = await response.json();
+      if (data.ok) {
+        const points = Math.floor(data.points / LAMPORTS_PER_SOL);
+        setUser({
+          rank: "",
+          name: data.username,
+          points: points.toLocaleString("en"),
+        });
+      } else {
+        throw new Error("Failed to get points from response");
+      }
+    } catch (err) {
+      throw new Error("Unknown error occurred");
+    }
+  }, [accessToken, userId, username]);
+  const addPoints = async (signature: string, userToken: string) => {
     if (!signature) {
       throw new Error("Failed to retrieve signature");
     }
@@ -38,7 +82,7 @@ export function useAddPoints() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${context.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify(requestBody),
         },
@@ -79,5 +123,5 @@ export function useAddPoints() {
       }
     }
   };
-  return { user, setUser, handleAddPoints };
+  return { user, setUser, addPoints, fetchPoints };
 }
