@@ -49,7 +49,7 @@ export function usePoints() {
       }
       const data: ApiResponse = await response.json();
       if (data.ok) {
-        const points = Math.floor(data.points / LAMPORTS_PER_SOL);
+        const points = data.points;
         setUser({
           rank: "",
           name: data.username,
